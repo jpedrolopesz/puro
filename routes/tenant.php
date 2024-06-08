@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Http\Controllers\ProfileController;
+use App\Models\Tenant;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
@@ -22,7 +23,7 @@ Route::group(
     ],
     function () {
         Route::get("/dashboard", function () {
-            //return response()->json(Auth::user());
+            return response()->json(Auth::user());
             return Inertia::render("Dashboard");
         })
             ->middleware(["auth", "verified"])

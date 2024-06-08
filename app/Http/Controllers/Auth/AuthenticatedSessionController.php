@@ -20,6 +20,7 @@ class AuthenticatedSessionController extends Controller
     public function create(): Response
     {
         return Inertia::render("Auth/Login", [
+            "domain" => env("SESSION_DOMAIN"),
             "canResetPassword" => Route::has("password.request"),
             "status" => session("status"),
         ]);
@@ -47,6 +48,18 @@ class AuthenticatedSessionController extends Controller
             route("tenant.dashboard", [], false);
 
         return Inertia::location($url);
+    }
+
+    /**
+     * Handle an incoming authentication tenant request.
+     */
+    public function storeTenant(LoginRequest $request)
+    {
+        $request->authenticate();
+
+        $request->session()->regenerate();
+
+        return redirect()->route("tenant.dashboard");
     }
 
     /**
