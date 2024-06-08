@@ -8,4 +8,9 @@ use Stancl\Tenancy\Database\Models\Domain as BaseDomain;
 class Domain extends BaseDomain
 {
     use HasFactory;
+
+    public function tenant()
+    {
+        return $this->belongsTo(Tenant::class);
+    }
 }

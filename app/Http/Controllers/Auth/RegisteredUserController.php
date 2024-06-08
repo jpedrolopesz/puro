@@ -61,6 +61,18 @@ class RegisteredUserController extends Controller
         $url =
             "http://" . $request->domain . route("tenant.dashboard", [], false);
 
+        $user = $request->user();
+        $tenant = Tenant::find($user->tenant_id);
+        $domain = $tenant->domains()->first()->domain;
+        $centralDomains = config("tenancy.central_domains");
+
+        $url =
+            "http://" .
+            $domain .
+            "." .
+            $centralDomains[0] .
+            route("dashboard", [], false);
+
         return Inertia::location($url);
     }
 }

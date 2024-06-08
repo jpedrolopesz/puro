@@ -12,7 +12,7 @@ return [
      *
      * Only relevant if you're using the domain or subdomain identification middleware.
      */
-    "central_domains" => ["puro.test"],
+    "central_domains" => [env("CENTRAL_DOMAIN")],
 
     /**
      * Tenancy bootstrappers are executed when tenancy is initialized.

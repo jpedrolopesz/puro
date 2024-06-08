@@ -10,18 +10,6 @@ use Inertia\Inertia;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
 use Stancl\Tenancy\Middleware\ScopeSessions;
 
-/*
-|--------------------------------------------------------------------------
-| Tenant Routes
-|--------------------------------------------------------------------------
-|
-| Here you can register the tenant routes for your application.
-| These routes are loaded by the TenantRouteServiceProvider.
-|
-| Feel free to customize them however you want. Good luck!
-|
-*/
-
 Route::group(
     [
         "as" => "tenant.",
@@ -34,8 +22,11 @@ Route::group(
     ],
     function () {
         Route::get("/dashboard", function () {
+            //return response()->json(Auth::user());
             return Inertia::render("Dashboard");
-        })->name("dashboard");
+        })
+            ->middleware(["auth", "verified"])
+            ->name("dashboard");
 
         Route::middleware("auth")->group(function () {
             Route::get("/profile", [ProfileController::class, "edit"])->name(
