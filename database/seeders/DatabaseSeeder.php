@@ -5,6 +5,7 @@ use App\Models\Tenant;
 use App\Models\Domain;
 use App\Models\User;
 use App\Enums\UserRole;
+use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Faker\Factory as Faker;
@@ -13,6 +14,14 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
+        $admin = Admin::factory()->create();
+
+        DB::table("admin_password_reset_tokens")->insert([
+            "email" => $admin->email,
+            "token" => Str::random(40),
+            "created_at" => now(),
+        ]);
+
         Tenant::factory(1)
             ->create([
                 "tenancy_db_name" => "tenant_" . Str::uuid(),
