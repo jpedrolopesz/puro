@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\UsersController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -13,6 +14,9 @@ Route::get("/", function () {
         "phpVersion" => PHP_VERSION,
     ]);
 });
+
+######## USERS ########
+Route::resource("users", UsersController::class);
 
 Route::get("/dashboard", function () {
     //return response()->json(Auth::user());
