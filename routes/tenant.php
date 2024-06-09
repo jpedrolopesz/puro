@@ -5,6 +5,7 @@ declare(strict_types=1);
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Tenant\DashboardController;
 use App\Models\Tenant;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -22,10 +23,7 @@ Route::group(
         ],
     ],
     function () {
-        Route::get("/dashboard", function () {
-            return response()->json(Auth::user());
-            return Inertia::render("Dashboard");
-        })
+        Route::get("/dashboard", [DashboardController::class, "index"])
             ->middleware(["auth", "verified"])
             ->name("dashboard");
 

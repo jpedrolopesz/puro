@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 
 /**
@@ -15,15 +16,13 @@ class TenantFactory extends Factory
      *
      * @return array<string, mixed>
      */
+
     public function definition(): array
     {
         return [
-            "data" => json_encode([
-                "settings" => [
-                    "theme" => fake()->randomElement(["light", "dark"]),
-                    "language" => fake()->randomElement(["en", "pt", "es"]),
-                ],
-            ]),
+            "email" => "jplopeszamonelo@hotmail.com",
+            "name" => "Joao Zamonelo",
+            "data" => null,
         ];
     }
 }

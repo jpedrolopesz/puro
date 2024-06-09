@@ -12,6 +12,11 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 {
     use HasDatabase, HasDomains, HasFactory;
 
+    public static function getCustomColumns(): array
+    {
+        return ["id", "email", "data"];
+    }
+
     public function domain()
     {
         return $this->hasOne(Domain::class);

@@ -17,6 +17,10 @@ return new class extends Migration {
             $table->timestamp("email_verified_at")->nullable();
             $table->string("password");
             $table->uuid("tenant_id")->nullable();
+            $table
+                ->enum("role", ["super_admin", "admin", "user"])
+                ->default("user");
+
             $table->rememberToken();
             $table->timestamps();
         });
