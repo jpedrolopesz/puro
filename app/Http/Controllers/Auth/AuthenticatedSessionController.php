@@ -11,6 +11,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Models\Tenant;
 use App\Models\User;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -38,7 +39,9 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if (Auth::guard("admin")->check()) {
-            return redirect()->route("dashboard");
+            Log::info("Redirecionando para admin.dashboard");
+
+            return redirect()->route("admin.dashboard");
         } elseif (Auth::guard("web")->check()) {
             $user = Auth::guard("web")->user();
             $tenant = Tenant::find($user->tenant_id);

@@ -3,6 +3,7 @@
 use App\Http\Controllers\Central\UsersController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,11 +20,12 @@ Route::get("/", function () {
 //Route::resource("users", UsersController::class);
 
 Route::get("/dashboard", function () {
-    //return response()->json(Auth::user());
+    return response()->json(Auth::guard("admin")->check());
     return Inertia::render("Dashboard");
 })
-    ->middleware(["auth", "verified"])
-    ->name("dashboard");
+    ->name("admin.dashboard")
+    ->middleware("auth:admin");
+
 Route::middleware("auth")->group(function () {
     Route::get("/profile", [ProfileController::class, "edit"])->name(
         "profile.edit"

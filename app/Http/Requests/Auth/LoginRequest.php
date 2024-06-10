@@ -5,6 +5,7 @@ namespace App\Http\Requests\Auth;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -44,15 +45,33 @@ class LoginRequest extends FormRequest
         $credentials = $this->only("email", "password");
         $remember = $this->boolean("remember");
 
+        Log::info("Tentando autenticação para admin", [
+            "credentials" => $credentials,
+        ]);
+
         if (!Auth::guard("admin")->attempt($credentials, $remember)) {
+            Log::info("Falha na autenticação como admin", [
+                "credentials" => $credentials,
+            ]);
+
             RateLimiter::hit($this->throttleKey());
 
+            Log::info("Tentando autenticação para usuário", [
+                "credentials" => $credentials,
+            ]);
+
             if (!Auth::guard("web")->attempt($credentials, $remember)) {
+                Log::info("Falha na autenticação como usuário", [
+                    "credentials" => $credentials,
+                ]);
+
                 throw ValidationException::withMessages([
                     "email" => trans("auth.failed"),
                 ]);
             }
         }
+
+        Log::info("Autenticação bem-sucedida", ["credentials" => $credentials]);
 
         RateLimiter::clear($this->throttleKey());
     }
