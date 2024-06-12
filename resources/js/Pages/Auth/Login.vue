@@ -29,11 +29,11 @@ const isSubdomainOfPuroTest = computed(() => hostname.endsWith(domain));
 
 const submit = () => {
     if (isSubdomainOfPuroTest.value) {
-        form.post(route("tenant.storeTenant"), {
+        form.post(route("storeAdmin"), {
             onFinish: () => form.reset("password"),
         });
     } else {
-        form.post(route("storeAdmin"), {
+        form.post(route("tenant.storeTenant"), {
             onFinish: () => form.reset("password"),
         });
     }
