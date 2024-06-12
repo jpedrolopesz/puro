@@ -6,7 +6,7 @@ import InputLabel from "@/Components/InputLabel.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
-import { computed } from "vue";
+import { computed, ref } from "vue";
 
 const { canResetPassword, status, domain } = defineProps({
     canResetPassword: {
@@ -25,10 +25,17 @@ const form = useForm({
     remember: false,
 });
 const hostname = window.location.hostname;
-const isSubdomainOfPuroTest = computed(() => hostname.endsWith(domain));
+const parts = hostname.split(".");
+
+let subdomain = null;
+if (parts.length > 2) {
+    subdomain = parts.slice(0, -2).join(".");
+}
+
+console.log("Subdomínio:", subdomain);
 
 const submit = () => {
-    if (isSubdomainOfPuroTest.value) {
+    if (subdomain == null) {
         form.post(route("storeAdmin"), {
             onFinish: () => form.reset("password"),
         });
