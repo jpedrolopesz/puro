@@ -34,7 +34,6 @@ class AuthenticatedSessionController extends Controller
      */
     public function store(LoginRequest $request): RedirectResponse
     {
-        dd("ok - store");
         $request->authenticate();
 
         $request->session()->regenerate();
@@ -50,7 +49,7 @@ class AuthenticatedSessionController extends Controller
             $centralDomains = config("tenancy.central_domains");
 
             $url =
-                "http://" .
+                "https://" .
                 $domain .
                 "." .
                 $centralDomains[0] .

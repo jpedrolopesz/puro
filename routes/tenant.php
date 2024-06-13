@@ -17,6 +17,7 @@ Route::group(
         "as" => "tenant.",
         "middleware" => [
             "web",
+
             InitializeTenancyBySubdomain::class,
             PreventAccessFromCentralDomains::class,
             ScopeSessions::class,
@@ -24,7 +25,7 @@ Route::group(
     ],
     function () {
         Route::get("/dashboard", [DashboardController::class, "index"])
-            ->middleware(["auth"])
+            ->middleware(["auth", "verifid"])
             ->name("dashboard");
 
         Route::middleware("auth")->group(function () {

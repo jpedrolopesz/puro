@@ -20,7 +20,7 @@ Route::get("/", function () {
 //Route::resource("users", UsersController::class);
 
 Route::get("/dashboard", function () {
-    return response()->json(Auth::guard("admin")->check());
+    return response()->json(Auth::guard("admin")->user());
     return Inertia::render("Dashboard");
 })
     ->name("admin.dashboard")
