@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { cn } from "../lib/utils";
-import { accounts } from "./Components/accounts";
-import NavList, { type LinkProp } from "./Components/NavList.vue";
-import AccountSwitcher from "./Components/AccountSwitcher.vue";
-import { Separator } from "../Components/ui/separator";
-import { TooltipProvider } from "../Components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import { accounts } from "./accounts";
+import NavList, { type LinkProp } from "./NavList.vue";
+import AccountSwitcher from "./AccountSwitcher.vue";
+import { Separator } from "../../../../Components/ui/separator";
+import { TooltipProvider } from "../../../../Components/ui/tooltip";
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
-} from "../Components/ui/resizable";
+} from "../../../../Components/ui/resizable";
 
 interface UserProps {
     // VOU TER QUE ADICIONAR CONTAS VINCULADA EM UM UNICO PERFIL

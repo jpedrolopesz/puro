@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import UserNav from "./Components/UserNav.vue";
-import Search from "./Components/Search.vue";
+import UserNav from "./UserNav.vue";
+import Search from "./Search.vue";
 </script>
 
 <template>

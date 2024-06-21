@@ -1,5 +1,5 @@
 <script setup>
-import Heard from "./Components/Head.vue";
+import Heard from "./Components/Heard.vue";
 import Sidebar from "./Components/Sidebar.vue";
 </script>
 
