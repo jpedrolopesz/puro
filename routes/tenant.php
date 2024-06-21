@@ -25,7 +25,7 @@ Route::group(
     ],
     function () {
         Route::get("/dashboard", [DashboardController::class, "index"])
-            ->middleware(["auth", "verifi"])
+            ->middleware(["auth", "verifid"])
             ->name("dashboard");
 
         Route::middleware("auth")->group(function () {
