@@ -27,7 +27,7 @@ Route::group(
             App\Http\Controllers\Tenant\DashboardController::class,
             "index",
         ])
-            ->middleware(["auth", "verifid"])
+            ->middleware(["auth"])
             ->name("dashboard");
 
         Route::middleware("auth")->group(function () {
