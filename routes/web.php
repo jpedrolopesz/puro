@@ -1,9 +1,12 @@
 <?php
 
+use App\Http\Controllers\Central\DashboardCentral;
 use App\Http\Controllers\Central\UsersController;
+use App\Http\Controllers\Controller;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -19,10 +22,7 @@ Route::get("/", function () {
 ######## USERS ########
 //Route::resource("users", UsersController::class);
 
-Route::get("/dashboard", function () {
-    return response()->json(Auth::guard("admin")->user());
-    return Inertia::render("Dashboard");
-})
+Route::get("/dashboard", [DashboardCentral::class, "index"])
     ->name("admin.dashboard")
     ->middleware("auth:admin");
 
