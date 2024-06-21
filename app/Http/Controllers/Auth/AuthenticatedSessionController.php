@@ -66,7 +66,7 @@ class AuthenticatedSessionController extends Controller
      */
     public function storeTenant(LoginRequest $request)
     {
-        dd("ok - storeTenant");
+        // dd("ok - storeTenant");
         $request->authenticate();
 
         $request->session()->regenerate();

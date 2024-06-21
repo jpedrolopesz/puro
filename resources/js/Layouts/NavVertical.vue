@@ -1,0 +1,157 @@
+<script lang="ts" setup>
+import { ref } from "vue";
+import { cn } from "../lib/utils";
+import { accounts } from "./Components/accounts";
+import NavList, { type LinkProp } from "./Components/NavList.vue";
+import AccountSwitcher from "./Components/AccountSwitcher.vue";
+import { Separator } from "../Components/ui/separator";
+import { TooltipProvider } from "../Components/ui/tooltip";
+import {
+    ResizableHandle,
+    ResizablePanel,
+    ResizablePanelGroup,
+} from "../Components/ui/resizable";
+
+interface UserProps {
+    // VOU TER QUE ADICIONAR CONTAS VINCULADA EM UM UNICO PERFIL
+    accounts: {
+        label: string;
+        email: string;
+        icon: string;
+    }[];
+
+    defaultLayout?: number[];
+    defaultCollapsed?: boolean;
+}
+
+const props = withDefaults(defineProps<UserProps>(), {
+    defaultLayout: () => [265, 440, 655],
+});
+
+const isCollapsed = ref(false);
+
+function onCollapse() {
+    isCollapsed.value = true;
+}
+
+function onExpand() {
+    isCollapsed.value = false;
+}
+const links: LinkProp[] = [
+    {
+        title: "Dashboard",
+        label: "",
+        icon: "lucide:inbox",
+        variant: "ghost",
+        route: route("dashboard.central"),
+        current: route().current("dashboard.central"),
+    },
+    {
+        title: "Users",
+        label: "972",
+        icon: "lucide:user-2",
+        variant: "ghost",
+        route: route("central.users"),
+        current: route().current("central.users"),
+    },
+    {
+        title: "Billing",
+        label: "",
+        icon: "lucide:shopping-cart",
+        variant: "ghost",
+        route: route("billing.central"),
+        current: route().current("billing.central"),
+    },
+];
+
+const links2: LinkProp[] = [
+    {
+        title: "Social",
+        label: "972",
+        icon: "lucide:user-2",
+        variant: "ghost",
+        route: "/social",
+    },
+    {
+        title: "Updates",
+        label: "342",
+        icon: "lucide:alert-circle",
+        variant: "ghost",
+        route: "/updates",
+    },
+    {
+        title: "Forums",
+        label: "128",
+        icon: "lucide:message-square",
+        variant: "ghost",
+        route: "/forums",
+    },
+    {
+        title: "Shopping",
+        label: "8",
+        icon: "lucide:shopping-cart",
+        variant: "ghost",
+        route: "/shopping",
+    },
+    {
+        title: "Promotions",
+        label: "21",
+        icon: "lucide:archive",
+        variant: "ghost",
+        route: "/promotions",
+    },
+];
+</script>
+
+<template>
+    <TooltipProvider :delay-duration="0">
+        <ResizablePanelGroup
+            id="resize-panel-group-1"
+            direction="horizontal"
+            class="h-full max-h-[800px] items-stretch"
+        >
+            <ResizablePanel
+                id="resize-panel-1"
+                :default-size="defaultLayout[0]"
+                collapsible
+                :min-size="15"
+                :max-size="20"
+                :class="
+                    cn(
+                        isCollapsed &&
+                            'min-w-[50px] transition-all duration-300 ease-in-out',
+                    )
+                "
+                @expand="onExpand"
+                @collapse="onCollapse"
+            >
+                <div
+                    class="mb-1"
+                    :class="
+                        cn(
+                            'flex h-[52px] items-center justify-center',
+                            isCollapsed ? 'h-[52px]' : 'px-2',
+                        )
+                    "
+                >
+                    <AccountSwitcher
+                        :is-collapsed="isCollapsed"
+                        :accounts="accounts"
+                    />
+                </div>
+                <Separator />
+                <NavList :is-collapsed="isCollapsed" :links="links" />
+                <Separator />
+                <NavList :is-collapsed="isCollapsed" :links="links2" />
+            </ResizablePanel>
+            <ResizableHandle id="resize-handle-1" with-handle />
+            <ResizablePanel
+                id="resize-panel-2"
+                :default-size="defaultLayout[1]"
+                :min-size="30"
+            >
+                <slot />
+            </ResizablePanel>
+        </ResizablePanelGroup>
+    </TooltipProvider>
+</template>

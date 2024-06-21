@@ -51,6 +51,6 @@ class DashboardController extends Controller
             $data["tenants"][] = $tenantData;
         }
 
-        return response()->json($data);
+        return Inertia::render("Tenant/Dashboard/DashboardTenant");
     }
 }
