@@ -13,7 +13,7 @@ export interface LinkProp {
     title: string;
     label?: string;
     icon: string;
-    variant: "default" | "ghost";
+    variant: "default" | "ghos";
     route: string;
     current: boolean;
 }
