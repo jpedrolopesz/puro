@@ -11,11 +11,10 @@ class TenantsController extends Controller
 {
     public function index(Request $request)
     {
-        $filters = $request->only(["search", "trashed"]);
-        $tenants = TenantGetAllAction::run($filters);
-
+        $filters = $request->all();
+        $tenantsData = TenantGetAllAction::run($filters);
         return Inertia::render("Central/Tenants/TenantsCentral", [
-            "tenants" => $tenants,
+            "tenants" => $tenantsData,
         ]);
     }
 }

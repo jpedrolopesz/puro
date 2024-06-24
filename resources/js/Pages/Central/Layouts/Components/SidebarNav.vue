@@ -43,16 +43,16 @@ const links: LinkProp[] = [
         label: "",
         icon: "lucide:inbox",
         variant: "ghost",
-        route: route("tenant.dashboard"),
-        current: route().current("tenant.dashboard"),
+        route: route("admin.dashboard"),
+        current: route().current("admin.dashboard"),
     },
     {
         title: "Tenants",
         label: "972",
         icon: "lucide:user-2",
         variant: "ghost",
-        route: route("tenant.dashboard"),
-        current: route().current("tenant.dashboard"),
+        route: route("tenants.index"),
+        current: route().current("tenants.index"),
     },
     {
         title: "Billing",
@@ -108,7 +108,7 @@ const links2: LinkProp[] = [
         <ResizablePanelGroup
             id="resize-panel-group-1"
             direction="horizontal"
-            class="h-full max-h-[800px] items-stretch"
+            class="h-lvh items-stretch"
         >
             <ResizablePanel
                 id="resize-panel-1"

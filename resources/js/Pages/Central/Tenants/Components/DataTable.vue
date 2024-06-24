@@ -33,7 +33,7 @@ import {
 
 interface DataTableProps {
     columns: ColumnDef<Task, any>[];
-    data: Task[];
+    data: Items[];
 }
 const props = defineProps<DataTableProps>();
 
@@ -63,6 +63,7 @@ const table = useVueTable({
             return rowSelection.value;
         },
     },
+
     enableRowSelection: true,
     onSortingChange: (updaterOrValue) => valueUpdater(updaterOrValue, sorting),
     onColumnFiltersChange: (updaterOrValue) =>
@@ -78,6 +79,8 @@ const table = useVueTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 });
+
+console.log(table);
 </script>
 
 <template>

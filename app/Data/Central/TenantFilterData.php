@@ -2,12 +2,14 @@
 
 namespace App\Data\Central;
 
+use Illuminate\Database\Eloquent\Builder;
+
 class TenantFilterData
 {
     public $builder;
     public $filters;
 
-    public function __construct($builder, array $filters)
+    public function __construct(Builder $builder, array $filters)
     {
         $this->builder = $builder;
         $this->filters = $filters;
@@ -28,6 +30,7 @@ class TenantFilterData
         return $this;
     }
 
+    // Exemplo de método de filtro para pesquisa por nome ou email
     private function search($value)
     {
         $this->builder
@@ -35,10 +38,13 @@ class TenantFilterData
             ->orWhere("email", "like", "%" . $value . "%");
     }
 
+    // Exemplo de método de filtro para inquilinos removidos
     private function trashed($value)
     {
         if ($value) {
             $this->builder->onlyTrashed();
         }
     }
+
+    // Adicione outros métodos de filtro conforme necessário
 }

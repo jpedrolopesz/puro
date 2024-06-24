@@ -2,9 +2,10 @@
 
 namespace App\Actions\Central\Tenants;
 
-use Illuminate\Pipeline\Pipeline;
 use App\Data\Central\TenantFilterData;
 use App\Models\Tenant;
+use Illuminate\Http\Request;
+use Illuminate\Pipeline\Pipeline;
 
 class TenantGetAllAction
 {
@@ -13,18 +14,15 @@ class TenantGetAllAction
         $data = TenantFilterData::from([
             "builder" => Tenant::query(),
             "filters" => $filters,
-        ])->applyFilters();
+        ]);
 
         $pipeline = app(Pipeline::class)
             ->send($data)
-            ->through([
-                // Adicione aqui os pipes para manipular os filtros
-            ])
+            ->through([])
             ->thenReturn();
 
         return $pipeline->builder
-            // ->filter(Request::only("search", "trashed"))
-            ->paginate(7)
+            ->paginate(isset($filters["perPage"]) ? $filters["perPage"] : 10)
             ->withQueryString();
     }
 }
