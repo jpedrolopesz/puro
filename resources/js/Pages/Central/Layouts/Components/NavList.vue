@@ -17,6 +17,7 @@ export interface LinkProp {
     route: string;
     current: boolean;
 }
+ß;
 
 interface NavProps {
     isCollapsed: boolean;
