@@ -3,7 +3,7 @@
 use App\Http\Controllers\Central\DashboardCentral;
 use App\Http\Controllers\Central\UsersController;
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Central\ProfileCentralController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Http;
@@ -26,16 +26,25 @@ Route::get("/dashboard", [DashboardCentral::class, "index"])
     ->name("admin.dashboard")
     ->middleware("auth:admin");
 
-Route::middleware("auth")->group(function () {
-    Route::get("/profile", [ProfileController::class, "edit"])->name(
+Route::middleware("auth:admin")->group(function () {
+    Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"
     );
-    Route::patch("/profile", [ProfileController::class, "update"])->name(
+
+    Route::get("/profile/account", function () {
+        return Inertia::render("Central/Profile/Account");
+    })->name("profile.appearance");
+
+    Route::get("/profile/appearance", function () {
+        return Inertia::render("Central/Profile/Appearance");
+    })->name("profile.appearance");
+    Route::patch("/profile", [ProfileCentralController::class, "update"])->name(
         "profile.update"
     );
-    Route::delete("/profile", [ProfileController::class, "destroy"])->name(
-        "profile.destroy"
-    );
+    Route::delete("/profile", [
+        ProfileCentralController::class,
+        "destroy",
+    ])->name("profile.destroy");
 });
 
 require __DIR__ . "/auth.php";

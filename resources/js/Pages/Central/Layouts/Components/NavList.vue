@@ -13,11 +13,10 @@ export interface LinkProp {
     title: string;
     label?: string;
     icon: string;
-    variant: "default" | "ghos";
+    variant: "default" | "ghost";
     route: string;
     current: boolean;
 }
-ß;
 
 interface NavProps {
     isCollapsed: boolean;
