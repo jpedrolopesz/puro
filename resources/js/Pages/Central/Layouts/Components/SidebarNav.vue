@@ -4,15 +4,15 @@ import { cn } from "@/lib/utils";
 import { accounts } from "./accounts";
 import NavList, { type LinkProp } from "./NavList.vue";
 import AccountSwitcher from "./AccountSwitcher.vue";
-import { Separator } from "../../../../Components/ui/separator";
-import { TooltipProvider } from "../../../../Components/ui/tooltip";
+import { Separator } from "@/Components/ui/separator";
+import { TooltipProvider } from "@/Components/ui/tooltip";
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
-} from "../../../../Components/ui/resizable";
+} from "@/Components/ui/resizable";
 
-interface UserProps {
+interface TenantProps {
     // VOU TER QUE ADICIONAR CONTAS VINCULADA EM UM UNICO PERFIL
     accounts: {
         label: string;
@@ -24,7 +24,7 @@ interface UserProps {
     defaultCollapsed?: boolean;
 }
 
-const props = withDefaults(defineProps<UserProps>(), {
+const props = withDefaults(defineProps<TenantProps>(), {
     defaultLayout: () => [265, 440, 655],
 });
 
@@ -47,7 +47,7 @@ const links: LinkProp[] = [
         current: route().current("tenant.dashboard"),
     },
     {
-        title: "Users",
+        title: "Tenants",
         label: "972",
         icon: "lucide:user-2",
         variant: "ghost",

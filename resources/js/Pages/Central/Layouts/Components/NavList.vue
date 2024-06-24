@@ -2,12 +2,12 @@
 import { cn } from "@/lib/utils";
 import { Icon } from "@iconify/vue";
 import { Link } from "@inertiajs/vue3";
-import { buttonVariants } from "../../../../Components/ui/button";
+import { buttonVariants } from "@/Components/ui/button";
 import {
     Tooltip,
     TooltipContent,
     TooltipTrigger,
-} from "../../../../Components/ui/tooltip";
+} from "@/Components/ui/tooltip";
 
 export interface LinkProp {
     title: string;

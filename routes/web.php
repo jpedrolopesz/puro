@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\Central\DashboardCentral;
-use App\Http\Controllers\Central\UsersController;
+use App\Http\Controllers\Central\TenantsController;
 
 use App\Http\Controllers\Central\ProfileCentralController;
 use Illuminate\Foundation\Application;
@@ -17,8 +17,10 @@ Route::get("/", function () {
     ]);
 });
 
-######## USERS ########
-Route::get("/users", [UsersController::class, "index"])->name("users.index");
+######## TENANTS ########
+Route::get("/tenants", [TenantsController::class, "index"])->name(
+    "tenants.index"
+);
 
 Route::middleware("auth:admin")->group(function () {
     Route::get("/dashboard", [DashboardCentral::class, "index"])->name(

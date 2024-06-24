@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import SidebarNav from "./Components/SidebarNav.vue";
 import { Separator } from "@/Components/ui/separator";
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedCentralLayout>
         <div class="space-y-6 p-10 pb-16">
             <div class="space-y-0.5">
                 <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
@@ -27,5 +27,5 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
                 </div>
             </div>
         </div>
-    </AuthenticatedLayout>
+    </AuthenticatedCentralLayout>
 </template>

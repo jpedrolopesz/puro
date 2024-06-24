@@ -1,10 +1,6 @@
 <script setup lang="ts">
-import {
-    Avatar,
-    AvatarFallback,
-    AvatarImage,
-} from "../../../../Components/ui/avatar";
-import { Button } from "../../../../Components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/Components/ui/avatar";
+import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -14,7 +10,7 @@ import {
     DropdownMenuSeparator,
     DropdownMenuShortcut,
     DropdownMenuTrigger,
-} from "../../../../Components/ui/dropdown-menu";
+} from "@/Components/ui/dropdown-menu";
 import { Link } from "@inertiajs/vue3";
 </script>
 

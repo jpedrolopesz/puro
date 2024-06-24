@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserNav from "./UserNav.vue";
+import DropdownMenuHeard from "./DropdownMenuHeard.vue";
 import Search from "./Search.vue";
 </script>
 
@@ -9,7 +9,7 @@ import Search from "./Search.vue";
             LOGO AQUI
             <div class="ml-auto flex items-center space-x-4">
                 <Search />
-                <UserNav />
+                <DropdownMenuHeard />
             </div>
         </div>
     </div>

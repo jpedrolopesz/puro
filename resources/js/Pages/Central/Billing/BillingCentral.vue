@@ -1,9 +1,9 @@
 <script setup lang="ts">
-import AuthenticatedLayout from "../../../Layouts/AuthenticatedLayout.vue";
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedLayout.vue";
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedCentralLayout>
         <div>Billing</div>
-    </AuthenticatedLayout>
+    </AuthenticatedCentralLayout>
 </template>
