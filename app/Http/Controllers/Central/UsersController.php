@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Actions\Central\Users\UserGetAllAction;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Inertia\Inertia;
 
 class UsersController extends Controller
 {
@@ -13,6 +14,8 @@ class UsersController extends Controller
         $filters = $request->only(["search", "trashed"]);
         $users = UserGetAllAction::run($filters);
 
-        return view("users.index", compact("users"));
+        return Inertia::render("Central/Users/UsersCentral", [
+            "users" => $users,
+        ]);
     }
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data\Central\User;
+namespace App\Data\Central;
 
 class UserFilterData
 {

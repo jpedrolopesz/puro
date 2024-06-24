@@ -4,7 +4,7 @@ namespace App\Actions\Central\Users;
 
 use Illuminate\Pipeline\Pipeline;
 use Illuminate\Support\Facades\Request;
-use App\Data\Central\User\UserFilterData;
+use App\Data\Central\UserFilterData;
 use App\Models\User;
 
 class UserGetAllAction
@@ -24,7 +24,7 @@ class UserGetAllAction
             ->thenReturn();
 
         return $pipeline->builder
-            ->filter(Request::only("search", "trashed"))
+            // ->filter(Request::only("search", "trashed"))
             ->paginate(7)
             ->withQueryString();
     }
