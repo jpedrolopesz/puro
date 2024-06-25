@@ -1,9 +1,11 @@
 <?php
 
-use App\Http\Controllers\Central\DashboardCentral;
-use App\Http\Controllers\Central\TenantsController;
-
-use App\Http\Controllers\Central\ProfileCentralController;
+use App\Http\Controllers\Central\{
+    ProfileCentralController,
+    TenantsController,
+    DashboardCentral,
+    BillingCentralController
+};
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -17,15 +19,23 @@ Route::get("/", function () {
     ]);
 });
 
-######## TENANTS ########
-Route::get("/tenants", [TenantsController::class, "index"])->name(
-    "tenants.index"
-);
-
 Route::middleware("auth:admin")->group(function () {
     Route::get("/dashboard", [DashboardCentral::class, "index"])->name(
         "admin.dashboard"
     );
+
+    ######## TENANTS ########
+    Route::get("/tenants", [TenantsController::class, "index"])->name(
+        "tenants.index"
+    );
+
+    ######## BILLING ########
+    Route::get("/billing", [BillingCentralController::class, "index"])->name(
+        "billing.index"
+    );
+
+    ######## PROFILE ########
+
     Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"
     );
