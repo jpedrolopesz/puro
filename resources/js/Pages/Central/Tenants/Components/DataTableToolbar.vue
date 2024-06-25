@@ -3,18 +3,19 @@ import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Task } from "../data/schema";
 
-import { priorities, statuses } from "../data/data";
+import { priorities, subscriptionStatuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import { Cross2Icon } from "@radix-icons/vue";
-import { Button } from "../../../../Components/ui/button";
-import { Input } from "../../../../Components/ui/input";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
     table: Table<Task>;
 }
 
 const props = defineProps<DataTableToolbarProps>();
+console.log(props);
 
 const isFiltered = computed(
     () => props.table.getState().columnFilters.length > 0,
@@ -27,20 +28,18 @@ const isFiltered = computed(
             <Input
                 placeholder="Filter tasks..."
                 :model-value="
-                    (table.getColumn('title')?.getFilterValue() as string) ?? ''
+                    (table.getColumn('id')?.getFilterValue() as string) ?? ''
                 "
                 class="h-8 w-[150px] lg:w-[250px]"
                 @input="
-                    table
-                        .getColumn('title')
-                        ?.setFilterValue($event.target.value)
+                    table.getColumn('id')?.setFilterValue($event.target.value)
                 "
             />
             <DataTableFacetedFilter
-                v-if="table.getColumn('status')"
-                :column="table.getColumn('status')"
+                v-if="table.getColumn('paymentStatus')"
+                :column="table.getColumn('paymentStatus')"
                 title="Status"
-                :options="statuses"
+                :options="subscriptionStatuses"
             />
             <DataTableFacetedFilter
                 v-if="table.getColumn('priority')"

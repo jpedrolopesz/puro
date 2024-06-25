@@ -24,7 +24,9 @@ interface DataTableColumnHeaderProps {
     title: string;
 }
 
-defineProps<DataTableColumnHeaderProps>();
+const props = defineProps<DataTableColumnHeaderProps>();
+
+console.log(props);
 </script>
 
 <script lang="ts">

@@ -20,7 +20,7 @@ import { ref } from "vue";
 import type { Task } from "../data/schema";
 import DataTablePagination from "./DataTablePagination.vue";
 import DataTableToolbar from "./DataTableToolbar.vue";
-import { valueUpdater } from "../../../../lib/utils";
+import { valueUpdater } from "@/lib/utils";
 
 import {
     Table,
@@ -29,7 +29,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "../../../../Components/ui/table";
+} from "@/Components/ui/table";
 
 interface DataTableProps {
     columns: ColumnDef<Task, any>[];
@@ -79,8 +79,6 @@ const table = useVueTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 });
-
-console.log(table);
 </script>
 
 <template>

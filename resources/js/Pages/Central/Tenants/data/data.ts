@@ -11,45 +11,41 @@ import {
   ArrowDownIcon,
 } from "@radix-icons/vue";
 
-export const labels = [
+export const subscriptionLevels = [
   {
-    value: "bug",
-    label: "Bug",
+    value: "basic",
+    subscriptionLevel: "Basic",
   },
   {
-    value: "feature",
-    label: "Feature",
+    value: "standard",
+    subscriptionLevel: "Standard",
   },
   {
-    value: "documentation",
-    label: "Documentation",
+    value: "platinum",
+    subscriptionLevel: "Platinum",
   },
 ];
 
-export const statuses = [
+export const subscriptionStatuses = [
   {
-    value: "backlog",
-    label: "Backlog",
+    value: "pending",
+    paymentStatus: "Pending",
     icon: h(QuestionMarkCircledIcon),
   },
   {
-    value: "todo",
-    label: "Todo",
-    icon: h(CircleIcon),
+    value: "paid",
+    paymentStatus: "Paid",
+    icon: h(QuestionMarkCircledIcon),
   },
+
   {
-    value: "in progress",
-    label: "In Progress",
-    icon: h(StopwatchIcon),
-  },
-  {
-    value: "done",
-    label: "Done",
+    value: "late",
+    paymentStatus: "Late",
     icon: h(CheckCircledIcon),
   },
   {
     value: "canceled",
-    label: "Canceled",
+    paymentStatus: "Canceled",
     icon: h(CrossCircledIcon),
   },
 ];

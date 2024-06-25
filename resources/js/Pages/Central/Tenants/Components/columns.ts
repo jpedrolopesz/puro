@@ -1,7 +1,11 @@
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 
-import { labels, priorities, statuses } from "../data/data";
+import {
+  subscriptionLevels,
+  subscriptionStatuses,
+  priorities,
+} from "../data/data";
 import type { Task } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
@@ -38,31 +42,39 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "title",
-    header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Title" }),
+    accessorKey: "name",
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Name" }),
 
     cell: ({ row }) => {
-      const label = labels.find((label) => label.value === row.original.label);
+      const subscriptionLevel = subscriptionLevels.find(
+        (subscriptionLevel) =>
+          subscriptionLevel.value === row.original.subscriptionLevel,
+      );
 
       return h("div", { class: "flex space-x-2" }, [
-        label ? h(Badge, { variant: "outline" }, () => label.label) : null,
+        subscriptionLevel
+          ? h(
+              Badge,
+              { variant: "outline" },
+              () => subscriptionLevel.subscriptionLevel,
+            )
+          : null,
         h(
           "span",
           { class: "max-w-[500px] truncate font-medium" },
-          row.getValue("title"),
+          row.getValue("name"),
         ),
       ]);
     },
   },
   {
-    accessorKey: "status",
+    accessorKey: "paymentStatus",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Status" }),
 
     cell: ({ row }) => {
-      const status = statuses.find(
-        (status) => status.value === row.getValue("status"),
+      const status = subscriptionStatuses.find(
+        (status) => status.value === row.getValue("paymentStatus"),
       );
 
       if (!status) return null;
@@ -70,7 +82,7 @@ export const columns: ColumnDef<Task>[] = [
       return h("div", { class: "flex w-[100px] items-center" }, [
         status.icon &&
           h(status.icon, { class: "mr-2 h-4 w-4 text-muted-foreground" }),
-        h("span", status.label),
+        h("span", status.paymentStatus),
       ]);
     },
     filterFn: (row, id, value) => {

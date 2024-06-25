@@ -35,8 +35,6 @@ interface TenantCollection {
 const props = defineProps<{
     tenants: TenantCollection;
 }>();
-
-//console.log(props.tenants.data);
 </script>
 
 <template>
@@ -50,17 +48,6 @@ const props = defineProps<{
                     </p>
                 </div>
             </div>
-
-            <ul>
-                <li v-for="tenant in tenants.data" :key="tenant.id">
-                    <p>Name: {{ tenant.name }}</p>
-                    <p>Email: {{ tenant.email }}</p>
-                    <p>Created At: {{ tenant.created_at }}</p>
-                    <p>Updated At: {{ tenant.updated_at }}</p>
-                    <p>Tenancy DB Name: {{ tenant.tenancy_db_name }}</p>
-                    <p>Data: {{ tenant.data }}</p>
-                </li>
-            </ul>
 
             <DataTable :data="tasks" :columns="columns" />
         </div>
