@@ -1,126 +1,90 @@
-<script setup>
-import GuestLayout from "@/Layouts/GuestLayout.vue";
-import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
-
-const form = useForm({
-    name: "",
-    email: "",
-    domain: "",
-    password: "",
-    password_confirmation: "",
-});
-
-const submit = () => {
-    form.post(route("register"), {
-        onFinish: () => form.reset("password", "password_confirmation"),
-    });
-};
+<script setup lang="ts">
+import { Link } from "@inertiajs/vue3";
+import UserRegisterForm from "./Components/UserRegisterForm.vue";
+import { buttonVariants } from "@/Components/ui/button";
+import { cn } from "@/lib/utils";
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
-
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
-
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
-
-                <InputError class="mt-2" :message="form.errors.name" />
-            </div>
-            <div class="mt-4">
-                <InputLabel for="domain" value="Domain" />
-
-                <TextInput
-                    id="domain"
-                    type="string"
-                    class="mt-1 block w-full"
-                    v-model="form.domain"
-                    required
-                    autocomplete="domain"
-                />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+    <div
+        class="container relative h-svh flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0"
+    >
+        <Link
+            :href="route('login')"
+            :class="
+                cn(
+                    buttonVariants({ variant: 'ghost' }),
+                    'absolute right-4 top-4 md:right-8 md:top-8',
+                )
+            "
+        >
+            Login
+        </Link>
+        <div
+            class="relative hidden h-full flex-col bg-muted p-10 text-white dark:border-r lg:flex"
+        >
+            <div class="absolute inset-0 bg-zinc-900" />
+            <div class="relative z-20 flex items-center text-lg font-medium">
+                <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    class="mr-2 h-6 w-6"
                 >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
+                    <path
+                        d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3"
+                    />
+                </svg>
+                Acme Inc
             </div>
-        </form>
-    </GuestLayout>
+            <div class="relative z-20 mt-auto">
+                <blockquote class="space-y-2">
+                    <p class="text-lg">
+                        &ldquo;This library has saved me countless hours of work
+                        and helped me deliver stunning designs to my clients
+                        faster than ever before.&rdquo;
+                    </p>
+                    <footer class="text-sm">Sofia Davis</footer>
+                </blockquote>
+            </div>
+        </div>
+        <div class="lg:p-8">
+            <div
+                class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
+            >
+                <div class="flex flex-col space-y-2 text-center">
+                    <h1 class="text-2xl font-semibold tracking-tight">
+                        Create an account
+                    </h1>
+                    <p class="text-sm text-muted-foreground">
+                        Enter your email below to create your account
+                    </p>
+                </div>
+
+                <UserRegisterForm />
+
+                <p class="px-8 text-center text-sm text-muted-foreground">
+                    By clicking continue, you agree to our
+                    <a
+                        href="/terms"
+                        class="underline underline-offset-4 hover:text-primary"
+                    >
+                        Terms of Service
+                    </a>
+                    and
+                    <a
+                        href="/privacy"
+                        class="underline underline-offset-4 hover:text-primary"
+                    >
+                        Privacy Policy
+                    </a>
+                    .
+                </p>
+            </div>
+        </div>
+    </div>
 </template>

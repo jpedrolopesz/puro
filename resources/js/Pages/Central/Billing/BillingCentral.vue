@@ -58,6 +58,10 @@ import {
 import { Checkbox } from "@/Components/ui/checkbox";
 
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+
+const connectStripe = () => {
+    window.location.href = "/billing-central/connect-stripe";
+};
 </script>
 
 <template>
@@ -85,7 +89,9 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
                                     </CardDescription>
                                 </CardHeader>
                                 <CardFooter>
-                                    <Button>Connect Stripe</Button>
+                                    <Button @click="connectStripe"
+                                        >Connect Stripe</Button
+                                    >
                                 </CardFooter>
                             </Card>
                             <Card>
