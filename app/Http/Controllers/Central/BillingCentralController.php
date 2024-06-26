@@ -21,7 +21,10 @@ class BillingCentralController extends Controller
     // Método para redirecionar o usuário para a Stripe
     public function connectStripe()
     {
-        $stripeUrl = "https://connect.stripe.com/oauth/authorize?response_type=code&client_id={$this->client_id}&scope=read_write";
+        $stripeUrl =
+            "https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_FkyHCg7X8mlvCUdMDao4mMxagUfhIwXb&scope=read_write";
+        //$stripeUrl = "https://connect.stripe.com/oauth/authorize?response_type=code&client_id={$this->client_id}&scope=read_write";
+
         return redirect($stripeUrl);
     }
 
