@@ -20,10 +20,17 @@ async function onSubmit(event: Event) {
     }, 3000);
 }
 
-defineProps<{
-    canResetPassword?: boolean;
-    status?: string;
-}>();
+const { canResetPassword, status, domain } = defineProps({
+    canResetPassword: {
+        type: Boolean,
+    },
+    status: {
+        type: String,
+    },
+    domain: {
+        type: String,
+    },
+});
 
 const form = useForm({
     email: "",
@@ -31,12 +38,24 @@ const form = useForm({
     remember: false,
 });
 
+const hostname = window.location.hostname;
+const parts = hostname.split(".");
+
+let subdomain = null;
+if (parts.length > 2) {
+    subdomain = parts.slice(0, -2).join(".");
+}
+
 const submit = () => {
-    form.post(route("login"), {
-        onFinish: () => {
-            form.reset("password");
-        },
-    });
+    if (subdomain == null) {
+        form.post(route("storeAdmin"), {
+            onFinish: () => form.reset("password"),
+        });
+    } else {
+        form.post(route("tenant.storeTenant"), {
+            onFinish: () => form.reset("password"),
+        });
+    }
 };
 </script>
 

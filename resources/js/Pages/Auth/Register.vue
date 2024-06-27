@@ -1,126 +1,212 @@
-<script setup>
-import GuestLayout from "@/Layouts/GuestLayout.vue";
+<script setup lang="ts">
+import { SymbolIcon, GithubLogoIcon } from "@radix-icons/vue";
+import LayoutAuth from "./Components/LayoutAuth.vue";
+import { Link, Head, useForm } from "@inertiajs/vue3";
 import InputError from "@/Components/InputError.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import TextInput from "@/Components/TextInput.vue";
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+import { cn } from "@/lib/utils";
+import { ref } from "vue";
+
+const isLoading = ref(false);
+async function onSubmit(event: Event) {
+    event.preventDefault();
+    isLoading.value = true;
+
+    setTimeout(() => {
+        isLoading.value = false;
+    }, 3000);
+}
 
 const form = useForm({
     name: "",
     email: "",
-    domain: "",
     password: "",
     password_confirmation: "",
 });
 
 const submit = () => {
     form.post(route("register"), {
-        onFinish: () => form.reset("password", "password_confirmation"),
+        onFinish: () => {
+            form.reset("password", "password_confirmation");
+        },
     });
 };
 </script>
 
 <template>
-    <GuestLayout>
-        <Head title="Register" />
+    <Head title="Register" />
 
-        <form @submit.prevent="submit">
-            <div>
-                <InputLabel for="name" value="Name" />
+    <LayoutAuth title="Register">
+        <div class="lg:p-8">
+            <div
+                class="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[350px]"
+            >
+                <div class="flex flex-col space-y-2 text-center">
+                    <h1 class="text-2xl font-semibold tracking-tight">
+                        Welcome Back! Access Your Account
+                    </h1>
+                    <p class="text-sm text-muted-foreground">
+                        To continue, please log in with your credentials.
+                    </p>
+                </div>
 
-                <TextInput
-                    id="name"
-                    type="text"
-                    class="mt-1 block w-full"
-                    v-model="form.name"
-                    required
-                    autofocus
-                    autocomplete="name"
-                />
+                <div :class="cn('grid gap-6', $attrs.class ?? '')">
+                    <form @submit.prevent="submit">
+                        <div class="grip gip-2">
+                            <div class="mt-2">
+                                <Label class="sr-only" for="name" value="Name">
+                                    Name
+                                </Label>
+                                <Input
+                                    id="name"
+                                    placeholder="Name"
+                                    type="name"
+                                    auto-capitalize="none"
+                                    auto-complete="name"
+                                    auto-correct="off"
+                                    :disabled="isLoading"
+                                    required
+                                    v-model="form.name"
+                                />
+                                <InputError
+                                    class="mt-2"
+                                    :message="form.errors.name"
+                                />
+                            </div>
 
-                <InputError class="mt-2" :message="form.errors.name" />
+                            <div class="mt-2">
+                                <Label class="sr-only" for="email">
+                                    Email
+                                </Label>
+                                <Input
+                                    id="email"
+                                    placeholder="Email"
+                                    type="email"
+                                    auto-capitalize="none"
+                                    auto-complete="email"
+                                    auto-correct="off"
+                                    :disabled="isLoading"
+                                    required
+                                    v-model="form.email"
+                                />
+
+                                <InputError
+                                    class="mt-2"
+                                    :message="form.errors.email"
+                                />
+                            </div>
+                        </div>
+
+                        <div class="mt-2">
+                            <Label class="sr-only" for="password">
+                                Password
+                            </Label>
+                            <Input
+                                id="password"
+                                placeholder="Password"
+                                type="password"
+                                auto-capitalize="none"
+                                auto-complete="new-password"
+                                :disabled="isLoading"
+                                required
+                                v-model="form.password"
+                            />
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.password"
+                            />
+                        </div>
+
+                        <div class="mt-2">
+                            <Label class="sr-only" for="password_confirmation">
+                                Confirm Password
+                            </Label>
+                            <Input
+                                id="password_confirmation"
+                                placeholder="Confirm Password"
+                                type="password"
+                                auto-capitalize="none"
+                                auto-complete="new-password"
+                                :disabled="isLoading"
+                                required
+                                v-model="form.password_confirmation"
+                            />
+
+                            <InputError
+                                class="mt-2"
+                                :message="form.errors.password_confirmation"
+                            />
+                        </div>
+
+                        <div class="mt-4">
+                            <div class="grid gap-1">
+                                <Button
+                                    :class="{ 'opacity-25': form.processing }"
+                                    :disabled="isLoading || form.processing"
+                                >
+                                    <SymbolIcon
+                                        v-if="isLoading"
+                                        class="mr-2 h-3 w-3 animate-spin"
+                                    />
+                                    Register
+                                </Button>
+                            </div>
+                            <div class="flex justify-end mt-2">
+                                <Link
+                                    :href="route('login')"
+                                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                >
+                                    Already registered?
+                                </Link>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="relative">
+                        <div class="absolute inset-0 flex items-center">
+                            <span class="w-full border-t" />
+                        </div>
+                        <div
+                            class="relative flex justify-center text-xs uppercase"
+                        >
+                            <span
+                                class="bg-background px-2 text-muted-foreground"
+                            >
+                                Or continue with
+                            </span>
+                        </div>
+                    </div>
+                    <Button
+                        variant="outline"
+                        type="button"
+                        :disabled="isLoading"
+                    >
+                        <GithubLogoIcon v-if="isLoading" class="mr-2 h-4 w-4" />
+                        GitHub
+                    </Button>
+                </div>
+
+                <p class="px-8 text-center text-sm text-muted-foreground">
+                    By clicking continue, you agree to our
+                    <a
+                        href="/terms"
+                        class="underline underline-offset-4 hover:text-primary"
+                    >
+                        Terms of Service
+                    </a>
+                    and
+                    <a
+                        href="/privacy"
+                        class="underline underline-offset-4 hover:text-primary"
+                    >
+                        Privacy Policy
+                    </a>
+                    .
+                </p>
             </div>
-            <div class="mt-4">
-                <InputLabel for="domain" value="Domain" />
-
-                <TextInput
-                    id="domain"
-                    type="string"
-                    class="mt-1 block w-full"
-                    v-model="form.domain"
-                    required
-                    autocomplete="domain"
-                />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="email" value="Email" />
-
-                <TextInput
-                    id="email"
-                    type="email"
-                    class="mt-1 block w-full"
-                    v-model="form.email"
-                    required
-                    autocomplete="username"
-                />
-
-                <InputError class="mt-2" :message="form.errors.email" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel for="password" value="Password" />
-
-                <TextInput
-                    id="password"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError class="mt-2" :message="form.errors.password" />
-            </div>
-
-            <div class="mt-4">
-                <InputLabel
-                    for="password_confirmation"
-                    value="Confirm Password"
-                />
-
-                <TextInput
-                    id="password_confirmation"
-                    type="password"
-                    class="mt-1 block w-full"
-                    v-model="form.password_confirmation"
-                    required
-                    autocomplete="new-password"
-                />
-
-                <InputError
-                    class="mt-2"
-                    :message="form.errors.password_confirmation"
-                />
-            </div>
-
-            <div class="flex items-center justify-end mt-4">
-                <Link
-                    :href="route('login')"
-                    class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                >
-                    Already registered?
-                </Link>
-
-                <PrimaryButton
-                    class="ms-4"
-                    :class="{ 'opacity-25': form.processing }"
-                    :disabled="form.processing"
-                >
-                    Register
-                </PrimaryButton>
-            </div>
-        </form>
-    </GuestLayout>
+        </div>
+    </LayoutAuth>
 </template>

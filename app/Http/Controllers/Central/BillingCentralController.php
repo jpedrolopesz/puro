@@ -18,57 +18,13 @@ class BillingCentralController extends Controller
         return Inertia::render("Central/Billing/BillingCentral");
     }
 
-    // Método para redirecionar o usuário para a Stripe
+    // Abordagem que  vou fazer vai ser a verificaóes se as chaces estao no config/service.
+    // Após a verificaçao eu irei disponibilizar o conteudo na tela.
     public function connectStripe()
     {
         $stripeUrl =
             "https://connect.stripe.com/oauth/authorize?response_type=code&client_id=ca_FkyHCg7X8mlvCUdMDao4mMxagUfhIwXb&scope=read_write";
-        //$stripeUrl = "https://connect.stripe.com/oauth/authorize?response_type=code&client_id={$this->client_id}&scope=read_write";
 
         return redirect($stripeUrl);
-    }
-
-    // Método para lidar com o callback da Stripe
-    public function handleStripeCallback(Request $request)
-    {
-        if ($request->has("code")) {
-            $code = $request->get("code");
-
-            $response = Http::asForm()->post(
-                "https://connect.stripe.com/oauth/token",
-                [
-                    "client_secret" => $this->client_secret,
-                    "code" => $code,
-                    "grant_type" => "authorization_code",
-                ]
-            );
-
-            $response_data = $response->json();
-
-            if (isset($response_data["access_token"])) {
-                // Sucesso - Salvar os dados do usuário e token de acesso
-                $access_token = $response_data["access_token"];
-                $stripe_user_id = $response_data["stripe_user_id"];
-
-                // Salvar esses detalhes no banco de dados conforme necessário
-                // ...
-
-                return response()->json([
-                    "message" => "Conexão com Stripe realizada com sucesso!",
-                ]);
-            } else {
-                // Falha - tratar erro
-                return response()->json(
-                    ["message" => "Erro ao conectar com Stripe!"],
-                    500
-                );
-            }
-        } else {
-            // O código de autorização não foi recebido
-            return response()->json(
-                ["message" => "Código de autorização não recebido!"],
-                400
-            );
-        }
     }
 }
