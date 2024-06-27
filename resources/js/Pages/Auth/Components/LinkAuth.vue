@@ -9,8 +9,15 @@ const props = defineProps<{
 }>();
 
 console.log(props.isRegister);
-const linkRoute = computed(() => (props.isRegister ? "login" : "register"));
-const linkText = computed(() => (props.isRegister ? "Login" : "Register"));
+const isLogin = computed(() => props.isRegister === "Login");
+const isRegister = computed(() => props.isRegister === "Register");
+
+const linkRoute = computed(() =>
+    isLogin.value ? "register" : isRegister.value ? "login" : "",
+);
+const linkText = computed(() =>
+    isLogin.value ? "Register" : isRegister.value ? "Login" : "",
+);
 </script>
 
 <template>
