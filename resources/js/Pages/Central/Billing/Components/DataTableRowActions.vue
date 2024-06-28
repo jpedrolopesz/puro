@@ -2,8 +2,8 @@
 import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
 
-import { taskSchema } from "../data/schema";
-import type { Task } from "../data/schema";
+import { orderSchema } from "../data/schema";
+import type { Order } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { Button } from "@/Components/ui/button";
@@ -22,7 +22,7 @@ import {
 } from "../../../../Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
-    row: Row<Task>;
+    row: Row<Order>;
 }
 const props = defineProps<DataTableRowActionsProps>();
 

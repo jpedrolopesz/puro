@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Task } from "../data/schema";
+import type { Order } from "../data/schema";
 
 import { priorities, subscriptionStatuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
@@ -11,11 +11,10 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Task>;
+    table: Table<Order>;
 }
 
 const props = defineProps<DataTableToolbarProps>();
-console.log(props);
 
 const isFiltered = computed(
     () => props.table.getState().columnFilters.length > 0,

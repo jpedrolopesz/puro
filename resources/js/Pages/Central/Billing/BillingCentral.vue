@@ -61,22 +61,9 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
 
 import { defineProps } from "vue";
 import orders from "./data/orders.json";
-
-interface Order {
-    id: number;
-    Customer: {
-        Name: string;
-        Email: string;
-    };
-    Type: string;
-    Status: string;
-    Date: string;
-    Amount: string;
-}
-
-const props = defineProps<{
-    orders: Order[];
-}>();
+import DataTable from "./Components/DataTable.vue";
+import OrderNav from "./Components/OrderNav.vue";
+import { columns } from "./Components/columns";
 
 const handleStripeCallback = () => {
     window.location.href = "/billing-central/connect-stripe";
@@ -280,8 +267,8 @@ const handleStripeCallback = () => {
                                                 <TableRow
                                                     v-for="order in orders"
                                                     :key="
-                                                        order.Customer.Email +
-                                                        order.Date
+                                                        order.customer.email +
+                                                        order.date
                                                     "
                                                 >
                                                     <TableCell>
@@ -289,23 +276,23 @@ const handleStripeCallback = () => {
                                                             class="font-medium"
                                                         >
                                                             {{
-                                                                order.Customer
-                                                                    .Name
+                                                                order.customer
+                                                                    .name
                                                             }}
                                                         </div>
                                                         <div
                                                             class="hidden text-sm text-muted-foreground md:inline"
                                                         >
                                                             {{
-                                                                order.Customer
-                                                                    .Email
+                                                                order.customer
+                                                                    .email
                                                             }}
                                                         </div>
                                                     </TableCell>
                                                     <TableCell
                                                         class="hidden sm:table-cell"
                                                         >{{
-                                                            order.Type
+                                                            order.type
                                                         }}</TableCell
                                                     >
                                                     <TableCell
@@ -313,7 +300,7 @@ const handleStripeCallback = () => {
                                                     >
                                                         <Badge
                                                             v-if="
-                                                                order.Status ===
+                                                                order.status ===
                                                                 'Fulfilled'
                                                             "
                                                             class="text-xs"
@@ -322,7 +309,7 @@ const handleStripeCallback = () => {
                                                         >
                                                         <Badge
                                                             v-if="
-                                                                order.Status ===
+                                                                order.status ===
                                                                 'Declined'
                                                             "
                                                             class="text-xs"
@@ -333,13 +320,13 @@ const handleStripeCallback = () => {
                                                     <TableCell
                                                         class="hidden md:table-cell"
                                                         >{{
-                                                            order.Date
+                                                            order.date
                                                         }}</TableCell
                                                     >
                                                     <TableCell
                                                         class="text-right"
                                                         >{{
-                                                            order.Amount
+                                                            order.amount
                                                         }}</TableCell
                                                     >
                                                 </TableRow>
@@ -352,6 +339,19 @@ const handleStripeCallback = () => {
                     </div>
                 </main>
             </div>
+        </div>
+
+        <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+            <div class="flex items-center justify-between space-y-2">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight">Orders</h2>
+                    <p class="text-muted-foreground">
+                        Here&apos;s a list of your tasks for this month!
+                    </p>
+                </div>
+            </div>
+
+            <DataTable :data="orders" :columns="columns" />
         </div>
     </AuthenticatedCentralLayout>
 </template>

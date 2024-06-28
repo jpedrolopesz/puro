@@ -36,14 +36,16 @@ export const columns: ColumnDef<Order>[] = [
   },
   {
     accessorKey: "id",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Task" }),
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Order" }),
     cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("id")),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Name" }),
+    accessorKey: "customer",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Customer" }),
 
     cell: ({ row }) => {
       const subscriptionLevel = subscriptionLevels.find(
@@ -62,11 +64,20 @@ export const columns: ColumnDef<Order>[] = [
         h(
           "span",
           { class: "max-w-[500px] truncate font-medium" },
-          row.getValue("name"),
+          row.getValue("customer"),
         ),
       ]);
     },
   },
+
+  {
+    accessorKey: "type",
+    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Type" }),
+    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("type")),
+    enableSorting: false,
+    enableHiding: false,
+  },
+
   {
     accessorKey: "paymentStatus",
     header: ({ column }) =>
