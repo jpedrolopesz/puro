@@ -6,13 +6,13 @@ import {
   subscriptionStatuses,
   priorities,
 } from "../data/data";
-import type { Task } from "../data/schema";
+import type { Order } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
-import { Checkbox } from "../../../../Components/ui/checkbox";
-import { Badge } from "../../../../Components/ui/badge";
+import { Checkbox } from "@/Components/ui/checkbox";
+import { Badge } from "@/Components/ui/badge";
 
-export const columns: ColumnDef<Task>[] = [
+export const columns: ColumnDef<Order>[] = [
   {
     id: "select",
     header: ({ table }) =>
