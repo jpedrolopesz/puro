@@ -59,6 +59,25 @@ import { Checkbox } from "@/Components/ui/checkbox";
 
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 
+import { defineProps } from "vue";
+import orders from "./data/orders.json";
+
+interface Order {
+    id: number;
+    Customer: {
+        Name: string;
+        Email: string;
+    };
+    Type: string;
+    Status: string;
+    Date: string;
+    Amount: string;
+}
+
+const props = defineProps<{
+    orders: Order[];
+}>();
+
 const handleStripeCallback = () => {
     window.location.href = "/billing-central/connect-stripe";
 };
@@ -67,9 +86,9 @@ const handleStripeCallback = () => {
 <template>
     <AuthenticatedCentralLayout>
         <div class="flex min-h-screen w-full flex-col">
-            <div class="flex flex-col sm:gap-4 sm:py-4 sm:pl-14">
+            <div class="flex flex-col sm:gap-4 sm:py-4">
                 <main
-                    class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-3 xl:grid-cols-3"
+                    class="grid flex-1 items-start gap-4 p-4 sm:px-6 sm:py-0 md:gap-8 lg:grid-cols-2 xl:grid-cols-2"
                 >
                     <div
                         class="grid auto-rows-max items-start gap-4 md:gap-8 lg:col-span-2"
@@ -231,6 +250,7 @@ const handleStripeCallback = () => {
                                             Recent orders from your store.
                                         </CardDescription>
                                     </CardHeader>
+
                                     <CardContent>
                                         <Table>
                                             <TableHeader>
@@ -240,338 +260,88 @@ const handleStripeCallback = () => {
                                                     >
                                                     <TableHead
                                                         class="hidden sm:table-cell"
+                                                        >Type</TableHead
                                                     >
-                                                        Type
-                                                    </TableHead>
                                                     <TableHead
                                                         class="hidden sm:table-cell"
+                                                        >Status</TableHead
                                                     >
-                                                        Status
-                                                    </TableHead>
                                                     <TableHead
                                                         class="hidden md:table-cell"
+                                                        >Date</TableHead
                                                     >
-                                                        Date
-                                                    </TableHead>
                                                     <TableHead
                                                         class="text-right"
+                                                        >Amount</TableHead
                                                     >
-                                                        Amount
-                                                    </TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             <TableBody>
-                                                <TableRow class="bg-accent">
+                                                <TableRow
+                                                    v-for="order in orders"
+                                                    :key="
+                                                        order.Customer.Email +
+                                                        order.Date
+                                                    "
+                                                >
                                                     <TableCell>
                                                         <div
                                                             class="font-medium"
                                                         >
-                                                            Liam Johnson
+                                                            {{
+                                                                order.Customer
+                                                                    .Name
+                                                            }}
                                                         </div>
                                                         <div
                                                             class="hidden text-sm text-muted-foreground md:inline"
                                                         >
-                                                            liam@example.com
+                                                            {{
+                                                                order.Customer
+                                                                    .Email
+                                                            }}
                                                         </div>
                                                     </TableCell>
                                                     <TableCell
                                                         class="hidden sm:table-cell"
+                                                        >{{
+                                                            order.Type
+                                                        }}</TableCell
                                                     >
-                                                        Sale
-                                                    </TableCell>
                                                     <TableCell
                                                         class="hidden sm:table-cell"
                                                     >
                                                         <Badge
+                                                            v-if="
+                                                                order.Status ===
+                                                                'Fulfilled'
+                                                            "
                                                             class="text-xs"
                                                             variant="secondary"
+                                                            >Fulfilled</Badge
                                                         >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-23
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $250.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Olivia Smith
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            olivia@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Refund
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
                                                         <Badge
+                                                            v-if="
+                                                                order.Status ===
+                                                                'Declined'
+                                                            "
                                                             class="text-xs"
                                                             variant="outline"
+                                                            >Declined</Badge
                                                         >
-                                                            Declined
-                                                        </Badge>
                                                     </TableCell>
                                                     <TableCell
                                                         class="hidden md:table-cell"
+                                                        >{{
+                                                            order.Date
+                                                        }}</TableCell
                                                     >
-                                                        2023-06-24
-                                                    </TableCell>
                                                     <TableCell
                                                         class="text-right"
+                                                        >{{
+                                                            order.Amount
+                                                        }}</TableCell
                                                     >
-                                                        $150.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Noah Williams
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            noah@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Subscription
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                        >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-25
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $350.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Emma Brown
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            emma@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Sale
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                        >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-26
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $450.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Liam Johnson
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            liam@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Sale
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                        >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-23
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $250.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Liam Johnson
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            liam@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Sale
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                        >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-23
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $250.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Olivia Smith
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            olivia@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Refund
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="outline"
-                                                        >
-                                                            Declined
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-24
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $150.00
-                                                    </TableCell>
-                                                </TableRow>
-                                                <TableRow>
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            Emma Brown
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            emma@example.com
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        Sale
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                        >
-                                                            Fulfilled
-                                                        </Badge>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                    >
-                                                        2023-06-26
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="text-right"
-                                                    >
-                                                        $450.00
-                                                    </TableCell>
                                                 </TableRow>
                                             </TableBody>
                                         </Table>
@@ -579,229 +349,6 @@ const handleStripeCallback = () => {
                                 </Card>
                             </TabsContent>
                         </Tabs>
-                    </div>
-                    <div>
-                        <Card class="overflow-hidden">
-                            <CardHeader
-                                class="flex flex-row items-start bg-muted/50"
-                            >
-                                <div class="grid gap-0.5">
-                                    <CardTitle
-                                        class="group flex items-center gap-2 text-lg"
-                                    >
-                                        Order ID: Oe31b70H
-                                        <Button
-                                            size="icon"
-                                            variant="outline"
-                                            class="h-6 w-6 opacity-0 transition-opacity group-hover:opacity-100"
-                                        >
-                                            <Copy class="h-3 w-3" />
-                                            <span class="sr-only"
-                                                >Copy Order ID</span
-                                            >
-                                        </Button>
-                                    </CardTitle>
-                                    <CardDescription
-                                        >Date: November 23,
-                                        2023</CardDescription
-                                    >
-                                </div>
-                                <div class="ml-auto flex items-center gap-1">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        class="h-8 gap-1"
-                                    >
-                                        <Truck class="h-3.5 w-3.5" />
-                                        <span
-                                            class="lg:sr-only xl:not-sr-only xl:whitespace-nowrap"
-                                        >
-                                            Track Order
-                                        </span>
-                                    </Button>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger as-child>
-                                            <Button
-                                                size="icon"
-                                                variant="outline"
-                                                class="h-8 w-8"
-                                            >
-                                                <MoreVertical
-                                                    class="h-3.5 w-3.5"
-                                                />
-                                                <span class="sr-only"
-                                                    >More</span
-                                                >
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuItem
-                                                >Edit</DropdownMenuItem
-                                            >
-                                            <DropdownMenuItem
-                                                >Export</DropdownMenuItem
-                                            >
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem
-                                                >Trash</DropdownMenuItem
-                                            >
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </div>
-                            </CardHeader>
-                            <CardContent class="p-6 text-sm">
-                                <div class="grid gap-3">
-                                    <div class="font-semibold">
-                                        Order Details
-                                    </div>
-                                    <ul class="grid gap-3">
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground">
-                                                Glimmer Lamps x <span>2</span>
-                                            </span>
-                                            <span>$250.00</span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground">
-                                                Aqua Filters x <span>1</span>
-                                            </span>
-                                            <span>$49.00</span>
-                                        </li>
-                                    </ul>
-                                    <Separator class="my-2" />
-                                    <ul class="grid gap-3">
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Subtotal</span
-                                            >
-                                            <span>$299.00</span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Shipping</span
-                                            >
-                                            <span>$5.00</span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Tax</span
-                                            >
-                                            <span>$25.00</span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between font-semibold"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Total</span
-                                            >
-                                            <span>$329.00</span>
-                                        </li>
-                                    </ul>
-                                </div>
-                                <Separator class="my-4" />
-                                <div class="grid grid-cols-2 gap-4">
-                                    <div class="grid gap-3">
-                                        <div class="font-semibold">
-                                            Shipping Information
-                                        </div>
-                                        <address
-                                            class="grid gap-0.5 not-italic text-muted-foreground"
-                                        >
-                                            <span>Liam Johnson</span>
-                                            <span>1234 Main St.</span>
-                                            <span>Anytown, CA 12345</span>
-                                        </address>
-                                    </div>
-                                    <div class="grid auto-rows-max gap-3">
-                                        <div class="font-semibold">
-                                            Billing Information
-                                        </div>
-                                        <div class="text-muted-foreground">
-                                            Same as shipping address
-                                        </div>
-                                    </div>
-                                </div>
-                                <Separator class="my-4" />
-                                <div class="grid gap-3">
-                                    <div class="font-semibold">
-                                        Customer Information
-                                    </div>
-                                    <dl class="grid gap-3">
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt class="text-muted-foreground">
-                                                Customer
-                                            </dt>
-                                            <dd>Liam Johnson</dd>
-                                        </div>
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt class="text-muted-foreground">
-                                                Email
-                                            </dt>
-                                            <dd>
-                                                <a href="mailto:"
-                                                    >liam@acme.com</a
-                                                >
-                                            </dd>
-                                        </div>
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt class="text-muted-foreground">
-                                                Phone
-                                            </dt>
-                                            <dd>
-                                                <a href="tel:"
-                                                    >+1 234 567 890</a
-                                                >
-                                            </dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                                <Separator class="my-4" />
-                                <div class="grid gap-3">
-                                    <div class="font-semibold">
-                                        Payment Information
-                                    </div>
-                                    <dl class="grid gap-3">
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt
-                                                class="flex items-center gap-1 text-muted-foreground"
-                                            >
-                                                <CreditCard class="h-4 w-4" />
-                                                Visa
-                                            </dt>
-                                            <dd>**** **** **** 4532</dd>
-                                        </div>
-                                    </dl>
-                                </div>
-                            </CardContent>
-                            <CardFooter
-                                class="flex flex-row items-center border-t bg-muted/50 px-6 py-3"
-                            >
-                                <div class="text-xs text-muted-foreground">
-                                    Updated
-                                    <time dateTime="2023-11-23"
-                                        >November 23, 2023</time
-                                    >
-                                </div>
-                            </CardFooter>
-                        </Card>
                     </div>
                 </main>
             </div>

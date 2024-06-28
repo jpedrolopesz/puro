@@ -5,16 +5,7 @@ import type {
     SortingState,
     VisibilityState,
 } from "@tanstack/vue-table";
-import {
-    FlexRender,
-    getCoreRowModel,
-    getFacetedRowModel,
-    getFacetedUniqueValues,
-    getFilteredRowModel,
-    getPaginationRowModel,
-    getSortedRowModel,
-    useVueTable,
-} from "@tanstack/vue-table";
+import { FlexRender } from "@tanstack/vue-table";
 
 import { ref } from "vue";
 import type { Task } from "../data/schema";

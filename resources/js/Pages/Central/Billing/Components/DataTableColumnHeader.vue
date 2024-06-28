@@ -9,15 +9,15 @@ import {
     ArrowDownIcon,
 } from "@radix-icons/vue";
 
-import { cn } from "../../../../lib/utils";
-import { Button } from "../../../../Components/ui/button";
+import { cn } from "@/lib/utils";
+import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "../../../../Components/ui/dropdown-menu";
+} from "@/Components/ui/dropdown-menu";
 
 interface DataTableColumnHeaderProps {
     column: Column<Task, any>;
@@ -25,6 +25,8 @@ interface DataTableColumnHeaderProps {
 }
 
 const props = defineProps<DataTableColumnHeaderProps>();
+
+console.log(props);
 </script>
 
 <script lang="ts">

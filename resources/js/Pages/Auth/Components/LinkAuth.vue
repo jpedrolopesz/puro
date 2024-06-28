@@ -8,7 +8,6 @@ const props = defineProps<{
     isRegister: String;
 }>();
 
-console.log(props.isRegister);
 const isLogin = computed(() => props.isRegister === "Login");
 const isRegister = computed(() => props.isRegister === "Register");
 
