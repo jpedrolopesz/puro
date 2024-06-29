@@ -141,217 +141,31 @@ const handleStripeCallback = () => {
                                 </CardFooter>
                             </Card>
                         </div>
-                        <Tabs default-value="week">
-                            <div class="flex items-center">
-                                <TabsList>
-                                    <TabsTrigger value="week">
-                                        Week
-                                    </TabsTrigger>
-                                    <TabsTrigger value="month">
-                                        Month
-                                    </TabsTrigger>
-                                    <TabsTrigger value="year">
-                                        Year
-                                    </TabsTrigger>
-                                </TabsList>
-                                <div class="ml-auto flex items-center gap-2">
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger as-child>
-                                            <Button
-                                                variant="outline"
-                                                size="sm"
-                                                class="h-7 gap-1 rounded-md px-3"
-                                            >
-                                                <ListFilter
-                                                    class="h-3.5 w-3.5"
-                                                />
-                                                <span
-                                                    class="sr-only sm:not-sr-only"
-                                                    >Filter</span
-                                                >
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel
-                                                >Filter by</DropdownMenuLabel
-                                            >
-                                            <DropdownMenuSeparator />
-                                            <DropdownMenuItem>
-                                                <div
-                                                    class="items-top flex space-x-2"
-                                                >
-                                                    <Checkbox id="terms1" />
-                                                    <label
-                                                        for="terms2"
-                                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        Fulfilled
-                                                    </label>
-                                                </div>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <div
-                                                    class="items-top flex space-x-2"
-                                                >
-                                                    <Checkbox id="terms1" />
-                                                    <label
-                                                        for="terms2"
-                                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        Declined
-                                                    </label>
-                                                </div>
-                                            </DropdownMenuItem>
-                                            <DropdownMenuItem>
-                                                <div
-                                                    class="items-top flex space-x-2"
-                                                >
-                                                    <Checkbox id="terms1" />
-                                                    <label
-                                                        for="terms2"
-                                                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                                                    >
-                                                        Refunded
-                                                    </label>
-                                                </div>
-                                            </DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                    <Button
-                                        variant="outline"
-                                        size="sm"
-                                        class="h-7 gap-1 rounded-md px-3"
+
+                        <div
+                            class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex"
+                        >
+                            <div
+                                class="flex items-center justify-between space-y-2"
+                            >
+                                <div>
+                                    <h2
+                                        class="text-2xl font-bold tracking-tight"
                                     >
-                                        <File class="h-3.5 w-3.5" />
-                                        <span class="sr-only sm:not-sr-only"
-                                            >Export</span
-                                        >
-                                    </Button>
+                                        Orders
+                                    </h2>
+                                    <p class="text-muted-foreground">
+                                        Here&apos;s a list of your tasks for
+                                        this month!
+                                    </p>
                                 </div>
                             </div>
-                            <TabsContent value="week">
-                                <Card>
-                                    <CardHeader class="px-7">
-                                        <CardTitle>Orders</CardTitle>
-                                        <CardDescription>
-                                            Recent orders from your store.
-                                        </CardDescription>
-                                    </CardHeader>
 
-                                    <CardContent>
-                                        <Table>
-                                            <TableHeader>
-                                                <TableRow>
-                                                    <TableHead
-                                                        >Customer</TableHead
-                                                    >
-                                                    <TableHead
-                                                        class="hidden sm:table-cell"
-                                                        >Type</TableHead
-                                                    >
-                                                    <TableHead
-                                                        class="hidden sm:table-cell"
-                                                        >Status</TableHead
-                                                    >
-                                                    <TableHead
-                                                        class="hidden md:table-cell"
-                                                        >Date</TableHead
-                                                    >
-                                                    <TableHead
-                                                        class="text-right"
-                                                        >Amount</TableHead
-                                                    >
-                                                </TableRow>
-                                            </TableHeader>
-                                            <TableBody>
-                                                <TableRow
-                                                    v-for="order in orders"
-                                                    :key="
-                                                        order.customer.email +
-                                                        order.date
-                                                    "
-                                                >
-                                                    <TableCell>
-                                                        <div
-                                                            class="font-medium"
-                                                        >
-                                                            {{
-                                                                order.customer
-                                                                    .name
-                                                            }}
-                                                        </div>
-                                                        <div
-                                                            class="hidden text-sm text-muted-foreground md:inline"
-                                                        >
-                                                            {{
-                                                                order.customer
-                                                                    .email
-                                                            }}
-                                                        </div>
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                        >{{
-                                                            order.type
-                                                        }}</TableCell
-                                                    >
-                                                    <TableCell
-                                                        class="hidden sm:table-cell"
-                                                    >
-                                                        <Badge
-                                                            v-if="
-                                                                order.status ===
-                                                                'Fulfilled'
-                                                            "
-                                                            class="text-xs"
-                                                            variant="secondary"
-                                                            >Fulfilled</Badge
-                                                        >
-                                                        <Badge
-                                                            v-if="
-                                                                order.status ===
-                                                                'Declined'
-                                                            "
-                                                            class="text-xs"
-                                                            variant="outline"
-                                                            >Declined</Badge
-                                                        >
-                                                    </TableCell>
-                                                    <TableCell
-                                                        class="hidden md:table-cell"
-                                                        >{{
-                                                            order.date
-                                                        }}</TableCell
-                                                    >
-                                                    <TableCell
-                                                        class="text-right"
-                                                        >{{
-                                                            order.amount
-                                                        }}</TableCell
-                                                    >
-                                                </TableRow>
-                                            </TableBody>
-                                        </Table>
-                                    </CardContent>
-                                </Card>
-                            </TabsContent>
-                        </Tabs>
+                            <DataTable :data="orders" :columns="columns" />
+                        </div>
                     </div>
                 </main>
             </div>
-        </div>
-
-        <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
-            <div class="flex items-center justify-between space-y-2">
-                <div>
-                    <h2 class="text-2xl font-bold tracking-tight">Orders</h2>
-                    <p class="text-muted-foreground">
-                        Here&apos;s a list of your tasks for this month!
-                    </p>
-                </div>
-            </div>
-
-            <DataTable :data="orders" :columns="columns" />
         </div>
     </AuthenticatedCentralLayout>
 </template>

@@ -2,13 +2,11 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Actions\Central\Tenants\TenantGetAllAction;
-use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use App\Models\Tenant;
 use Inertia\Inertia;
 
-class TenantsController extends Controller
+class TenantsCentralController extends Controller
 {
     public function index(Tenant $request)
     {

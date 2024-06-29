@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Inertia\Inertia;
 
-class UsersController extends Controller
+class UsersCentralController extends Controller
 {
     public function index(Request $request)
     {

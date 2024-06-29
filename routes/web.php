@@ -2,9 +2,10 @@
 
 use App\Http\Controllers\Central\{
     ProfileCentralController,
-    TenantsController,
-    DashboardCentral,
-    BillingCentralController
+    TenantsCentralController,
+    DashboardCentralController,
+    BillingCentralController,
+    PlansCentralController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -20,13 +21,20 @@ Route::get("/", function () {
 });
 
 Route::middleware("auth:admin")->group(function () {
-    Route::get("/dashboard", [DashboardCentral::class, "index"])->name(
-        "admin.dashboard"
-    );
+    Route::get("/dashboard", [
+        DashboardCentralController::class,
+        "index",
+    ])->name("admin.dashboard");
 
     ######## TENANTS ########
-    Route::get("/tenants", [TenantsController::class, "index"])->name(
+    Route::get("/tenants", [TenantsCentralController::class, "index"])->name(
         "tenants.index"
+    );
+
+    ######## Planes ########
+
+    Route::get("/plans", [PlansCentralController::class, "index"])->name(
+        "plans.index"
     );
 
     ######## BILLING ########

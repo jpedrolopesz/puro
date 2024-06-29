@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
-class DashboardCentral extends Controller
+class DashboardCentralController extends Controller
 {
     public function index()
     {

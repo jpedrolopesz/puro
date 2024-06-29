@@ -6,5 +6,21 @@
     "status": "Fulfilled",
     "date": "2023-06-23",
     "amount": "$250.00"
+  },
+  {
+    "id": 2,
+    "customer": "pedro",
+    "type": "Sale",
+    "status": "Fulfilled",
+    "date": "2023-06-23",
+    "amount": "$250.00"
+  },
+  {
+    "id": 3,
+    "customer": "zamonelo",
+    "type": "Sale",
+    "status": "Fulfilled",
+    "date": "2023-06-23",
+    "amount": "$250.00"
   }
 ]
