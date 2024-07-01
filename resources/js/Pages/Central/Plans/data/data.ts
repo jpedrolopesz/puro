@@ -11,18 +11,21 @@ import {
   ArrowDownIcon,
 } from "@radix-icons/vue";
 
-export const subscriptionLevels = [
+export const intervals = [
   {
-    value: "basic",
-    subscriptionLevel: "Basic",
+    value: "month",
+    interval: "Monthly",
   },
   {
-    value: "standard",
-    subscriptionLevel: "Standard",
+    value: "year",
+    interval: "Yearly",
   },
+];
+
+export const currencys = [
   {
-    value: "platinum",
-    subscriptionLevel: "Platinum",
+    value: "USD",
+    currency: "USD",
   },
 ];
 
