@@ -36,6 +36,10 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
     );
+    Route::get("/plans/create", [
+        PlansCentralController::class,
+        "create",
+    ])->name("plans.create");
 
     ######## BILLING ########
     Route::get("/billing", [BillingCentralController::class, "index"])->name(
@@ -58,9 +62,9 @@ Route::middleware("auth:admin")->group(function () {
     );
     Route::get("/profile/account", function () {
         return Inertia::render("Central/Profile/Account");
-    })->name("profile.appearance");
+    })->name("profile.appearanc");
 
-    Route::get("/profile/appearance", function () {
+    Route::get("/profile/appearanc", function () {
         return Inertia::render("Central/Profile/Appearance");
     })->name("profile.appearance");
     Route::patch("/profile", [ProfileCentralController::class, "update"])->name(

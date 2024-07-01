@@ -12,4 +12,9 @@ class PlansCentralController extends Controller
     {
         return Inertia::render("Central/Plans/PlansCentral");
     }
+
+    public function create()
+    {
+        return Inertia::render("Central/Plans/Create/PlanCreate");
+    }
 }

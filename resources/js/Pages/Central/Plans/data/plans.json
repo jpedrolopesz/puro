@@ -1,17 +1,41 @@
 [
   {
-    "id": 1,
-    "name": "Basic",
-    "price": 19.9
+    "id": "prod_NWjs8kKbJWmuuc",
+    "name": "Gold Plan",
+    "description": "Access to all premium features",
+    "active": true,
+    "unit_amount": 2999.99,
+    "currency": "USD",
+    "interval": "month",
+    "nickname": "Premium Monthly",
+    "metadata": {},
+    "created_at": "2023-06-15T12:34:56",
+    "updated_at": "2023-06-15T12:34:56"
   },
   {
-    "id": 2,
-    "name": "Standard",
-    "price": 39.9
+    "id": "prod_ABC123XYZ",
+    "name": "Silver Plan",
+    "description": "Access to selected premium features",
+    "active": true,
+    "unit_amount": 1999.99,
+    "currency": "USD",
+    "interval": "month",
+    "nickname": "Silver Monthly",
+    "metadata": {},
+    "created_at": "2023-06-15T13:00:00",
+    "updated_at": "2023-06-15T13:00:00"
   },
   {
-    "id": 3,
-    "name": "Platinum",
-    "price": 59.9
+    "id": "prod_DEF456UVW",
+    "name": "Gold Plan Yearly",
+    "description": "Access to all premium features for a year",
+    "active": true,
+    "unit_amount": 29999.99,
+    "currency": "USD",
+    "interval": "year",
+    "nickname": "Premium Yearly",
+    "metadata": {},
+    "created_at": "2023-06-15T12:36:56",
+    "updated_at": "2023-06-15T12:36:56"
   }
 ]

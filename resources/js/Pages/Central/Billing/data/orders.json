@@ -22,5 +22,39 @@
     "status": "Fulfilled",
     "date": "2023-06-23",
     "amount": "$250.00"
+  },
+
+  {
+    "id": 1,
+    "subscription_id": "sub_1J2mQY2eZvKYlo2CJ5OeUYaX",
+    "customer_id": "cus_KJ7uFivEcvXx4z",
+    "status": "active",
+    "start_date": "2023-06-15T12:34:56",
+    "end_date": null,
+    "plan_id": "prod_NWjs8kKbJWmuuc",
+    "created_at": "2023-06-15T12:34:56",
+    "updated_at": "2023-06-15T12:34:56"
+  },
+  {
+    "id": 2,
+    "subscription_id": "sub_1J2mRY2eZvKYlo2CTx6zv2Yc",
+    "customer_id": "cus_FivEqH7z4lL9C3",
+    "status": "canceled",
+    "start_date": "2023-05-10T12:34:56",
+    "end_date": "2023-06-10T12:34:56",
+    "plan_id": "prod_NWjs8kKbJWmuuc",
+    "created_at": "2023-05-10T12:34:56",
+    "updated_at": "2023-06-10T12:34:56"
+  },
+  {
+    "id": 3,
+    "subscription_id": "sub_1J2mSY2eZvKYlo2CSp6xv2E",
+    "customer_id": "cus_GH8hFivGdXx5y4",
+    "status": "active",
+    "start_date": "2023-06-20T10:20:30",
+    "end_date": null,
+    "plan_id": "prod_DEF456UVW",
+    "created_at": "2023-06-20T10:20:30",
+    "updated_at": "2023-06-20T10:20:30"
   }
 ]
