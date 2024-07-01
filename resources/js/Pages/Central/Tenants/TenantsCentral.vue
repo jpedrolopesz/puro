@@ -44,7 +44,7 @@ const props = defineProps<{
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight">Tenants</h2>
                     <p class="text-muted-foreground">
-                        Here&apos;s a list of your tasks for this month!
+                        Here&apos;s a list of your tasks for this mon
                     </p>
                 </div>
             </div>
