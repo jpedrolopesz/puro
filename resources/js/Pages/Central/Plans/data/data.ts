@@ -27,6 +27,11 @@ export const currencys = [
     value: "USD",
     currency: "USD",
   },
+  {
+    value: "BRL",
+    currency: "BRL",
+  },
+  // Adicione outras moedas conforme necessário
 ];
 
 export const subscriptionStatuses = [

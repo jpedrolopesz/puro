@@ -36,10 +36,10 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
     );
-    Route::get("/plans/create", [
+    Route::get("/plans/{productId}", [
         PlansCentralController::class,
-        "create",
-    ])->name("plans.create");
+        "edit",
+    ])->name("plans.edit");
 
     ######## BILLING ########
     Route::get("/billing", [BillingCentralController::class, "index"])->name(

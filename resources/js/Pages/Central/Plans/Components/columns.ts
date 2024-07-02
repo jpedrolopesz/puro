@@ -2,21 +2,24 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 
 import {
-  subscriptionLevels,
   subscriptionStatuses,
   priorities,
+  intervals,
+  currencys,
 } from "../data/data";
 import type { Order } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Badge } from "@/Components/ui/badge";
-import { intervals } from "../data/data";
-import { currencys } from "../data/data";
 
 function formatAmount(amount) {
-  // Exemplo simples de formatação de moeda, ajuste conforme necessário
-  return (amount / 100).toFixed(2); // Assumindo que 'amount' está em centavos, formatado para 2 casas decimais
+  return (amount / 100).toFixed(2);
+}
+
+function formatDate(timestamp) {
+  const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
+  return date.toLocaleDateString(); // Adjust the format as needed
 }
 
 export const columns: ColumnDef<Order>[] = [
@@ -54,53 +57,18 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "name",
     header: ({ column }) => h(DataTableColumnHeader, { column, title: "Name" }),
     cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("name")),
-
     filterFn: (row, id, value) => {
       return value.includes(row.getValue("name"));
     },
   },
 
   {
-    accessorKey: "interval",
+    accessorKey: "prices",
     header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Interval" }),
+      h(DataTableColumnHeader, { column, title: "Prices" }),
     cell: ({ row }) => {
-      const interval = row.getValue("interval");
-      const formattedInterval =
-        interval.charAt(0).toUpperCase() + interval.slice(1);
-      return h("div", { class: "w-20" }, formattedInterval);
-    },
-    filterFn: (row, id, value) => {
-      return value
-        .toLowerCase()
-        .includes(row.getValue("interval").toLowerCase());
-    },
-  },
-  {
-    accessorKey: "price",
-    header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Price" }),
-
-    cell: ({ row }) => {
-      const currency = currencys.find(
-        (currency) => currency.value === row.original.currency,
-      );
-
-      // Construindo a string formatada diretamente
-      const formattedAmount = currency
-        ? ` ${formatAmount(row.original.unit_amount)}`
-        : "";
-
-      return h("div", { class: "flex space-x-2" }, [
-        currency
-          ? h(Badge, { variant: "outline" }, () => currency.currency)
-          : null,
-        h(
-          "span",
-          { class: "max-w-[500px] truncate font-medium" },
-          formattedAmount,
-        ),
-      ]);
+      const prices = row.getValue("prices");
+      return h("div", { class: "w-20" }, prices.length.toString());
     },
   },
 
@@ -122,6 +90,21 @@ export const columns: ColumnDef<Order>[] = [
       ]),
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "created",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Created" }),
+    cell: ({ row }) =>
+      h("div", { class: "w-20" }, formatDate(row.getValue("created"))),
+  },
+
+  {
+    accessorKey: "updated",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Updated" }),
+    cell: ({ row }) =>
+      h("div", { class: "w-20" }, formatDate(row.getValue("updated"))),
   },
 
   {

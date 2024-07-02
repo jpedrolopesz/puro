@@ -69,6 +69,21 @@ import {
 } from "@/Components/ui/tooltip";
 
 import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
+
+import { defineProps } from "vue";
+
+const props = defineProps({
+    product: {
+        type: Object as () => any, // Defina o tipo correto do objeto product
+        required: true, // Indica que product é obrigatório
+    },
+});
+
+// Função para formatar a data a partir de um timestamp Unix em segundos
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000); // Convert Unix timestamp to miliseconds
+    return date.toLocaleDateString(); // Adjust the format as needed
+}
 </script>
 
 <template>
@@ -85,10 +100,10 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                     <h1
                         class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
                     >
-                        Pro Controller
+                        {{ product.name }}
                     </h1>
                     <Badge variant="outline" class="ml-auto sm:ml-0">
-                        In stock
+                        {{ product.active ? "Active" : "Inactive" }}
                     </Badge>
                     <div class="hidden items-center gap-2 md:ml-auto md:flex">
                         <Button variant="outline" size="sm"> Discard </Button>
@@ -103,7 +118,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                     >
                         <Card>
                             <CardHeader>
-                                <CardTitle>Product Details</CardTitle>
+                                <CardTitle>Plan Details</CardTitle>
                                 <CardDescription>
                                     Lipsum dolor sit amet, consectetur
                                     adipiscing elit
@@ -117,7 +132,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                                             id="name"
                                             type="text"
                                             class="w-full"
-                                            default-value="Gamer Gear Pro Controller"
+                                            v-model="product.name"
                                         />
                                     </div>
                                     <div class="grid gap-3">
@@ -126,195 +141,115 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                                         >
                                         <Textarea
                                             id="description"
-                                            default-value="Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam auctor, nisl nec ultricies ultricies, nunc nisl ultricies nunc, nec ultricies nunc nisl nec nunc."
-                                            class="min-h-32"
+                                            class="min-h-22"
+                                            v-model="product.description"
                                         />
                                     </div>
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Stock</CardTitle>
-                                <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead class="w-[100px]">
-                                                SKU
-                                            </TableHead>
-                                            <TableHead>Stock</TableHead>
-                                            <TableHead>Price</TableHead>
-                                            <TableHead class="w-[100px]">
-                                                Size
-                                            </TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell class="font-semibold">
-                                                GGPC-001
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="stock-1"
-                                                    class="sr-only"
-                                                >
-                                                    Stock
-                                                </Label>
-                                                <Input
-                                                    id="stock-1"
-                                                    type="number"
-                                                    default-value="100"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="price-1"
-                                                    class="sr-only"
+
+                        <TabsContent value="week">
+                            <Card>
+                                <CardHeader class="px-7">
+                                    <CardTitle>Plans</CardTitle>
+                                    <CardDescription>
+                                        Recent orders from your store.
+                                    </CardDescription>
+                                </CardHeader>
+                                <CardContent>
+                                    <Table>
+                                        <TableHeader>
+                                            <TableRow>
+                                                <TableHead
+                                                    class="hidden sm:table-cell"
                                                 >
                                                     Price
-                                                </Label>
-                                                <Input
-                                                    id="price-1"
-                                                    type="number"
-                                                    default-value="99.99"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <ToggleGroup
-                                                    type="single"
-                                                    default-value="s"
-                                                    variant="outline"
+                                                </TableHead>
+                                                <TableHead
+                                                    class="hidden sm:table-cell"
                                                 >
-                                                    <ToggleGroupItem value="s">
-                                                        S
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="m">
-                                                        M
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="l">
-                                                        L
-                                                    </ToggleGroupItem>
-                                                </ToggleGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell class="font-semibold">
-                                                GGPC-002
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="stock-2"
-                                                    class="sr-only"
+                                                    Recurrency
+                                                </TableHead>
+                                                <TableHead
+                                                    class="hidden md:table-cell"
                                                 >
-                                                    Stock
-                                                </Label>
-                                                <Input
-                                                    id="stock-2"
-                                                    type="number"
-                                                    default-value="143"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="price-2"
-                                                    class="sr-only"
+                                                    Assinantes
+                                                </TableHead>
+                                                <TableHead
+                                                    class="hidden md:table-cell"
                                                 >
-                                                    Price
-                                                </Label>
-                                                <Input
-                                                    id="price-2"
-                                                    type="number"
-                                                    default-value="99.99"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <ToggleGroup
-                                                    type="single"
-                                                    default-value="m"
-                                                    variant="outline"
+                                                    Date
+                                                </TableHead>
+                                            </TableRow>
+                                        </TableHeader>
+                                        <TableBody>
+                                            <TableRow
+                                                v-for="price in product.prices"
+                                                :key="price.id"
+                                            >
+                                                <TableCell
+                                                    class="hidden sm:table-cell"
                                                 >
-                                                    <ToggleGroupItem value="s">
-                                                        S
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="m">
-                                                        M
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="l">
-                                                        L
-                                                    </ToggleGroupItem>
-                                                </ToggleGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                        <TableRow>
-                                            <TableCell class="font-semibold">
-                                                GGPC-003
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="stock-3"
-                                                    class="sr-only"
+                                                    {{
+                                                        (price.unit_amount /
+                                                            100,
+                                                        price.currency)
+                                                    }}
+                                                </TableCell>
+                                                <TableCell
+                                                    class="hidden sm:table-cell"
                                                 >
-                                                    Stock
-                                                </Label>
-                                                <Input
-                                                    id="stock-3"
-                                                    type="number"
-                                                    default-value="32"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <Label
-                                                    for="price-3"
-                                                    class="sr-only"
+                                                    <span
+                                                        v-if="price.recurring"
+                                                    >
+                                                        {{
+                                                            price.recurring
+                                                                .interval
+                                                        }}
+                                                        /
+                                                        {{
+                                                            price.recurring
+                                                                .interval_count
+                                                        }}
+                                                    </span>
+                                                </TableCell>
+                                                <TableCell
+                                                    class="hidden sm:table-cell"
                                                 >
-                                                    Stock
-                                                </Label>
-                                                <Input
-                                                    id="price-3"
-                                                    type="number"
-                                                    default-value="99.99"
-                                                />
-                                            </TableCell>
-                                            <TableCell>
-                                                <ToggleGroup
-                                                    type="single"
-                                                    default-value="s"
-                                                    variant="outline"
+                                                    Assinantes
+                                                    {{ price.active }}
+                                                </TableCell>
+                                                <TableCell
+                                                    class="hidden md:table-cell"
                                                 >
-                                                    <ToggleGroupItem value="s">
-                                                        S
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="m">
-                                                        M
-                                                    </ToggleGroupItem>
-                                                    <ToggleGroupItem value="l">
-                                                        L
-                                                    </ToggleGroupItem>
-                                                </ToggleGroup>
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
-                            </CardContent>
-                            <CardFooter class="justify-center border-t p-4">
-                                <Button size="sm" variant="ghost" class="gap-1">
-                                    <PlusCircle class="h-3.5 w-3.5" />
-                                    Add Variant
-                                </Button>
-                            </CardFooter>
-                        </Card>
+                                                    {{
+                                                        formatDate(
+                                                            price.created,
+                                                        )
+                                                    }}
+                                                </TableCell>
+                                            </TableRow>
+                                        </TableBody>
+                                    </Table>
+                                </CardContent>
+                                <CardFooter class="justify-center border-t p-4">
+                                    <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        class="gap-1"
+                                    >
+                                        <PlusCircle class="h-3.5 w-3.5" />
+                                        Add Variant
+                                    </Button>
+                                </CardFooter>
+                            </Card>
+                        </TabsContent>
                     </div>
                     <div class="grid auto-rows-max items-start gap-4 lg:gap-8">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Product Status</CardTitle>
+                                <CardTitle>Plan Status</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <div class="grid gap-6">
@@ -347,7 +282,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                         </Card>
                         <Card class="overflow-hidden">
                             <CardHeader>
-                                <CardTitle>Product imgs</CardTitle>
+                                <CardTitle>Plan imgs</CardTitle>
                                 <CardDescription>
                                     Lipsum dolor sit amet, consectetur
                                     adipiscing elit
@@ -356,7 +291,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                             <CardContent>
                                 <div class="grid gap-2">
                                     <img
-                                        alt="Product image"
+                                        alt="Plan image"
                                         class="aspect-square w-full rounded-md object-cover"
                                         height="300"
                                         src="/placeholder.svg"
@@ -365,7 +300,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                                     <div class="grid grid-cols-3 gap-2">
                                         <button>
                                             <img
-                                                alt="Product image"
+                                                alt="Plan image"
                                                 class="aspect-square w-full rounded-md object-cover"
                                                 height="84"
                                                 src="/placeholder.svg"
@@ -397,7 +332,7 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
                 </div>
                 <div class="flex items-center justify-center gap-2 md:hidden">
                     <Button variant="outline" size="sm"> Discard </Button>
-                    <Button size="sm"> Save Product </Button>
+                    <Button size="sm"> Save Plan</Button>
                 </div>
             </div>
         </main>
