@@ -7,22 +7,15 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Http;
 use Stripe\Stripe;
-use Stripe\Charge;
 use Stripe\Product;
 use Stripe\Price;
+use Stripe\PaymentIntent;
+use Stripe\PaymentMethod;
+use Stripe\Customer;
 
 class BillingCentralController extends Controller
 {
     public function index()
-    {
-        return Inertia::render("Central/Billing/BillingCentral");
-    }
-
-    // Abordagem que  vou fazer vai ser a verificaóes se as chaces estao no config/service.
-    // Após a verificaçao eu irei disponibilizar o conteudo na tela.
-    //
-
-    public function connectStripe()
     {
         try {
             // Configure a chave secreta do Stripe
@@ -30,62 +23,185 @@ class BillingCentralController extends Controller
                 "sk_test_51LRjEpGQW0U1PfqxjAwrWJaaaML9e8xOtowprEoQOF8j2z2Nvn9a5P8KkvDpgVzmeBpCdczITYNhvI1DMYs18qRb00e3YMKUXY"
             );
 
-            // Faz uma chamada à API para verificar s
-            //
-            // e a integração está funcionando
-            // $charges = Charge::all(["limit" => 1]);
-            //
-            $products = Product::all();
+            // Faz uma chamada à API para buscar todos os PaymentIntents
+            $paymentIntents = PaymentIntent::all(["limit" => 10]);
 
-            // Montar um array com as propriedades desejadas de cada produto
-            $productList = [];
+            // Monta um array com as propriedades desejadas de cada pagamento
+            $paymentList = [];
 
-            foreach ($products->data as $product) {
-                // Inicializa array para armazenar preços
-                $pricesList = [];
+            foreach ($paymentIntents->data as $paymentIntent) {
+                // Inicializa variáveis para armazenar dados do cliente
+                $customerName = null;
+                $customerEmail = null;
+                $customerAddress = null;
+                $customerPhone = null;
 
-                // Obtém os preços associados ao produto
-                $prices = Price::all(["product" => $product->id]);
-                foreach ($prices->data as $price) {
-                    $pricesList[] = [
-                        "id" => $price->id,
-                        "currency" => $price->currency,
-                        "unit_amount" => $price->unit_amount,
-                        "billing_scheme" => $price->billing_scheme,
-                        "trial_period_days" => $price->trial_period_days,
-                        "recurring" => $price->recurring
-                            ? [
-                                "interval" => $price->recurring->interval,
-                                "interval_count" =>
-                                    $price->recurring->interval_count,
-                            ]
-                            : null,
-                    ];
+                // Inicializa variáveis para armazenar dados do método de pagamento
+                $cardBrand = null;
+                $cardLast4 = null;
+                $expMonth = null;
+                $expYear = null;
+
+                // Verifica se há um customer associado ao PaymentIntent
+                if ($paymentIntent->customer) {
+                    // Faz uma chamada à API para buscar o Customer
+                    $customer = Customer::retrieve($paymentIntent->customer);
+
+                    // Define as variáveis de nome, email, endereço e telefone do cliente
+                    $customerName = $customer->name;
+                    $customerEmail = $customer->email;
+                    $customerAddress = $customer->address;
+                    $customerPhone = $customer->phone;
                 }
 
-                $productList[] = [
-                    "id" => $product->id,
-                    "name" => $product->name,
-                    "description" => $product->description,
-                    "active" => $product->active,
-                    "created" => $product->created,
-                    "updated" => $product->updated,
-                    "statement_descriptor" => $product->statement_descriptor,
-                    "prices" => $pricesList, // Adiciona os preços ao produto
+                // Verifica se há um payment method associado ao PaymentIntent
+                if ($paymentIntent->payment_method) {
+                    // Faz uma chamada à API para buscar o PaymentMethod
+                    $paymentMethod = PaymentMethod::retrieve(
+                        $paymentIntent->payment_method
+                    );
+
+                    // Define as variáveis do cartão
+                    if ($paymentMethod->type == "card") {
+                        $cardBrand = $paymentMethod->card->brand;
+                        $cardLast4 = $paymentMethod->card->last4;
+                        $expMonth = $paymentMethod->card->exp_month;
+                        $expYear = $paymentMethod->card->exp_year;
+                    }
+                }
+
+                $paymentList[] = [
+                    "id" => $paymentIntent->id,
+                    "amount" => $paymentIntent->amount,
+                    "currency" => $paymentIntent->currency,
+                    "status" => $paymentIntent->status,
+                    "created" => $paymentIntent->created,
+                    "customer_name" => $customerName,
+                    "customer_email" => $customerEmail,
+                    "customer_address" => $customerAddress,
+                    "customer_phone" => $customerPhone,
+                    "description" => $paymentIntent->description,
+                    "payment_method" => $paymentIntent->payment_method,
+                    "card_brand" => $cardBrand,
+                    "card_last4" => $cardLast4,
+                    "card_exp_month" => $expMonth,
+                    "card_exp_year" => $expYear,
+                    "receipt_email" => $paymentIntent->receipt_email,
+                    "metadata" => $paymentIntent->metadata,
+                    "application_fee_amount" =>
+                        $paymentIntent->application_fee_amount,
+                    "capture_method" => $paymentIntent->capture_method,
                 ];
             }
-            dd($productList);
 
-            return response()->json([
-                "success" => true,
-                "message" => "Stripe integration is working.",
-                "data" => $productList,
+            return Inertia::render("Central/Billing/BillingCentral", [
+                "paymentList" => $paymentList,
             ]);
         } catch (\Exception $e) {
             return response()->json(
                 [
                     "success" => false,
-                    "message" => "Stripe integration failed.",
+                    "message" => "Failed to retrieve payments.",
+                    "error" => $e->getMessage(),
+                ],
+                500
+            );
+        }
+    }
+
+    public function details($paymentsId)
+    {
+        try {
+            // Configure a chave secreta do Stripe
+            Stripe::setApiKey(
+                "sk_test_51LRjEpGQW0U1PfqxjAwrWJaaaML9e8xOtowprEoQOF8j2z2Nvn9a5P8KkvDpgVzmeBpCdczITYNhvI1DMYs18qRb00e3YMKUXY"
+            );
+
+            // Faz uma chamada à API para buscar o PaymentIntent com o ID fornecido
+            $paymentIntent = PaymentIntent::retrieve($paymentsId);
+
+            // Verifica se encontrou o PaymentIntent
+            if ($paymentIntent) {
+                // Inicializa variáveis para armazenar dados do cliente
+                $customerName = null;
+                $customerEmail = null;
+                $customerAddress = null;
+                $customerPhone = null;
+
+                // Inicializa variáveis para armazenar dados do método de pagamento
+                $cardBrand = null;
+                $cardLast4 = null;
+                $expMonth = null;
+                $expYear = null;
+
+                // Verifica se há um customer associado ao PaymentIntent
+                if ($paymentIntent->customer) {
+                    // Faz uma chamada à API para buscar o Customer
+                    $customer = Customer::retrieve($paymentIntent->customer);
+
+                    // Define as variáveis de nome, email, endereço e telefone do cliente
+                    $customerName = $customer->name;
+                    $customerEmail = $customer->email;
+                    $customerAddress = $customer->address;
+                    $customerPhone = $customer->phone;
+                }
+
+                // Verifica se há um payment method associado ao PaymentIntent
+                if ($paymentIntent->payment_method) {
+                    // Faz uma chamada à API para buscar o PaymentMethod
+                    $paymentMethod = PaymentMethod::retrieve(
+                        $paymentIntent->payment_method
+                    );
+
+                    // Define as variáveis do cartão
+                    if ($paymentMethod->type == "card") {
+                        $cardBrand = $paymentMethod->card->brand;
+                        $cardLast4 = $paymentMethod->card->last4;
+                        $expMonth = $paymentMethod->card->exp_month;
+                        $expYear = $paymentMethod->card->exp_year;
+                    }
+                }
+
+                $paymentDetails = [
+                    "id" => $paymentIntent->id,
+                    "amount" => $paymentIntent->amount,
+                    "currency" => $paymentIntent->currency,
+                    "status" => $paymentIntent->status,
+                    "created" => $paymentIntent->created,
+                    "customer_name" => $customerName,
+                    "customer_email" => $customerEmail,
+                    "customer_address" => $customerAddress,
+                    "customer_phone" => $customerPhone,
+                    "description" => $paymentIntent->description,
+                    "payment_method" => $paymentIntent->payment_method,
+                    "card_brand" => $cardBrand,
+                    "card_last4" => $cardLast4,
+                    "card_exp_month" => $expMonth,
+                    "card_exp_year" => $expYear,
+                    "receipt_email" => $paymentIntent->receipt_email,
+                    "metadata" => $paymentIntent->metadata,
+                    "application_fee_amount" =>
+                        $paymentIntent->application_fee_amount,
+                    "capture_method" => $paymentIntent->capture_method,
+                ];
+
+                return Inertia::render("Central/Billing/BillingViewDetails", [
+                    "paymentDetails" => $paymentDetails,
+                ]);
+            } else {
+                return response()->json(
+                    [
+                        "success" => false,
+                        "message" => "Payment not found.",
+                    ],
+                    404
+                );
+            }
+        } catch (\Exception $e) {
+            return response()->json(
+                [
+                    "success" => false,
+                    "message" => "Failed to retrieve payment details.",
                     "error" => $e->getMessage(),
                 ],
                 500

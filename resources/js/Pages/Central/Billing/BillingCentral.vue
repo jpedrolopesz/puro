@@ -68,6 +68,15 @@ import { columns } from "./Components/columns";
 const handleStripeCallback = () => {
     window.location.href = "/billing-central/connect-stripe";
 };
+
+const props = defineProps({
+    paymentList: {
+        type: Object, // Defina o tipo correto do objeto product
+        required: true, // Indica que product é obrigatório
+    },
+});
+
+console.log(props.paymentList);
 </script>
 
 <template>

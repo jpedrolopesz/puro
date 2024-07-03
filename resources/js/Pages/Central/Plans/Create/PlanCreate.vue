@@ -102,9 +102,19 @@ function formatDate(timestamp) {
                     >
                         {{ product.name }}
                     </h1>
-                    <Badge variant="outline" class="ml-auto sm:ml-0">
+                    <Badge
+                        :variant="product.active ? 'outline' : ''"
+                        :class="[
+                            'ml-auto hover:non',
+                            'sm:ml-0',
+                            product.active
+                                ? 'text-white bg-gray-800/80'
+                                : 'text-gray-800/80 bg-gray-400/40',
+                        ]"
+                    >
                         {{ product.active ? "Active" : "Inactive" }}
                     </Badge>
+
                     <div class="hidden items-center gap-2 md:ml-auto md:flex">
                         <Button variant="outline" size="sm"> Discard </Button>
                         <Button size="sm"> Save Product </Button>
@@ -161,26 +171,14 @@ function formatDate(timestamp) {
                                     <Table>
                                         <TableHeader>
                                             <TableRow>
-                                                <TableHead
-                                                    class="hidden sm:table-cell"
-                                                >
-                                                    Price
-                                                </TableHead>
-                                                <TableHead
-                                                    class="hidden sm:table-cell"
-                                                >
+                                                <TableHead> Price </TableHead>
+                                                <TableHead>
                                                     Recurrency
                                                 </TableHead>
-                                                <TableHead
-                                                    class="hidden md:table-cell"
-                                                >
+                                                <TableHead>
                                                     Assinantes
                                                 </TableHead>
-                                                <TableHead
-                                                    class="hidden md:table-cell"
-                                                >
-                                                    Date
-                                                </TableHead>
+                                                <TableHead> Date </TableHead>
                                             </TableRow>
                                         </TableHeader>
                                         <TableBody>
@@ -188,18 +186,12 @@ function formatDate(timestamp) {
                                                 v-for="price in product.prices"
                                                 :key="price.id"
                                             >
-                                                <TableCell
-                                                    class="hidden sm:table-cell"
-                                                >
+                                                <TableCell>
                                                     {{
-                                                        (price.unit_amount /
-                                                            100,
-                                                        price.currency)
+                                                        price.unit_amount / 100
                                                     }}
                                                 </TableCell>
-                                                <TableCell
-                                                    class="hidden sm:table-cell"
-                                                >
+                                                <TableCell>
                                                     <span
                                                         v-if="price.recurring"
                                                     >
@@ -214,15 +206,11 @@ function formatDate(timestamp) {
                                                         }}
                                                     </span>
                                                 </TableCell>
-                                                <TableCell
-                                                    class="hidden sm:table-cell"
-                                                >
+                                                <TableCell>
                                                     Assinantes
                                                     {{ price.active }}
                                                 </TableCell>
-                                                <TableCell
-                                                    class="hidden md:table-cell"
-                                                >
+                                                <TableCell>
                                                     {{
                                                         formatDate(
                                                             price.created,
@@ -290,29 +278,13 @@ function formatDate(timestamp) {
                             </CardHeader>
                             <CardContent>
                                 <div class="grid gap-2">
-                                    <img
-                                        alt="Plan image"
-                                        class="aspect-square w-full rounded-md object-cover"
-                                        height="300"
-                                        src="/placeholder.svg"
-                                        width="300"
-                                    />
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <button>
-                                            <img
-                                                alt="Plan image"
-                                                class="aspect-square w-full rounded-md object-cover"
-                                                height="84"
-                                                src="/placeholder.svg"
-                                                width="84"
-                                            />
-                                        </button>
+                                    <div class="grid grid-cols-2 gap-2">
                                         <button>
                                             <img
                                                 alt="Product image"
                                                 class="aspect-square w-full rounded-md object-cover"
                                                 height="84"
-                                                src="/placeholder.svg"
+                                                src="/images/placeholder.svg"
                                                 width="84"
                                             />
                                         </button>

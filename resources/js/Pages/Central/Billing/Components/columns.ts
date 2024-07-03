@@ -71,9 +71,21 @@ export const columns: ColumnDef<Order>[] = [
   },
 
   {
-    accessorKey: "type",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Type" }),
-    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("type")),
+    accessorKey: "amount",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "amount" }),
+    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("amount")),
+    enableSorting: false,
+    enableHiding: false,
+  },
+  {
+    accessorKey: "Description",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Description" }),
+    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("description")),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue("description"));
+    },
     enableSorting: false,
     enableHiding: false,
   },
