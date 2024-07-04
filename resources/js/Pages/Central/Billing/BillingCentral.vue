@@ -75,6 +75,7 @@ const props = defineProps({
         required: true, // Indica que product é obrigatório
     },
 });
+//asada
 
 console.log(props.paymentList);
 </script>
