@@ -72,7 +72,7 @@ const handleStripeCallback = () => {
 const props = defineProps({
     paymentList: {
         type: Object, // Defina o tipo correto do objeto product
-        required: true, // Indica que product é obrigatório
+        required: true, // Indica que product é obrigatór
     },
 });
 //asada
