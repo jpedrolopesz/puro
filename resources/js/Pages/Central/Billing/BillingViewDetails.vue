@@ -13,10 +13,14 @@ import {
     ShoppingCart,
     Upload,
     Users2,
+    CreditCard,
+    Clipboard,
 } from "lucide-vue-next";
 
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
+import { Separator } from "@/Components/ui/separator";
+
 import {
     Card,
     CardContent,
@@ -91,8 +95,8 @@ console.log(props.paymentDetails);
                         In stock
                     </Badge>
                     <div class="hidden items-center gap-2 md:ml-auto md:flex">
-                        <Button variant="outline" size="sm"> Discard </Button>
-                        <Button size="sm"> Save Product </Button>
+                        {{ paymentDetails.id }}
+                        <Clipboard class="h-4 w-4" />
                     </div>
                 </div>
                 <div
@@ -103,77 +107,128 @@ console.log(props.paymentDetails);
                     >
                         <Card>
                             <CardHeader>
-                                <CardTitle>Product Details</CardTitle>
-                                <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
-                                </CardDescription>
+                                <CardTitle>Payment Details</CardTitle>
                             </CardHeader>
-                            <CardContent> </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Stock</CardTitle>
-                                <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
-                                </CardDescription>
-                                <CardContent> </CardContent>
-                            </CardHeader>
+                            <CardContent>
+                                <div>
+                                    <Separator class="my-2" />
+                                    <ul class="grid gap-3">
+                                        <li
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span class="text-muted-foreground"
+                                                >Subtotal</span
+                                            >
+                                            <span>$299.00</span>
+                                        </li>
+                                        <li
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span class="text-muted-foreground"
+                                                >Shipping</span
+                                            >
+                                            <span>$5.00</span>
+                                        </li>
+                                        <li
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span class="text-muted-foreground"
+                                                >Tax</span
+                                            >
+                                            <span>$25.00</span>
+                                        </li>
+                                        <li
+                                            class="flex items-center justify-between font-semibold"
+                                        >
+                                            <span class="text-muted-foreground"
+                                                >Total</span
+                                            >
+                                            <span>$329.00</span>
+                                        </li>
+                                    </ul>
+                                </div>
+
+                                <Separator class="my-2" />
+                                <div class="grid gap-3 my-4">
+                                    <div class="font-semibold">
+                                        Customer Information
+                                    </div>
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt class="text-muted-foreground">
+                                                Customer
+                                            </dt>
+                                            <dd>Liam Johnson</dd>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt class="text-muted-foreground">
+                                                Email
+                                            </dt>
+                                            <dd>
+                                                <a href="mailto:"
+                                                    >liam@acme.com</a
+                                                >
+                                            </dd>
+                                        </div>
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt class="text-muted-foreground">
+                                                Phone
+                                            </dt>
+                                            <dd>
+                                                <a href="tel:"
+                                                    >+1 234 567 890</a
+                                                >
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                                <Separator class="my-4" />
+                                <div class="grid gap-3">
+                                    <div class="font-semibold">
+                                        Payment Information
+                                    </div>
+
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                <CreditCard class="h-4 w-4" />
+                                                Visa
+                                            </dt>
+                                            <dd>**** **** **** 4532</dd>
+                                        </div>
+                                    </dl>
+                                </div>
+                            </CardContent>
                         </Card>
                     </div>
                     <div class="grid auto-rows-max items-start gap-4 lg:gap-8">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Product Status</CardTitle>
-                            </CardHeader>
-                            <CardContent> </CardContent>
-                        </Card>
                         <Card class="overflow-hidden">
                             <CardHeader>
-                                <CardTitle>Product imgs</CardTitle>
-                                <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
-                                </CardDescription>
+                                <CardTitle> Shipping Information</CardTitle>
                             </CardHeader>
+
                             <CardContent>
-                                <div class="grid gap-2">
-                                    <img
-                                        alt="Product image"
-                                        class="aspect-square w-full rounded-md object-cover"
-                                        height="300"
-                                        src="/placeholder.svg"
-                                        width="300"
-                                    />
-                                    <div class="grid grid-cols-3 gap-2">
-                                        <button>
-                                            <img
-                                                alt="Product image"
-                                                class="aspect-square w-full rounded-md object-cover"
-                                                height="84"
-                                                src="/placeholder.svg"
-                                                width="84"
-                                            />
-                                        </button>
-                                        <button>
-                                            <img
-                                                alt="Product image"
-                                                class="aspect-square w-full rounded-md object-cover"
-                                                height="84"
-                                                src="/placeholder.svg"
-                                                width="84"
-                                            />
-                                        </button>
-                                        <button
-                                            class="flex aspect-square w-full items-center justify-center rounded-md border border-dashed"
-                                        >
-                                            <Upload
-                                                class="h-4 w-4 text-muted-foreground"
-                                            />
-                                            <span class="sr-only">Upload</span>
-                                        </button>
-                                    </div>
+                                <Separator class="my-2" />
+
+                                <div class="grid gap-3">
+                                    <div class="font-semibold"></div>
+                                    <address
+                                        class="grid gap-0.5 not-italic text-muted-foreground"
+                                    >
+                                        <span>Liam Johnson</span>
+                                        <span>1234 Main St.</span>
+                                        <span>Anytown, CA 12345</span>
+                                    </address>
                                 </div>
                             </CardContent>
                         </Card>
