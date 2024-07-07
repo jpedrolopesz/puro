@@ -161,6 +161,9 @@ class BillingCentralController extends Controller
                         $expYear = $paymentMethod->card->exp_year;
                     }
                 }
+                $applicationFee = isset($paymentIntent->application_fee_amount)
+                    ? $paymentIntent->application_fee_amount
+                    : 0;
 
                 $paymentDetails = [
                     "id" => $paymentIntent->id,
@@ -180,8 +183,7 @@ class BillingCentralController extends Controller
                     "card_exp_year" => $expYear,
                     "receipt_email" => $paymentIntent->receipt_email,
                     "metadata" => $paymentIntent->metadata,
-                    "application_fee_amount" =>
-                        $paymentIntent->application_fee_amount,
+                    "application_fee_amount" => $applicationFee,
                     "capture_method" => $paymentIntent->capture_method,
                 ];
 

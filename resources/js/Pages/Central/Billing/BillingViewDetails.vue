@@ -72,6 +72,11 @@ const props = defineProps({
     },
 });
 
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
+    return date.toLocaleDateString(); // Adjust the format as needed
+}
+
 console.log(props.paymentDetails);
 </script>
 
@@ -90,13 +95,37 @@ console.log(props.paymentDetails);
                         class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
                     >
                         {{ paymentDetails.amount }}
+                        <span class="uppercase"
+                            >{{ paymentDetails.currency }}
+                        </span>
                     </h1>
-                    <Badge variant="outline" class="ml-auto sm:ml-0">
-                        In stock
+                    <Badge
+                        :class="[
+                            'variant-outline',
+                            'ml-auto sm:ml-0 capitalize',
+                            paymentDetails.status
+                                ? 'bg-gray-800/80'
+                                : 'bg-gray-400/40 text-black',
+                        ]"
+                    >
+                        {{ paymentDetails.status }}
                     </Badge>
+
                     <div class="hidden items-center gap-2 md:ml-auto md:flex">
-                        {{ paymentDetails.id }}
-                        <Clipboard class="h-4 w-4" />
+                        <span class="text-muted-foreground text-sm">{{
+                            paymentDetails.id
+                        }}</span>
+
+                        <Clipboard class="h-3.5 w-3.5 text-muted-foreground" />
+
+                        <UseClipboard
+                            v-slot="{ copy, copied }"
+                            source="copy me"
+                        >
+                            <button @click="copy()">
+                                {{ copied ? "Copied" : "Copy" }}
+                            </button>
+                        </UseClipboard>
                     </div>
                 </div>
                 <div
@@ -119,15 +148,9 @@ console.log(props.paymentDetails);
                                             <span class="text-muted-foreground"
                                                 >Subtotal</span
                                             >
-                                            <span>$299.00</span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Shipping</span
-                                            >
-                                            <span>$5.00</span>
+                                            <span>{{
+                                                paymentDetails.amount
+                                            }}</span>
                                         </li>
                                         <li
                                             class="flex items-center justify-between"
@@ -135,7 +158,20 @@ console.log(props.paymentDetails);
                                             <span class="text-muted-foreground"
                                                 >Tax</span
                                             >
-                                            <span>$25.00</span>
+                                            <span>{{
+                                                paymentDetails.application_fee_amount
+                                            }}</span>
+                                        </li>
+
+                                        <li
+                                            class="flex items-center justify-between"
+                                        >
+                                            <span class="text-muted-foreground"
+                                                >Description</span
+                                            >
+                                            <span>{{
+                                                paymentDetails.description
+                                            }}</span>
                                         </li>
                                         <li
                                             class="flex items-center justify-between font-semibold"
@@ -160,7 +196,11 @@ console.log(props.paymentDetails);
                                             <dt class="text-muted-foreground">
                                                 Customer
                                             </dt>
-                                            <dd>Liam Johnson</dd>
+                                            <dd>
+                                                {{
+                                                    paymentDetails.customer_name
+                                                }}
+                                            </dd>
                                         </div>
                                         <div
                                             class="flex items-center justify-between"
@@ -169,8 +209,15 @@ console.log(props.paymentDetails);
                                                 Email
                                             </dt>
                                             <dd>
-                                                <a href="mailto:"
-                                                    >liam@acme.com</a
+                                                <a
+                                                    :href="
+                                                        'mailto:' +
+                                                        paymentDetails.customer_email
+                                                    "
+                                                >
+                                                    {{
+                                                        paymentDetails.customer_email
+                                                    }}</a
                                                 >
                                             </dd>
                                         </div>
@@ -181,9 +228,15 @@ console.log(props.paymentDetails);
                                                 Phone
                                             </dt>
                                             <dd>
-                                                <a href="tel:"
-                                                    >+1 234 567 890</a
+                                                <a
+                                                    href="tel:{{ paymentDetails.customer_phone ? paymentDetails.customer_phone : 'Uninformed' }}"
                                                 >
+                                                    {{
+                                                        paymentDetails.customer_phone
+                                                            ? paymentDetails.customer_phone
+                                                            : "Uninformed"
+                                                    }}
+                                                </a>
                                             </dd>
                                         </div>
                                     </dl>
@@ -201,10 +254,83 @@ console.log(props.paymentDetails);
                                             <dt
                                                 class="flex items-center gap-1 text-muted-foreground"
                                             >
-                                                <CreditCard class="h-4 w-4" />
-                                                Visa
+                                                Id
                                             </dt>
-                                            <dd>**** **** **** 4532</dd>
+                                            <dd>
+                                                {{
+                                                    paymentDetails.payment_method
+                                                }}
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                Description
+                                            </dt>
+                                            <dd>
+                                                {{ paymentDetails.description }}
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                Card Expiration
+                                            </dt>
+                                            <dd>
+                                                {{
+                                                    paymentDetails.card_exp_month
+                                                }}/
+                                                {{
+                                                    paymentDetails.card_exp_year
+                                                }}
+                                            </dd>
+                                        </div>
+                                    </dl>
+
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                <CreditCard class="h-4 w-4" />
+                                                {{ paymentDetails.card_brand }}
+                                            </dt>
+                                            <dd>
+                                                **** **** ****
+                                                {{ paymentDetails.card_last4 }}
+                                            </dd>
+                                        </div>
+                                    </dl>
+                                    <dl class="grid gap-3">
+                                        <div
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                Created
+                                            </dt>
+                                            <dd>
+                                                {{
+                                                    formatDate(
+                                                        paymentDetails.created,
+                                                    )
+                                                }}
+                                            </dd>
                                         </div>
                                     </dl>
                                 </div>
