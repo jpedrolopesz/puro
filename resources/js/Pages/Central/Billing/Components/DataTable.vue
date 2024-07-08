@@ -16,7 +16,7 @@ import {
     useVueTable,
 } from "@tanstack/vue-table";
 
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import type { Order } from "../data/schema";
 import DataTablePagination from "./DataTablePagination.vue";
 import DataTableToolbar from "./DataTableToolbar.vue";
@@ -41,6 +41,8 @@ const sorting = ref<SortingState>([]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
 const rowSelection = ref({});
+
+const isLoading = ref(true);
 
 const table = useVueTable({
     get data() {
@@ -79,11 +81,23 @@ const table = useVueTable({
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
 });
+
+const fetchData = async () => {
+    // Simula uma chamada de API
+    setTimeout(() => {
+        isLoading.value = false;
+    }, 2000); // Simula um atraso de 2 segundos
+};
+
+onMounted(() => {
+    fetchData();
+});
 </script>
 
 <template>
     <div class="space-y-4">
         <DataTableToolbar :table="table" />
+
         <div class="rounded-md border">
             <Table>
                 <TableHeader>
@@ -103,8 +117,21 @@ const table = useVueTable({
                         </TableHead>
                     </TableRow>
                 </TableHeader>
+
                 <TableBody>
-                    <template v-if="table.getRowModel().rows?.length">
+                    <template v-if="isLoading">
+                        <!-- Skeleton de carregamento -->
+                        <TableRow v-for="n in 5" :key="n">
+                            <TableCell
+                                v-for="m in props.columns.length"
+                                :key="m"
+                            >
+                                <div class="h-4 bg-gray-300 rounded"></div>
+                            </TableCell>
+                        </TableRow>
+                    </template>
+
+                    <template v-else-if="table.getRowModel().rows?.length">
                         <TableRow
                             v-for="row in table.getRowModel().rows"
                             :key="row.id"
@@ -122,14 +149,16 @@ const table = useVueTable({
                         </TableRow>
                     </template>
 
-                    <TableRow v-else>
-                        <TableCell
-                            :colspan="columns.length"
-                            class="h-24 text-center"
-                        >
-                            No results.
-                        </TableCell>
-                    </TableRow>
+                    <template v-else>
+                        <TableRow>
+                            <TableCell
+                                :colspan="props.columns.length"
+                                class="h-24 text-center"
+                            >
+                                No results.
+                            </TableCell>
+                        </TableRow>
+                    </template>
                 </TableBody>
             </Table>
         </div>

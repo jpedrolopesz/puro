@@ -13,7 +13,6 @@ import {
     ShoppingCart,
     Upload,
     Users2,
-    CreditCard,
     Clipboard,
 } from "lucide-vue-next";
 
@@ -111,21 +110,10 @@ console.log(props.paymentDetails);
                         {{ paymentDetails.status }}
                     </Badge>
 
-                    <div class="hidden items-center gap-2 md:ml-auto md:flex">
+                    <div class="hidden items-center md:ml-auto md:flex">
                         <span class="text-muted-foreground text-sm">{{
                             paymentDetails.id
                         }}</span>
-
-                        <Clipboard class="h-3.5 w-3.5 text-muted-foreground" />
-
-                        <UseClipboard
-                            v-slot="{ copy, copied }"
-                            source="copy me"
-                        >
-                            <button @click="copy()">
-                                {{ copied ? "Copied" : "Copy" }}
-                            </button>
-                        </UseClipboard>
                     </div>
                 </div>
                 <div

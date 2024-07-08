@@ -1,24 +1,4 @@
 <script setup lang="ts">
-import {
-    CircleUser,
-    Copy,
-    CreditCard,
-    File,
-    Home,
-    LineChart,
-    ListFilter,
-    MoreVertical,
-    Package,
-    Package2,
-    PanelLeft,
-    Search,
-    Settings,
-    ShoppingCart,
-    Truck,
-    Users2,
-} from "lucide-vue-next";
-
-import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import {
     Card,
@@ -28,35 +8,7 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import { Input } from "@/Components/ui/input";
-
 import { Progress } from "@/Components/ui/progress";
-import { Separator } from "@/Components/ui/separator";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/Components/ui/tooltip";
-import { Checkbox } from "@/Components/ui/checkbox";
-
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 
 import { defineProps } from "vue";
@@ -65,19 +17,12 @@ import DataTable from "./Components/DataTable.vue";
 import OrderNav from "./Components/OrderNav.vue";
 import { columns } from "./Components/columns";
 
-const handleStripeCallback = () => {
-    window.location.href = "/billing-central/connect-stripe";
-};
-
 const props = defineProps({
-    paymentList: {
+    paymentLists: {
         type: Object, // Defina o tipo correto do objeto product
         required: true, // Indica que product é obrigatór
     },
 });
-//asada
-
-console.log(props.paymentList);
 </script>
 
 <template>
@@ -105,9 +50,7 @@ console.log(props.paymentList);
                                     </CardDescription>
                                 </CardHeader>
                                 <CardFooter>
-                                    <Button @click="handleStripeCallback"
-                                        >Connect Stripe</Button
-                                    >
+                                    <Button>Connect Stripe</Button>
                                 </CardFooter>
                             </Card>
                             <Card>
@@ -171,7 +114,10 @@ console.log(props.paymentList);
                                 </div>
                             </div>
 
-                            <DataTable :data="orders" :columns="columns" />
+                            <DataTable
+                                :data="paymentLists"
+                                :columns="columns"
+                            />
                         </div>
                     </div>
                 </main>

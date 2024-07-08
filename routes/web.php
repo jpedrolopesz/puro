@@ -45,6 +45,7 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/billing", [BillingCentralController::class, "index"])->name(
         "billing.index"
     );
+
     Route::get("/billing/payments/{paymentsId}", [
         BillingCentralController::class,
         "details",
