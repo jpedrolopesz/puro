@@ -28,25 +28,20 @@ export const subscriptionLevels = [
 
 export const subscriptionStatuses = [
   {
-    value: "pending",
-    paymentStatus: "Pending",
+    value: "succeeded",
+    status: "Succeeded",
     icon: h(QuestionMarkCircledIcon),
   },
   {
     value: "paid",
-    paymentStatus: "Paid",
+    status: "Paid",
     icon: h(QuestionMarkCircledIcon),
   },
 
   {
     value: "late",
-    paymentStatus: "Late",
+    status: "Late",
     icon: h(CheckCircledIcon),
-  },
-  {
-    value: "canceled",
-    paymentStatus: "Canceled",
-    icon: h(CrossCircledIcon),
   },
 ];
 

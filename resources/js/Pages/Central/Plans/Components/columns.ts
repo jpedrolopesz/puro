@@ -48,7 +48,7 @@ export const columns: ColumnDef<Order>[] = [
     accessorKey: "id",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Product Id" }),
-    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("id")),
+    cell: ({ row }) => h("div", { class: "w-24 truncate" }, row.getValue("id")),
     enableSorting: false,
     enableHiding: false,
   },
@@ -68,7 +68,7 @@ export const columns: ColumnDef<Order>[] = [
       h(DataTableColumnHeader, { column, title: "Prices" }),
     cell: ({ row }) => {
       const prices = row.getValue("prices");
-      return h("div", { class: "w-20" }, prices.length.toString());
+      return h("div", { class: "w-8" }, prices.length.toString());
     },
   },
 

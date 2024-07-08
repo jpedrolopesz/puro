@@ -23,6 +23,8 @@ const props = defineProps({
         required: true, // Indica que product é obrigatór
     },
 });
+
+console.log(props.paymentLists);
 </script>
 
 <template>
