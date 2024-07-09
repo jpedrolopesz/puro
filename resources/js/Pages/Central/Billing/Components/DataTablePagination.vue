@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
-import type { Order } from "../data/schema";
+import type { Billing } from "../data/schema";
 import {
     DoubleArrowLeftIcon,
     DoubleArrowRightIcon,
@@ -8,17 +8,17 @@ import {
     ChevronLeftIcon,
 } from "@radix-icons/vue";
 
-import { Button } from "../../../../Components/ui/button";
+import { Button } from "@/Components/ui/button";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../../../../Components/ui/select";
+} from "@/Components/ui/select";
 
 interface DataTablePaginationProps {
-    table: Table<Order>;
+    table: Table<Billing>;
 }
 defineProps<DataTablePaginationProps>();
 </script>

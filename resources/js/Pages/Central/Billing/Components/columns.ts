@@ -1,18 +1,17 @@
-import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
-
+import { Link } from "@inertiajs/vue3";
+import type { ColumnDef } from "@tanstack/vue-table";
 import {
   subscriptionLevels,
   subscriptionStatuses,
   priorities,
 } from "../data/data";
-import type { Order } from "../data/schema";
+import type { Billing } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
 import { Checkbox } from "@/Components/ui/checkbox";
-import { Badge } from "@/Components/ui/badge";
 
-export const columns: ColumnDef<Order>[] = [
+export const columns: ColumnDef<Billing>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -34,11 +33,20 @@ export const columns: ColumnDef<Order>[] = [
     enableSorting: false,
     enableHiding: false,
   },
+
   {
     accessorKey: "id",
     header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Order" }),
-    cell: ({ row }) => h("div", { class: "w-24 truncate" }, row.getValue("id")),
+      h(DataTableColumnHeader, { column, title: "Billing Id" }),
+    cell: ({ row }) =>
+      h(
+        Link,
+        {
+          href: `/billing/payments/${row.getValue("id")}`,
+          class: "w-24 truncate",
+        },
+        () => row.getValue("id"), // Transformado em uma função
+      ),
     enableSorting: false,
     enableHiding: false,
   },
@@ -52,7 +60,6 @@ export const columns: ColumnDef<Order>[] = [
       return value.includes(row.getValue("customer_name"));
     },
   },
-
   {
     accessorKey: "amount",
     header: ({ column }) =>
@@ -71,7 +78,6 @@ export const columns: ColumnDef<Order>[] = [
       return value.includes(row.getValue("description"));
     },
   },
-
   {
     accessorKey: "status",
     header: ({ column }) =>
@@ -94,7 +100,6 @@ export const columns: ColumnDef<Order>[] = [
       return value.includes(row.getValue(id));
     },
   },
-
   {
     id: "actions",
     cell: ({ row }) => h(DataTableRowActions, { row }),

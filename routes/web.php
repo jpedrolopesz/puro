@@ -49,7 +49,7 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/billing/payments/{paymentsId}", [
         BillingCentralController::class,
         "details",
-    ]);
+    ])->name("billing.details");
     Route::get("/billing-central", [BillingCentralController::class, "index"]);
 
     Route::get("/billing-central/connect-stripe", [

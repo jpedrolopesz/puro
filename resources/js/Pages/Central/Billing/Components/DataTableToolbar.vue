@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Order } from "../data/schema";
+import type { Billing } from "../data/schema";
 
 import { priorities, subscriptionStatuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
@@ -11,7 +11,7 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Order>;
+    table: Table<Billing>;
 }
 
 const props = defineProps<DataTableToolbarProps>();

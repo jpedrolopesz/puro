@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head, Link } from "@inertiajs/vue3";
 import {
     ChevronLeft,
     CircleUser,
@@ -80,16 +81,20 @@ console.log(props.paymentDetails);
 </script>
 
 <template>
+    <Head title="Billing Details" />
+
     <AuthenticatedCentralLayout>
         <main
             class="grid flex-1 items-start gap-4 p-4 sm:px-1 sm:py-0 md:gap-8"
         >
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <div class="flex items-center gap-4">
-                    <Button variant="outline" size="icon" class="h-7 w-7">
-                        <ChevronLeft class="h-4 w-4" />
-                        <span class="sr-only">Back</span>
-                    </Button>
+                    <Link :href="route('billing.index')">
+                        <Button variant="outline" size="icon" class="h-7 w-7">
+                            <ChevronLeft class="h-4 w-4" />
+                            <span class="sr-only">Back</span>
+                        </Button>
+                    </Link>
                     <h1
                         class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
                     >
@@ -151,16 +156,6 @@ console.log(props.paymentDetails);
                                             }}</span>
                                         </li>
 
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Description</span
-                                            >
-                                            <span>{{
-                                                paymentDetails.description
-                                            }}</span>
-                                        </li>
                                         <li
                                             class="flex items-center justify-between font-semibold"
                                         >
@@ -230,7 +225,10 @@ console.log(props.paymentDetails);
                                     </dl>
                                 </div>
                                 <Separator class="my-4" />
-                                <div class="grid gap-3">
+                                <div
+                                    class="grid gap-3"
+                                    v-if="paymentDetails.status !== 'canceled'"
+                                >
                                     <div class="font-semibold">
                                         Payment Information
                                     </div>
@@ -262,7 +260,11 @@ console.log(props.paymentDetails);
                                                 Description
                                             </dt>
                                             <dd>
-                                                {{ paymentDetails.description }}
+                                                {{
+                                                    paymentDetails.description
+                                                        ? paymentDetails.description
+                                                        : "Uninformed"
+                                                }}
                                             </dd>
                                         </div>
                                     </dl>
@@ -339,9 +341,11 @@ console.log(props.paymentDetails);
                                     <address
                                         class="grid gap-0.5 not-italic text-muted-foreground"
                                     >
-                                        <span>Liam Johnson</span>
-                                        <span>1234 Main St.</span>
-                                        <span>Anytown, CA 12345</span>
+                                        {{
+                                            paymentDetails.customer_address
+                                                ? paymentDetails.customer_address
+                                                : "Uninformed"
+                                        }}
                                     </address>
                                 </div>
                             </CardContent>

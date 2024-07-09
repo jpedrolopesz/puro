@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { Head } from "@inertiajs/vue3";
 import { Button } from "@/Components/ui/button";
 import {
     Card,
@@ -28,6 +29,8 @@ console.log(props.paymentLists);
 </script>
 
 <template>
+    <Head title="Billing" />
+
     <AuthenticatedCentralLayout>
         <div class="flex min-h-screen w-full flex-col">
             <div class="flex flex-col sm:gap-4 sm:py-4">
@@ -107,7 +110,7 @@ console.log(props.paymentLists);
                                     <h2
                                         class="text-2xl font-bold tracking-tight"
                                     >
-                                        Orders
+                                        Billings
                                     </h2>
                                     <p class="text-muted-foreground">
                                         Here&apos;s a list of your tasks for

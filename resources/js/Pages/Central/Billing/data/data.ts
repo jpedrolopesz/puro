@@ -1,10 +1,7 @@
 import { h } from "vue";
 
 import {
-  StopwatchIcon,
-  QuestionMarkCircledIcon,
   CrossCircledIcon,
-  CircleIcon,
   CheckCircledIcon,
   ArrowUpIcon,
   ArrowRightIcon,
@@ -30,18 +27,12 @@ export const subscriptionStatuses = [
   {
     value: "succeeded",
     status: "Succeeded",
-    icon: h(QuestionMarkCircledIcon),
-  },
-  {
-    value: "paid",
-    status: "Paid",
-    icon: h(QuestionMarkCircledIcon),
-  },
-
-  {
-    value: "late",
-    status: "Late",
     icon: h(CheckCircledIcon),
+  },
+  {
+    value: "canceled",
+    status: "Canceled",
+    icon: h(CrossCircledIcon),
   },
 ];
 

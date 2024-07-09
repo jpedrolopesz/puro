@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import { Link } from "@inertiajs/vue3";
+
 import type {
     ColumnDef,
     ColumnFiltersState,
@@ -42,8 +44,6 @@ const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
 const rowSelection = ref({});
 
-const isLoading = ref(true);
-
 const table = useVueTable({
     get data() {
         return props.data;
@@ -82,11 +82,11 @@ const table = useVueTable({
     getFacetedUniqueValues: getFacetedUniqueValues(),
 });
 
+const isLoading = ref(true);
 const fetchData = async () => {
-    // Simula uma chamada de API
     setTimeout(() => {
         isLoading.value = false;
-    }, 2000); // Simula um atraso de 2 segundos
+    }, 2000);
 };
 
 onMounted(() => {
