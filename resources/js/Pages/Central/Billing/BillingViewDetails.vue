@@ -1,26 +1,10 @@
 <script setup lang="ts">
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head, Link } from "@inertiajs/vue3";
-import {
-    ChevronLeft,
-    CircleUser,
-    Home,
-    LineChart,
-    Package,
-    Package2,
-    PanelLeft,
-    PlusCircle,
-    Search,
-    Settings,
-    ShoppingCart,
-    Upload,
-    Users2,
-    Clipboard,
-} from "lucide-vue-next";
-
+import { ChevronLeft, CreditCard } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Separator } from "@/Components/ui/separator";
-
 import {
     Card,
     CardContent,
@@ -28,56 +12,19 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-
-import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
-
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/Components/ui/tooltip";
-
-import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-
 import { defineProps } from "vue";
+
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString();
+}
 
 const props = defineProps({
     paymentDetails: {
-        type: Object, // Defina o tipo correto do objeto product
-        required: true, // Indica que product é obrigatório
+        type: Object,
+        required: true,
     },
 });
-
-function formatDate(timestamp) {
-    const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
-    return date.toLocaleDateString(); // Adjust the format as needed
-}
-
-console.log(props.paymentDetails);
 </script>
 
 <template>

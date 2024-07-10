@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
 
-import { orderSchema } from "../data/schema";
-import type { Order } from "../data/schema";
+import { planSchema } from "../data/schema";
+import type { Plan } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { Button } from "@/Components/ui/button";
@@ -19,14 +20,15 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
-} from "../../../../Components/ui/dropdown-menu";
+    DropdownMenuLabel,
+} from "@/Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
-    row: Row<Order>;
+    row: Row<Plan>;
 }
 const props = defineProps<DataTableRowActionsProps>();
 
-const task = computed(() => taskSchema.parse(props.row.original));
+const planSchema = computed(() => planSchema.parse(props.row.original));
 </script>
 
 <template>
@@ -40,16 +42,19 @@ const task = computed(() => taskSchema.parse(props.row.original));
                 <span class="sr-only">Open menu</span>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-[160px]">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
-
+        <DropdownMenuContent align="end" class="w-[180px]">
+            <DropdownMenuLabel>Connections</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-                Delete
-                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <DropdownMenuItem
+                ><Link
+                    :href="
+                        route('plan.edit', {
+                            planId: props.row.original.id,
+                        })
+                    "
+                    >Edit plan</Link
+                ></DropdownMenuItem
+            >
         </DropdownMenuContent>
     </DropdownMenu>
 </template>

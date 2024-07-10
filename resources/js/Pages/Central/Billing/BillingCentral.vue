@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head } from "@inertiajs/vue3";
 import { Button } from "@/Components/ui/button";
+import { Progress } from "@/Components/ui/progress";
+import DataTable from "./Components/DataTable.vue";
+import OrderNav from "./Components/OrderNav.vue";
 import {
     Card,
     CardContent,
@@ -9,23 +13,15 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import { Progress } from "@/Components/ui/progress";
-import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-
-import { defineProps } from "vue";
-import orders from "./data/orders.json";
-import DataTable from "./Components/DataTable.vue";
-import OrderNav from "./Components/OrderNav.vue";
 import { columns } from "./Components/columns";
+import { defineProps } from "vue";
 
 const props = defineProps({
     paymentLists: {
-        type: Object, // Defina o tipo correto do objeto product
-        required: true, // Indica que product é obrigatór
+        type: Object,
+        required: true,
     },
 });
-
-console.log(props.paymentLists);
 </script>
 
 <template>

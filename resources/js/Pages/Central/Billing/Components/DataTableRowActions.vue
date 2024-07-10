@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
 
 import { billingSchema } from "../data/schema";
 import type { Billing } from "../data/schema";
@@ -19,6 +20,7 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
+    DropdownMenuLabel,
 } from "@/Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
@@ -40,8 +42,19 @@ const billingSchema = computed(() => billingSchema.parse(props.row.original));
                 <span class="sr-only">Open menu</span>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-[160px]">
-            <DropdownMenuItem>Ver Recibo</DropdownMenuItem>
+        <DropdownMenuContent align="end" class="w-[180px]">
+            <DropdownMenuLabel>Connections</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            <DropdownMenuItem
+                ><Link
+                    :href="
+                        route('billing.details', {
+                            paymentsId: props.row.original.id,
+                        })
+                    "
+                    >View payment details</Link
+                ></DropdownMenuItem
+            >
         </DropdownMenuContent>
     </DropdownMenu>
 </template>

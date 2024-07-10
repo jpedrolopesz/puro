@@ -19,7 +19,7 @@ class StripeGetAllAction
             "sk_test_51LRjEpGQW0U1PfqxjAwrWJaaaML9e8xOtowprEoQOF8j2z2Nvn9a5P8KkvDpgVzmeBpCdczITYNhvI1DMYs18qRb00e3YMKUXY"
         );
         // Faz uma chamada à API para buscar todos os PaymentIntents
-        $paymentIntents = PaymentIntent::all(["limit" => 1]);
+        $paymentIntents = PaymentIntent::all(["limit" => 2]);
 
         // Monta um array com as propriedades desejadas de cada pagamento
         $paymentList = [];

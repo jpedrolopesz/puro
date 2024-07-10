@@ -1,22 +1,12 @@
 <script setup lang="ts">
-import {
-    ChevronLeft,
-    CircleUser,
-    Home,
-    LineChart,
-    Package,
-    Package2,
-    PanelLeft,
-    PlusCircle,
-    Search,
-    Settings,
-    ShoppingCart,
-    Upload,
-    Users2,
-} from "lucide-vue-next";
-
+import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
+import { ChevronLeft, PlusCircle, Upload } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+import { Textarea } from "@/Components/ui/textarea";
+import { Label } from "@/Components/ui/label";
+import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
 import {
     Card,
     CardContent,
@@ -25,27 +15,6 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
-import { Input } from "@/Components/ui/input";
-import { Textarea } from "@/Components/ui/textarea";
-import { Label } from "@/Components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
-import {
-    Breadcrumb,
-    BreadcrumbItem,
-    BreadcrumbLink,
-    BreadcrumbList,
-    BreadcrumbPage,
-    BreadcrumbSeparator,
-} from "@/Components/ui/breadcrumb";
-import { Sheet, SheetContent, SheetTrigger } from "@/Components/ui/sheet";
 import {
     Table,
     TableBody,
@@ -61,29 +30,20 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/Components/ui/select";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@/Components/ui/tooltip";
 
-import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
-
+import { Link } from "@inertiajs/vue3";
 import { defineProps } from "vue";
 
+function formatDate(timestamp) {
+    const date = new Date(timestamp * 1000);
+    return date.toLocaleDateString();
+}
 const props = defineProps({
     product: {
-        type: Object as () => any, // Defina o tipo correto do objeto product
-        required: true, // Indica que product é obrigatório
+        type: Object as () => any,
+        required: true,
     },
 });
-
-// Função para formatar a data a partir de um timestamp Unix em segundos
-function formatDate(timestamp) {
-    const date = new Date(timestamp * 1000); // Convert Unix timestamp to miliseconds
-    return date.toLocaleDateString(); // Adjust the format as needed
-}
 </script>
 
 <template>
@@ -93,10 +53,12 @@ function formatDate(timestamp) {
         >
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <div class="flex items-center gap-4">
-                    <Button variant="outline" size="icon" class="h-7 w-7">
-                        <ChevronLeft class="h-4 w-4" />
-                        <span class="sr-only">Back</span>
-                    </Button>
+                    <Link :href="route('plans.index')">
+                        <Button variant="outline" size="icon" class="h-7 w-7">
+                            <ChevronLeft class="h-4 w-4" />
+                            <span class="sr-only">Back</span>
+                        </Button>
+                    </Link>
                     <h1
                         class="flex-1 shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
                     >
@@ -159,80 +121,61 @@ function formatDate(timestamp) {
                             </CardContent>
                         </Card>
 
-                        <TabsContent value="week">
-                            <Card>
-                                <CardHeader class="px-7">
-                                    <CardTitle>Plans</CardTitle>
-                                    <CardDescription>
-                                        Recent orders from your store.
-                                    </CardDescription>
-                                </CardHeader>
-                                <CardContent>
-                                    <Table>
-                                        <TableHeader>
-                                            <TableRow>
-                                                <TableHead> Price </TableHead>
-                                                <TableHead>
-                                                    Recurrency
-                                                </TableHead>
-                                                <TableHead>
-                                                    Assinantes
-                                                </TableHead>
-                                                <TableHead> Date </TableHead>
-                                            </TableRow>
-                                        </TableHeader>
-                                        <TableBody>
-                                            <TableRow
-                                                v-for="price in product.prices"
-                                                :key="price.id"
-                                            >
-                                                <TableCell>
+                        <Card>
+                            <CardHeader class="px-7">
+                                <CardTitle>Plans</CardTitle>
+                                <CardDescription>
+                                    Recent orders from your store.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead> Price </TableHead>
+                                            <TableHead> Recurrency </TableHead>
+                                            <TableHead> Assinantes </TableHead>
+                                            <TableHead> Date </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        <TableRow
+                                            v-for="price in product.prices"
+                                            :key="price.id"
+                                        >
+                                            <TableCell>
+                                                {{ price.unit_amount / 100 }}
+                                            </TableCell>
+                                            <TableCell>
+                                                <span v-if="price.recurring">
                                                     {{
-                                                        price.unit_amount / 100
+                                                        price.recurring.interval
                                                     }}
-                                                </TableCell>
-                                                <TableCell>
-                                                    <span
-                                                        v-if="price.recurring"
-                                                    >
-                                                        {{
-                                                            price.recurring
-                                                                .interval
-                                                        }}
-                                                        /
-                                                        {{
-                                                            price.recurring
-                                                                .interval_count
-                                                        }}
-                                                    </span>
-                                                </TableCell>
-                                                <TableCell>
-                                                    Assinantes
-                                                    {{ price.active }}
-                                                </TableCell>
-                                                <TableCell>
+                                                    /
                                                     {{
-                                                        formatDate(
-                                                            price.created,
-                                                        )
+                                                        price.recurring
+                                                            .interval_count
                                                     }}
-                                                </TableCell>
-                                            </TableRow>
-                                        </TableBody>
-                                    </Table>
-                                </CardContent>
-                                <CardFooter class="justify-center border-t p-4">
-                                    <Button
-                                        size="sm"
-                                        variant="ghost"
-                                        class="gap-1"
-                                    >
-                                        <PlusCircle class="h-3.5 w-3.5" />
-                                        Add Variant
-                                    </Button>
-                                </CardFooter>
-                            </Card>
-                        </TabsContent>
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                Assinantes
+                                                {{ price.active }}
+                                            </TableCell>
+                                            <TableCell>
+                                                {{ formatDate(price.created) }}
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
+                            <CardFooter class="justify-center border-t p-4">
+                                <Button size="sm" variant="ghost" class="gap-1">
+                                    <PlusCircle class="h-3.5 w-3.5" />
+                                    Add Variant
+                                </Button>
+                            </CardFooter>
+                        </Card>
                     </div>
                     <div class="grid auto-rows-max items-start gap-4 lg:gap-8">
                         <Card>
