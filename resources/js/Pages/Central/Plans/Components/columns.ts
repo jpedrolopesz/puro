@@ -1,5 +1,6 @@
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
+import { Link } from "@inertiajs/vue3";
 
 import {
   subscriptionStatuses,
@@ -47,8 +48,16 @@ export const columns: ColumnDef<Order>[] = [
   {
     accessorKey: "id",
     header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Product Id" }),
-    cell: ({ row }) => h("div", { class: "w-24 truncate" }, row.getValue("id")),
+      h(DataTableColumnHeader, { column, title: "Plan Id" }),
+    cell: ({ row }) =>
+      h(
+        Link,
+        {
+          href: `/plans/${row.getValue("id")}`,
+          class: "w-24 truncate",
+        },
+        () => row.getValue("id"),
+      ),
     enableSorting: false,
     enableHiding: false,
   },

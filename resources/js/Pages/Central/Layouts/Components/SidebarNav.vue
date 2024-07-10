@@ -25,7 +25,9 @@ interface TenantProps {
 }
 
 const props = withDefaults(defineProps<TenantProps>(), {
-    defaultLayout: () => [265, 440, 655],
+    defaultCollapsed: false,
+
+    defaultLayout: () => [30],
 });
 
 const isCollapsed = ref(false);

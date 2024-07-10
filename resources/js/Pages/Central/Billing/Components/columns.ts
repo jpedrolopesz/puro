@@ -42,7 +42,7 @@ export const columns: ColumnDef<Billing>[] = [
       h(
         Link,
         {
-          href: `/billing/payments/${row.getValue("id")}`,
+          href: `/billing/${row.getValue("id")}`,
           class: "w-24 truncate",
         },
         () => row.getValue("id"), // Transformado em uma função

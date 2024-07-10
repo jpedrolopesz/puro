@@ -1,35 +1,16 @@
 [
   {
-    "id": "TASK-8782",
-    "title": "You can't compress the program without quantifying the open-source SSD pixel!",
-    "status": "in progress",
-    "subscriptionLevel": "platinum",
-    "paymentStatus": "canceled",
-    "priority": "medium"
-  },
-  {
     "id": 1,
-    "name": "Joao Zamonelo",
-    "subscriptionLevel": "basic",
-    "paymentStatus": "paid",
-
-    "email": "jplopeszamonelo@hotmail.com",
-    "tenancy_db_name": "tenant_9bf91441-7d3a-4a5a-b01f-532f33822cfb"
-  },
-  {
-    "id": 2,
-    "title": "You can't compress the program without quantifying the open-source SSD pixel!",
+    "tenancy_name": "Apple",
     "status": "active",
-    "priority": "medium",
     "paymentStatus": "pending",
     "subscriptionLevel": "basic",
-    "name": "Joao Zamonelo",
-    "email": "jplopeszamonelo@hotmail.com",
     "tenancy_db_name": "tenant_9bf91441-7d3a-4a5a-b01f-532f33822cfb",
+    "tenancy_about": "You can't compress the program without quantifying the open-source SSD pixel!",
     "creator": {
-      "id": 123,
-      "name": "Maria Silva",
-      "email": "maria.silva@example.com"
+      "id": 1,
+      "name": "Joao Zamonelo",
+      "email": "admin@example.com"
     },
     "activity_log": [
       {

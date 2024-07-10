@@ -5,6 +5,7 @@ use App\Http\Controllers\Central\{
     TenantsCentralController,
     DashboardCentralController,
     BillingCentralController,
+    MailCentralController,
     PlansCentralController
 };
 use Illuminate\Foundation\Application;
@@ -61,6 +62,12 @@ Route::middleware("auth:admin")->group(function () {
         BillingCentralController::class,
         "handleStripeCallback",
     ]);
+
+    ######## Mail ########
+
+    Route::get("/mail", [MailCentralController::class, "index"])->name(
+        "mail.index"
+    );
 
     ######## PROFILE ########
 

@@ -35,15 +35,18 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "id",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Task" }),
-    cell: ({ row }) => h("div", { class: "w-20" }, row.getValue("id")),
+    accessorKey: "tenancy_db_name",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Tenant Id" }),
+    cell: ({ row }) =>
+      h("div", { class: "w-24 truncate" }, row.getValue("tenancy_db_name")),
     enableSorting: false,
     enableHiding: false,
   },
   {
-    accessorKey: "name",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Name" }),
+    accessorKey: "tenancy_name",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Tenant Name" }),
 
     cell: ({ row }) => {
       const subscriptionLevel = subscriptionLevels.find(
@@ -62,9 +65,19 @@ export const columns: ColumnDef<Task>[] = [
         h(
           "span",
           { class: "max-w-[500px] truncate font-medium" },
-          row.getValue("name"),
+          row.getValue("tenancy_name"),
         ),
       ]);
+    },
+  },
+  {
+    accessorKey: "creator.name",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Customer" }),
+    cell: ({ row }) =>
+      h("div", { class: "w-20" }, row.getValue("creator.name")),
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue("creator.name"));
     },
   },
   {
