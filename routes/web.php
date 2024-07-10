@@ -31,8 +31,12 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/tenants", [TenantsCentralController::class, "index"])->name(
         "tenants.index"
     );
+    Route::get("/tenants/{tenantID}", [
+        TenantsCentralController::class,
+        "details",
+    ])->name("tenant.details");
 
-    ######## Planes ########
+    ######## Plans ########
 
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
@@ -66,7 +70,7 @@ Route::middleware("auth:admin")->group(function () {
     ######## Mail ########
 
     Route::get("/mail", [MailCentralController::class, "index"])->name(
-        "mail.index"
+        "mails.index"
     );
 
     ######## PROFILE ########

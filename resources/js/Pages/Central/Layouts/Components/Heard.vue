@@ -6,9 +6,7 @@ import Search from "./Search.vue";
 <template>
     <div class="border-b">
         <div class="flex h-14 items-center px-4">
-            LOGO AQUI
             <div class="ml-auto flex items-center space-x-4">
-                <Search />
                 <DropdownMenuHeard />
             </div>
         </div>

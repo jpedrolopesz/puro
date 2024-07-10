@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
+import { Link } from "@inertiajs/vue3";
 
-import { taskSchema } from "../data/schema";
-import type { Task } from "../data/schema";
+import { tenantSchema } from "../data/schema";
+import type { Tenant } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { Button } from "@/Components/ui/button";
@@ -19,14 +20,15 @@ import {
     DropdownMenuSubContent,
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
-} from "../../../../Components/ui/dropdown-menu";
+    DropdownMenuLabel,
+} from "@/Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
-    row: Row<Task>;
+    row: Row<Tenant>;
 }
 const props = defineProps<DataTableRowActionsProps>();
 
-const task = computed(() => taskSchema.parse(props.row.original));
+const tenantSchema = computed(() => tenantSchema.parse(props.row.original));
 </script>
 
 <template>
@@ -40,16 +42,19 @@ const task = computed(() => taskSchema.parse(props.row.original));
                 <span class="sr-only">Open menu</span>
             </Button>
         </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" class="w-[160px]">
-            <DropdownMenuItem>Edit</DropdownMenuItem>
-            <DropdownMenuItem>Make a copy</DropdownMenuItem>
-            <DropdownMenuItem>Favorite</DropdownMenuItem>
-
+        <DropdownMenuContent align="end" class="w-[180px]">
+            <DropdownMenuLabel>Connections</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
-                Delete
-                <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-            </DropdownMenuItem>
+            <DropdownMenuItem
+                ><Link
+                    :href="
+                        route('tenant.details', {
+                            tenantID: props.row.original.id,
+                        })
+                    "
+                    >View payment details</Link
+                ></DropdownMenuItem
+            >
         </DropdownMenuContent>
     </DropdownMenu>
 </template>

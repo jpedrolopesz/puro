@@ -16,4 +16,13 @@ class TenantsCentralController extends Controller
             "tenants" => $tenantsData,
         ]);
     }
+
+    public function details(Tenant $tenantId, $id)
+    {
+        //dd($tenantId->find($id));
+
+        return Inertia::render("Central/Tenants/TenantViewDetails", [
+            "tenantDetails" => $tenantId->find($id),
+        ]);
+    }
 }

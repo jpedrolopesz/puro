@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { ref } from "vue";
 import { cn } from "@/lib/utils";
-import { accounts } from "./accounts";
+
 import NavList, { type LinkProp } from "./NavList.vue";
-import AccountSwitcher from "./AccountSwitcher.vue";
 import { Separator } from "@/Components/ui/separator";
 import { TooltipProvider } from "@/Components/ui/tooltip";
 import {
@@ -13,13 +12,6 @@ import {
 } from "@/Components/ui/resizable";
 
 interface TenantProps {
-    // VOU TER QUE ADICIONAR CONTAS VINCULADA EM UM UNICO PERFIL
-    accounts: {
-        label: string;
-        email: string;
-        icon: string;
-    }[];
-
     defaultLayout?: number[];
     defaultCollapsed?: boolean;
 }
@@ -71,6 +63,14 @@ const links: LinkProp[] = [
         variant: "ghost",
         route: route("plans.index"),
         current: route().current("plans.index"),
+    },
+    {
+        title: "Mails",
+        label: "6",
+        icon: "lucide:message-square",
+        variant: "ghost",
+        route: route("mails.index"),
+        current: route().current("mails.index"),
     },
 ];
 
@@ -144,10 +144,7 @@ const links2: LinkProp[] = [
                         )
                     "
                 >
-                    <AccountSwitcher
-                        :is-collapsed="isCollapsed"
-                        :accounts="accounts"
-                    />
+                    <span :is-collapsed="isCollapsed">Logo aqui</span>
                 </div>
                 <Separator />
                 <NavList :is-collapsed="isCollapsed" :links="links" />

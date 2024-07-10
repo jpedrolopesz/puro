@@ -1,5 +1,6 @@
-import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
+import { Link } from "@inertiajs/vue3";
+import type { ColumnDef } from "@tanstack/vue-table";
 
 import {
   subscriptionLevels,
@@ -35,11 +36,18 @@ export const columns: ColumnDef<Task>[] = [
     enableHiding: false,
   },
   {
-    accessorKey: "tenancy_db_name",
+    accessorKey: "id",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Tenant Id" }),
     cell: ({ row }) =>
-      h("div", { class: "w-24 truncate" }, row.getValue("tenancy_db_name")),
+      h(
+        Link,
+        {
+          href: `/tenants/${row.getValue("id")}`,
+          class: "w-24 truncate",
+        },
+        () => row.getValue("id"), // Transformado em uma função
+      ),
     enableSorting: false,
     enableHiding: false,
   },
