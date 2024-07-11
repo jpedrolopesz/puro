@@ -56,6 +56,6 @@ class User extends Authenticatable
 
     public function tenants()
     {
-        return $this->belongsToMany(Tenant::class);
+        return $this->tenants(Tenant::class, "creator_id");
     }
 }

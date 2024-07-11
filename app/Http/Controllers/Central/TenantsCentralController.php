@@ -13,7 +13,7 @@ class TenantsCentralController extends Controller
         $tenantsData = $request->all();
 
         return Inertia::render("Central/Tenants/TenantsCentral", [
-            "tenants" => $tenantsData,
+            "tenantsLists" => $tenantsData,
         ]);
     }
 

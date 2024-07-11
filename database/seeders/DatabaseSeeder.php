@@ -14,6 +14,7 @@ class DatabaseSeeder extends Seeder
 {
     public function run()
     {
+        // $this->call(TenancySeeder::class);
         $admin = Admin::factory()->create();
 
         DB::table("admin_password_reset_tokens")->insert([

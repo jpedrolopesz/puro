@@ -1,40 +1,20 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 
-import tasks from "./data/tasks.json";
 import DataTable from "./Components/DataTable.vue";
 import TenantNav from "./Components/TenantNav.vue";
 import { columns } from "./Components/columns";
 
 import { PropType, defineProps } from "vue";
 
-interface Tenant {
-    id: number;
-    email: string;
-    created_at: string;
-    updated_at: string;
-    data: string | null;
-    name: string;
-    tenancy_db_name: string;
-}
+const props = defineProps({
+    tenantsLists: {
+        type: Object,
+        required: true,
+    },
+});
 
-interface TenantCollection {
-    items: Tenant[];
-    perPage: number;
-    currentPage: number;
-    path: string;
-    query: any[];
-    fragment: string | null;
-    pageName: string;
-    onEachSide: number;
-    options: Record<string, any>;
-    total: number;
-    lastPage: number;
-}
-
-const props = defineProps<{
-    tenants: TenantCollection;
-}>();
+console.log(props.tenantsLists);
 </script>
 
 <template>
@@ -49,7 +29,7 @@ const props = defineProps<{
                 </div>
             </div>
 
-            <DataTable :data="tasks" :columns="columns" />
+            <DataTable :data="tenantsLists" :columns="columns" />
         </div>
     </AuthenticatedCentralLayout>
 </template>
