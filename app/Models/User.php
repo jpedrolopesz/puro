@@ -7,11 +7,12 @@ use function Illuminate\Events\queueable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Cashier\Billable;
 use Stancl\Tenancy\Database\Concerns\CentralConnection;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, CentralConnection;
+    use HasFactory, Notifiable, CentralConnection, Billable;
 
     /**
      * The attributes that are mass assignable.

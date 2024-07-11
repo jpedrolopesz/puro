@@ -13,7 +13,7 @@ return new class extends Migration {
         Schema::create("subscriptions", function (Blueprint $table) {
             $table->id();
             $table->foreignId("user_id");
-            $table->string("plan_id"); // ID do plano
+            // $table->string("plan_id"); // ID do plano
 
             $table->string("type");
             $table->string("stripe_id")->unique();
@@ -25,11 +25,6 @@ return new class extends Migration {
             $table->timestamps();
 
             $table->index(["user_id", "stripe_status"]);
-            $table
-                ->foreign("plan_id")
-                ->references("id")
-                ->on("plans")
-                ->onDelete("cascade");
         });
     }
 

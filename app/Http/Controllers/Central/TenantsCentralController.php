@@ -24,10 +24,15 @@ class TenantsCentralController extends Controller
 
     public function details(Tenant $tenantId, $id)
     {
-        //dd($tenantId->find($id));
+        $tenantId = Tenant::with([
+            "creator",
+            "activityLogs",
+            "resourceUsage",
+            "supportTickets",
+        ])->find($id);
 
         return Inertia::render("Central/Tenants/TenantViewDetails", [
-            "tenantDetails" => $tenantId->find($id),
+            "tenantDetails" => $tenantId,
         ]);
     }
 }

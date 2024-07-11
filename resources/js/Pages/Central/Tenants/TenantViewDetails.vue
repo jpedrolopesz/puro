@@ -12,6 +12,14 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
+import {
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/Components/ui/table";
 import { defineProps } from "vue";
 
 function formatDate(timestamp) {
@@ -46,9 +54,19 @@ console.log(props.tenantDetails);
                     </Link>
                     <div class="flex flex-col">
                         <h1
-                            class="shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
+                            class="flex items-center shrink-0 whitespace-nowrap text-xl font-semibold tracking-tight sm:grow-0"
                         >
-                            {{ tenantDetails.name }}
+                            {{ tenantDetails.tenancy_name }}
+                            <Badge
+                                :variant="tenantDetails.status ? '' : 'outline'"
+                                class="ml-2"
+                            >
+                                {{
+                                    tenantDetails.status === "active"
+                                        ? "Active"
+                                        : "Inactive"
+                                }}
+                            </Badge>
                         </h1>
                         <span class="lowercase">
                             {{ tenantDetails.email }}
@@ -56,9 +74,12 @@ console.log(props.tenantDetails);
                     </div>
 
                     <div class="hidden items-center md:ml-auto md:flex">
-                        <span class="text-muted-foreground text-sm">{{
-                            tenantDetails.id
-                        }}</span>
+                        <div class="flex items-center justify-center gap-2">
+                            <Button variant="outline" size="sm">
+                                Discard
+                            </Button>
+                            <Button size="sm"> Save </Button>
+                        </div>
                     </div>
                 </div>
                 <div
@@ -69,132 +90,97 @@ console.log(props.tenantDetails);
                     >
                         <Card>
                             <CardHeader>
-                                <CardTitle>Assinaturas</CardTitle>
+                                <CardTitle>Subscriptions</CardTitle>
                             </CardHeader>
                             <CardContent>
-                                <div>
-                                    <Separator class="my-2" />
-                                    <ul class="grid gap-3">
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Subtotal</span
-                                            >
-                                            <span></span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Tax</span
-                                            >
-                                            <span></span>
-                                        </li>
-
-                                        <li
-                                            class="flex items-center justify-between font-semibold"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Total</span
-                                            >
-                                            <span>$329.00</span>
-                                        </li>
-                                    </ul>
+                                <div
+                                    class="flex flex-1 items-center justify-center rounded-lg border border-dashed shadow-sm"
+                                >
+                                    <p
+                                        class="text-sm my-6 text-muted-foreground"
+                                    >
+                                        No subscription
+                                    </p>
                                 </div>
                             </CardContent>
                         </Card>
                         <Card>
-                            <CardHeader>
-                                <CardTitle>Pagamentos</CardTitle>
+                            <CardHeader class="px-7">
+                                <CardTitle>Orders</CardTitle>
+                                <CardDescription>
+                                    Recent orders from your store.
+                                </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <div>
-                                    <Separator class="my-2" />
-                                    <ul class="grid gap-3">
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Subtotal</span
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Customer</TableHead>
+                                            <TableHead
+                                                class="hidden sm:table-cell"
                                             >
-                                            <span></span>
-                                        </li>
-                                        <li
-                                            class="flex items-center justify-between"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Tax</span
+                                                Type
+                                            </TableHead>
+                                            <TableHead
+                                                class="hidden sm:table-cell"
                                             >
-                                            <span></span>
-                                        </li>
-
-                                        <li
-                                            class="flex items-center justify-between font-semibold"
-                                        >
-                                            <span class="text-muted-foreground"
-                                                >Total</span
+                                                Status
+                                            </TableHead>
+                                            <TableHead
+                                                class="hidden md:table-cell"
                                             >
-                                            <span>$329.00</span>
-                                        </li>
-                                    </ul>
-                                </div>
-
-                                <Separator class="my-4" />
-                                <div class="grid gap-3">
-                                    <div class="font-semibold">
-                                        Payment Information
-                                    </div>
-
-                                    <dl class="grid gap-3">
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt
-                                                class="flex items-center gap-1 text-muted-foreground"
+                                                Date
+                                            </TableHead>
+                                            <TableHead class="text-right">
+                                                Amount
+                                            </TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        <TableRow>
+                                            <TableCell>
+                                                <div class="font-medium">
+                                                    Emma Brown
+                                                </div>
+                                                <div
+                                                    class="hidden text-sm text-muted-foreground md:inline"
+                                                >
+                                                    emma@example.com
+                                                </div>
+                                            </TableCell>
+                                            <TableCell
+                                                class="hidden sm:table-cell"
                                             >
-                                                Id
-                                            </dt>
-                                            <dd></dd>
-                                        </div>
-                                    </dl>
-
-                                    <dl class="grid gap-3">
-                                        <div
-                                            class="flex items-center justify-between"
-                                        >
-                                            <dt
-                                                class="flex items-center gap-1 text-muted-foreground"
+                                                Sale
+                                            </TableCell>
+                                            <TableCell
+                                                class="hidden sm:table-cell"
                                             >
-                                                Description
-                                            </dt>
-                                            <dd></dd>
-                                        </div>
-                                    </dl>
-                                </div>
+                                                <Badge
+                                                    class="text-xs"
+                                                    variant="secondary"
+                                                >
+                                                    Fulfilled
+                                                </Badge>
+                                            </TableCell>
+                                            <TableCell
+                                                class="hidden md:table-cell"
+                                            >
+                                                2023-06-26
+                                            </TableCell>
+                                            <TableCell class="text-right">
+                                                $450.00
+                                            </TableCell>
+                                        </TableRow>
+                                    </TableBody>
+                                </Table>
                             </CardContent>
                         </Card>
                     </div>
                     <div class="grid auto-rows-max items-start gap-4 lg:gap-8">
                         <Card class="overflow-hidden">
                             <CardHeader>
-                                <CardTitle> Insights</CardTitle>
-                            </CardHeader>
-
-                            <CardContent>
-                                <Separator class="my-2" />
-
-                                <div class="grid gap-3">
-                                    <div class="font-semibold"></div>
-                                    <address
-                                        class="grid gap-0.5 not-italic text-muted-foreground"
-                                    ></address>
-                                </div>
-                            </CardContent>
-                        </Card>
-                        <Card>
-                            <CardHeader>
-                                <CardTitle>Detalhes</CardTitle>
+                                <CardTitle>Creator of the tenant</CardTitle>
                                 <CardDescription>
                                     Lipsum dolor sit amet, consectetur
                                     adipiscing elit.
@@ -204,10 +190,68 @@ console.log(props.tenantDetails);
 
                             <CardContent>
                                 <CardTitle class="text-gray-800/90 text-sm">
-                                    Cliente desde</CardTitle
+                                    ID creator</CardTitle
                                 >
                                 <CardDescription class="mb-3">
-                                    {{ tenantDetails.created_at }}
+                                    {{ tenantDetails.creator.id }}
+                                </CardDescription>
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Creator name</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.creator.name }}
+                                </CardDescription>
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Creator e-mail</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.creator.email }}
+                                </CardDescription>
+
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Customer since</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.creator.created_at }}
+                                </CardDescription>
+
+                                <Separator class="my-4" />
+                                <div class="grid gap-3">
+                                    <CardTitle class="text-gray-800/90 text-sm">
+                                        Payment Information
+                                    </CardTitle>
+                                    <dl class="grid gap-3">
+                                        <CardDescription
+                                            class="flex items-center justify-between"
+                                        >
+                                            <dt
+                                                class="flex items-center gap-1 text-muted-foreground"
+                                            >
+                                                <CreditCard class="h-4 w-4" />
+                                                Visa
+                                            </dt>
+                                            <dd>**** **** **** 4532</dd>
+                                        </CardDescription>
+                                    </dl>
+                                </div>
+                            </CardContent>
+                        </Card>
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Details of the tenant</CardTitle>
+                                <CardDescription>
+                                    Lipsum dolor sit amet, consectetur
+                                    adipiscing elit.
+                                </CardDescription>
+                                <Separator class="my-1" />
+                            </CardHeader>
+
+                            <CardContent>
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Last update</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.updated_at }}
                                 </CardDescription>
                                 <CardTitle class="text-gray-800/90 text-sm">
                                     E-mail billing</CardTitle
@@ -228,7 +272,7 @@ console.log(props.tenantDetails);
                 </div>
                 <div class="flex items-center justify-center gap-2 md:hidden">
                     <Button variant="outline" size="sm"> Discard </Button>
-                    <Button size="sm"> Save Product </Button>
+                    <Button size="sm"> Save </Button>
                 </div>
             </div>
         </main>

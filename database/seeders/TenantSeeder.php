@@ -13,6 +13,8 @@ use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Faker\Factory as Faker;
+use Laravel\Cashier\Subscription;
+use Laravel\Cashier\SubscriptionItem;
 
 class TenantSeeder extends Seeder
 {
@@ -47,6 +49,25 @@ class TenantSeeder extends Seeder
             "tenancy_about" =>
                 'You can\'t compress the program without quantifying the open-source SSD pixel!',
             "creator_id" => $creator->id,
+        ]);
+        // Criação de assinatura para o usuário criador
+        // Criação de assinatura para o usuário criador
+        $creator
+            ->newSubscription("default", "price_1PbVo2GQW0U1PfqxgSgO9fgK")
+            ->create("pm_card_visa");
+
+        // Obter a última assinatura criada pelo usuário criador
+        $latestSubscription = $creator
+            ->subscriptions()
+            ->latest("created_at")
+            ->first();
+
+        // Criar um novo item de assinatura associado à última assinatura criada
+        SubscriptionItem::create([
+            "subscription_id" => $latestSubscription->id,
+            "stripe_id" => "price_1PbVo2GQW0U1PfqxgSgO9fgK", // Substitua pelo ID real do item no Stripe, se aplicável
+            "stripe_product" => "Product A",
+            "quantity" => 1,
         ]);
 
         // Adicionar activity logs
