@@ -21,8 +21,6 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             "data",
             "tenancy_name",
             "status",
-            "payment_status",
-            "subscription_level",
             "tenancy_db_name",
             "tenancy_about",
             "creator_id",
@@ -45,16 +43,16 @@ class Tenant extends BaseTenant implements TenantWithDatabase
 
     public function activityLogs()
     {
-        return $this->hasMany(ActivityLog::class);
+        return $this->hasMany(ActivityLog::class, "tenancy_id");
     }
 
     public function resourceUsage()
     {
-        return $this->hasOne(ResourceUsage::class);
+        return $this->hasOne(ResourceUsage::class, "tenancy_id");
     }
 
     public function supportTickets()
     {
-        return $this->hasMany(SupportTicket::class);
+        return $this->hasMany(SupportTicket::class, "tenancy_id");
     }
 }

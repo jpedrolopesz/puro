@@ -2,7 +2,7 @@
 import type { Column } from "@tanstack/vue-table";
 import type { Component } from "vue";
 import { computed } from "vue";
-import type { Task } from "../data/schema";
+import type { Tenant } from "../data/schema";
 import { CheckIcon, PlusCircledIcon } from "@radix-icons/vue";
 
 import { Badge } from "@/Components/ui/badge";
@@ -26,10 +26,10 @@ import { Separator } from "@/Components/ui/separator";
 import { cn } from "@/lib/utils";
 
 interface DataTableFacetedFilter {
-    column?: Column<Task, any>;
+    column?: Column<Tenant, any>;
     title?: string;
     options: {
-        paymentStatus: string;
+        status: string;
         value: string;
         icon?: Component;
     }[];
@@ -75,7 +75,7 @@ const selectedValues = computed(
                                 variant="secondary"
                                 class="rounded-sm px-1 font-normal"
                             >
-                                {{ option.paymentStatus }}
+                                {{ option.status }}
                             </Badge>
                         </template>
                     </div>
@@ -87,7 +87,7 @@ const selectedValues = computed(
                 :filter-function="
                     (list: DataTableFacetedFilter['options'], term) =>
                         list.filter((i) =>
-                            i.paymentStatus.toLowerCase()?.includes(term),
+                            i.status.toLowerCase()?.includes(term),
                         )
                 "
             >
@@ -137,7 +137,7 @@ const selectedValues = computed(
                                 v-if="option.icon"
                                 class="mr-2 h-4 w-4 text-muted-foreground"
                             />
-                            <span>{{ option.paymentStatus }}</span>
+                            <span>{{ option.status }}</span>
                             <span
                                 v-if="facets?.get(option.value)"
                                 class="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs"
@@ -151,7 +151,7 @@ const selectedValues = computed(
                         <CommandSeparator />
                         <CommandGroup>
                             <CommandItem
-                                :value="{ paymentStatus: 'Clear filters' }"
+                                :value="{ status: 'Clear filters' }"
                                 class="justify-center text-center"
                                 @select="column?.setFilterValue(undefined)"
                             >

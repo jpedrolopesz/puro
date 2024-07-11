@@ -17,7 +17,7 @@ import {
 } from "@tanstack/vue-table";
 
 import { ref } from "vue";
-import type { Task } from "../data/schema";
+import type { Tenant } from "../data/schema";
 import DataTablePagination from "./DataTablePagination.vue";
 import DataTableToolbar from "./DataTableToolbar.vue";
 import { valueUpdater } from "@/lib/utils";
@@ -32,7 +32,7 @@ import {
 } from "@/Components/ui/table";
 
 interface DataTableProps {
-    columns: ColumnDef<Task, any>[];
+    columns: ColumnDef<Tenant, any>[];
     data: Items[];
 }
 const props = defineProps<DataTableProps>();

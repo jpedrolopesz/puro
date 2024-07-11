@@ -52,7 +52,7 @@ class CreateTenantsTable extends Migration
             $table->foreignId("tenancy_id")->constrained("tenants");
             $table->string("subject");
             $table->string("status");
-            $table->timestamp("created_at")->useCurrent();
+
             $table->timestamps();
         });
     }

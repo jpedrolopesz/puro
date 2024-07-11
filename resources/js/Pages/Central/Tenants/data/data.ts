@@ -1,8 +1,6 @@
 import { h } from "vue";
 
 import {
-  StopwatchIcon,
-  QuestionMarkCircledIcon,
   CrossCircledIcon,
   CircleIcon,
   CheckCircledIcon,
@@ -26,26 +24,15 @@ export const subscriptionLevels = [
   },
 ];
 
-export const subscriptionStatuses = [
+export const statuses = [
   {
-    value: "pending",
-    paymentStatus: "Pending",
-    icon: h(QuestionMarkCircledIcon),
-  },
-  {
-    value: "paid",
-    paymentStatus: "Paid",
-    icon: h(QuestionMarkCircledIcon),
-  },
-
-  {
-    value: "late",
-    paymentStatus: "Late",
+    value: "active",
+    status: "Active",
     icon: h(CheckCircledIcon),
   },
   {
-    value: "canceled",
-    paymentStatus: "Canceled",
+    value: "inactive",
+    status: "Inactive",
     icon: h(CrossCircledIcon),
   },
 ];

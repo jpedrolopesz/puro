@@ -8,9 +8,14 @@ use Inertia\Inertia;
 
 class TenantsCentralController extends Controller
 {
-    public function index(Tenant $request)
+    public function index()
     {
-        $tenantsData = $request->all();
+        $tenantsData = Tenant::with([
+            "creator",
+            "activityLogs",
+            "resourceUsage",
+            "supportTickets",
+        ])->get();
 
         return Inertia::render("Central/Tenants/TenantsCentral", [
             "tenantsLists" => $tenantsData,

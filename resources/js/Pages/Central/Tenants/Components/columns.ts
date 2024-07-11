@@ -2,18 +2,14 @@ import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
 
-import {
-  subscriptionLevels,
-  subscriptionStatuses,
-  priorities,
-} from "../data/data";
-import type { Task } from "../data/schema";
+import { subscriptionLevels, priorities, statuses } from "../data/data";
+import type { Tenant } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
-import { Checkbox } from "../../../../Components/ui/checkbox";
-import { Badge } from "../../../../Components/ui/badge";
+import { Checkbox } from "@/Components/ui/checkbox";
+import { Badge } from "@/Components/ui/badge";
 
-export const columns: ColumnDef<Task>[] = [
+export const columns: ColumnDef<Tenant>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -46,7 +42,7 @@ export const columns: ColumnDef<Task>[] = [
           href: `/tenants/${row.getValue("id")}`,
           class: "w-24 truncate",
         },
-        () => row.getValue("id"), // Transformado em uma função
+        () => row.getValue("id"),
       ),
     enableSorting: false,
     enableHiding: false,
@@ -82,20 +78,24 @@ export const columns: ColumnDef<Task>[] = [
     accessorKey: "creator.name",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Customer" }),
-    cell: ({ row }) =>
-      h("div", { class: "w-20" }, row.getValue("creator.name")),
+    cell: ({ row }) => {
+      const creatorName = row.original.creator.name;
+      return h("div", { class: "w-20" }, creatorName);
+    },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue("creator.name"));
+      const creatorName = row.original.creator.name;
+      return creatorName.includes(value);
     },
   },
+
   {
-    accessorKey: "paymentStatus",
+    accessorKey: "status",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Status" }),
 
     cell: ({ row }) => {
-      const status = subscriptionStatuses.find(
-        (status) => status.value === row.getValue("paymentStatus"),
+      const status = statuses.find(
+        (status) => status.value === row.getValue("status"),
       );
 
       if (!status) return null;
@@ -103,11 +103,11 @@ export const columns: ColumnDef<Task>[] = [
       return h("div", { class: "flex w-[100px] items-center" }, [
         status.icon &&
           h(status.icon, { class: "mr-2 h-4 w-4 text-muted-foreground" }),
-        h("span", status.paymentStatus),
+        h("span", status.status),
       ]);
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue(id));
+      return value.includes(row.getValue("status"));
     },
   },
   {

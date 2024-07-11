@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Task } from "../data/schema";
+import type { Tenant } from "../data/schema";
 
-import { priorities, subscriptionStatuses } from "../data/data";
+import { priorities, statuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import { Cross2Icon } from "@radix-icons/vue";
@@ -11,11 +11,10 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Task>;
+    table: Table<Tenant>;
 }
 
 const props = defineProps<DataTableToolbarProps>();
-console.log(props);
 
 const isFiltered = computed(
     () => props.table.getState().columnFilters.length > 0,
@@ -36,10 +35,10 @@ const isFiltered = computed(
                 "
             />
             <DataTableFacetedFilter
-                v-if="table.getColumn('paymentStatus')"
-                :column="table.getColumn('paymentStatus')"
+                v-if="table.getColumn('status')"
+                :column="table.getColumn('status')"
                 title="Status"
-                :options="subscriptionStatuses"
+                :options="statuses"
             />
             <DataTableFacetedFilter
                 v-if="table.getColumn('priority')"

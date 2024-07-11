@@ -13,6 +13,6 @@ class ActivityLog extends Model
 
     public function tenancy()
     {
-        return $this->belongsTo(Tenant::class);
+        return $this->belongsTo(Tenant::class, "tenancy_id");
     }
 }
