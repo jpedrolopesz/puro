@@ -25,6 +25,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+console.log(props.paymentDetails);
 </script>
 
 <template>

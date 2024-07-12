@@ -30,7 +30,6 @@ class UserFactory extends Factory
             "email" => "jplopeszamonelo@hotmail.com",
             "email_verified_at" => now(),
             "password" => (static::$password ??= Hash::make("password")),
-            "tenant_id" => Str::uuid(),
             "role" => UserRole::User,
 
             "remember_token" => Str::random(10),

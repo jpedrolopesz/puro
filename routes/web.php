@@ -6,7 +6,8 @@ use App\Http\Controllers\Central\{
     DashboardCentralController,
     BillingCentralController,
     MailCentralController,
-    PlansCentralController
+    PlansCentralController,
+    PaymentController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -20,6 +21,15 @@ Route::get("/", function () {
         "phpVersion" => PHP_VERSION,
     ]);
 });
+
+Route::get("/sync-payments", [PaymentController::class, "syncPayments"])->name(
+    "sync.payments"
+);
+
+Route::get("/billing-central/connect-stripe", [
+    BillingCentralController::class,
+    "connectStripe",
+]);
 
 Route::middleware("auth:admin")->group(function () {
     Route::get("/dashboard", [
