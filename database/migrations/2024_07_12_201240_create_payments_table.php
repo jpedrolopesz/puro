@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string("amount");
             $table->string("currency");
             $table->string("status");
+            $table->string("description");
             $table->dateTime("payment_date");
             $table->string("customer_name")->nullable();
             $table->string("customer_email")->nullable();

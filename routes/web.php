@@ -7,7 +7,7 @@ use App\Http\Controllers\Central\{
     BillingCentralController,
     MailCentralController,
     PlansCentralController,
-    PaymentController
+    PaymentCentralController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -22,9 +22,13 @@ Route::get("/", function () {
     ]);
 });
 
-Route::get("/sync-payments", [PaymentController::class, "syncPayments"])->name(
-    "sync.payments"
+Route::get("/payments", [PaymentCentralController::class, "index"])->name(
+    "payments.index"
 );
+Route::get("/sync-payments", [
+    PaymentCentralController::class,
+    "syncPayments",
+])->name("sync.payments");
 
 Route::get("/billing-central/connect-stripe", [
     BillingCentralController::class,

@@ -57,6 +57,14 @@ const links: LinkProp[] = [
         current: route().current("billing.index"),
     },
     {
+        title: "Payments",
+        label: "",
+        icon: "lucide:shopping-cart",
+        variant: "ghost",
+        route: route("payments.index"),
+        current: route().current("payments.index"),
+    },
+    {
         title: "Plans",
         label: "6",
         icon: "lucide:archive",

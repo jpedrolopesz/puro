@@ -74,6 +74,10 @@ class StripeGetAllAction
                 ? $customerDetails->email
                 : null;
 
+            $payment->description = $paymentIntent->description
+                ? $paymentIntent->description
+                : null;
+
             // Dados sensíveis do método de pagamento
             $payment->payment_method_type = $paymentMethodDetails
                 ? $paymentMethodDetails->type

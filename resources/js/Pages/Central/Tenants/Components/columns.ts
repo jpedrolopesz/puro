@@ -62,7 +62,7 @@ export const columns: ColumnDef<Tenant>[] = [
         subscriptionLevel
           ? h(
               Badge,
-              { variant: "outline" },
+              { variant: "outline " },
               () => subscriptionLevel.subscriptionLevel,
             )
           : null,
