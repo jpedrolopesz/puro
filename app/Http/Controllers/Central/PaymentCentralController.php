@@ -2,9 +2,8 @@
 
 namespace App\Http\Controllers\Central;
 
-use Illuminate\Http\Request;
+use App\Services\Stripe\StripePaymentIntentsManager;
 use App\Http\Controllers\Controller;
-use App\Actions\Central\Stripe\StripeGetAllAction;
 use App\Models\Payment;
 use Inertia\Inertia;
 
@@ -14,10 +13,7 @@ class PaymentCentralController extends Controller
     {
         $payments = Payment::all();
         try {
-            // $paymentList = StripeGetAllAction::getAllPaymentIntents();
-
             return Inertia::render("Central/Payments/PaymentsCentral", [
-                // "paymentLi" => $paymentList,
                 "paymentLists" => $payments,
             ]);
         } catch (\Exception $e) {
@@ -36,11 +32,13 @@ class PaymentCentralController extends Controller
     {
         try {
             // Recupera todos os pagamentos do Stripe
-            $paymentIntents = StripeGetAllAction::getAllPaymentIntents();
+            $paymentIntents = StripePaymentIntentsManager::getAllPaymentIntents();
 
             // Itera sobre os pagamentos para salvá-los no banco de dados
             foreach ($paymentIntents as $paymentIntent) {
-                StripeGetAllAction::savePaymentToDatabase($paymentIntent);
+                StripePaymentIntentsManager::savePaymentToDatabase(
+                    $paymentIntent
+                );
             }
 
             return response()->json([
@@ -48,7 +46,6 @@ class PaymentCentralController extends Controller
                 "message" => "Pagamentos sincronizados com sucesso.",
             ]);
         } catch (\Exception $e) {
-            // Trata qualquer exceção que possa ocorrer
             return response()->json(
                 [
                     "success" => false,

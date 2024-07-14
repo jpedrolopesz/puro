@@ -6,8 +6,6 @@ import plans from "./data/plans.json";
 import DataTable from "./Components/DataTable.vue";
 import TenantNav from "./Components/PlanstNav.vue";
 import { columns } from "./Components/columns";
-
-import { PropType, defineProps } from "vue";
 </script>
 
 <template>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import ChartlineOverview from "./Components/ChartlineOverview.vue";
 import Overview from "./Components/Overview.vue";
 import DateRangePicker from "./Components/DateRangePicker.vue";
 import RecentSales from "./Components/RecentSales.vue";
@@ -17,6 +18,26 @@ import {
     TabsList,
     TabsTrigger,
 } from "../../../Components/ui/tabs";
+import { defineProps, ref } from "vue";
+
+const props = defineProps({
+    data: {
+        type: Array,
+        required: true,
+    },
+});
+
+const filteredData = ref(props.data);
+
+function handleDateSelected(dateRange) {
+    // Filtrar os dados com base nas datas selecionadas
+    filteredData.value = props.data.filter((item) => {
+        const itemDate = new Date(item.date); // Ajuste conforme a estrutura dos seus dados
+        return itemDate >= dateRange.start && itemDate <= dateRange.end;
+    });
+}
+
+console.log(filteredData.value);
 </script>
 
 <template>
@@ -25,9 +46,11 @@ import {
             <h2 class="text-3xl font-bold tracking-tight">Dashboard Central</h2>
             <div class="flex items-center space-x-2">
                 <DateRangePicker />
-                <Button>Download</Button>
             </div>
         </div>
+
+        <ChartlineOverview :data="filteredData" />
+
         <Tabs default-value="overview" class="space-y-4">
             <TabsList>
                 <TabsTrigger value="overview"> Overview </TabsTrigger>
