@@ -12,37 +12,31 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
+const emit = defineEmits(["updateData"]);
+const props = defineProps({
+    data: {
+        type: Array,
+        required: true,
+    },
+});
+
 const currentDate = new Date();
 const date = ref({
     start: new Date(2024, 5, 10),
     end: addDays(startOfDay(currentDate), 0),
 });
 
-// Simulated API data
-const apiData = ref([
-    { year: 2015, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2016, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2017, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2018, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2019, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2020, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    { year: 2021, "Export Growth Rate": 0, "Import Growth Rate": 0 },
-    {
-        year: 2022,
-        "Export Growth Rate": 4736.7,
-        "Import Growth Rate": 3552.525,
-    },
-    {
-        year: 2023,
-        "Export Growth Rate": 2066.9,
-        "Import Growth Rate": 1550.175,
-    },
-    { year: 2024, "Export Growth Rate": 576, "Import Growth Rate": 432 },
-]);
+// Reset function
+function resetDate() {
+    date.value = {
+        start: null,
+        end: null,
+    };
+    emit("updateData", props.data); // Emit the original data to reset the chart
+}
 
-// Função para filtrar os dados da API com base no intervalo de datas selecionado
 function filterData(startDate, endDate) {
-    return apiData.value.filter((item) => {
+    return props.data.filter((item) => {
         const itemYear = item.year;
         return (
             itemYear >= startDate.getFullYear() &&
@@ -57,7 +51,7 @@ watch(
     ([newStartDate, newEndDate]) => {
         if (newStartDate && newEndDate) {
             const filteredData = filterData(newStartDate, newEndDate);
-            console.log(filteredData); // Aqui você pode usar os dados filtrados como preferir
+            emit("updateData", filteredData);
         }
     },
 );
@@ -94,5 +88,6 @@ watch(
                 <Calendar v-model.range="date" :columns="2" />
             </PopoverContent>
         </Popover>
+        <Button @click="resetDate">Reset</Button>
     </div>
 </template>

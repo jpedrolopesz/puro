@@ -3,38 +3,21 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
 import Overview from "./Components/Overview.vue";
 import DateRangePicker from "./Components/DateRangePicker.vue";
-import RecentSales from "./Components/RecentSales.vue";
-import { Button } from "../../../Components/ui/button";
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardHeader,
-    CardTitle,
-} from "../../../Components/ui/card";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "../../../Components/ui/tabs";
+import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, ref } from "vue";
+import dataApi from "./data/data.json";
 
 const props = defineProps({
-    data: {
-        type: Array,
+    gross_volume: {
+        type: Object,
         required: true,
     },
 });
+const filteredData = ref(props.gross_volume);
 
-const filteredData = ref(props.data);
-
-function handleDateSelected(dateRange) {
-    // Filtrar os dados com base nas datas selecionadas
-    filteredData.value = props.data.filter((item) => {
-        const itemDate = new Date(item.date); // Ajuste conforme a estrutura dos seus dados
-        return itemDate >= dateRange.start && itemDate <= dateRange.end;
-    });
+function handleUpdateData(newData) {
+    filteredData.value = newData;
 }
 
 console.log(filteredData.value);
@@ -45,11 +28,14 @@ console.log(filteredData.value);
         <div class="flex items-center justify-between space-y-2">
             <h2 class="text-3xl font-bold tracking-tight">Dashboard Central</h2>
             <div class="flex items-center space-x-2">
-                <DateRangePicker />
+                <DateRangePicker
+                    :data="dataApi"
+                    @updateData="handleUpdateData"
+                />
             </div>
         </div>
 
-        <ChartlineOverview :data="filteredData" />
+        <ChartlineOverview :gross_volume="filteredData" />
 
         <Tabs default-value="overview" class="space-y-4">
             <TabsList>
@@ -188,24 +174,13 @@ console.log(filteredData.value);
                         </CardContent>
                     </Card>
                 </div>
-                <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                <div class="grid gap-2 md:grid-cols-1 lg:grid-cols-1">
                     <Card class="col-span-4">
                         <CardHeader>
                             <CardTitle>Overview</CardTitle>
                         </CardHeader>
                         <CardContent class="pl-2">
                             <Overview />
-                        </CardContent>
-                    </Card>
-                    <Card class="col-span-3">
-                        <CardHeader>
-                            <CardTitle>Recent Sales</CardTitle>
-                            <CardDescription>
-                                You made 265 sales this month.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <RecentSales />
                         </CardContent>
                     </Card>
                 </div>

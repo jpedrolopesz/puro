@@ -29,22 +29,27 @@ class DashboardCentralController extends Controller
         //
         //
         // Obter o volume bruto de pagamentos
-        $annualVolumes = $this->stripeMetricsService->getAnnualGrossVolumes();
+        $annualVolumes = $this->stripeMetricsService->getMonthlyGrossVolumes();
 
         // Montar os dados no formato desejado
         $data = [];
 
         foreach ($annualVolumes as $volume) {
-            $data[] = [
-                "year" => $volume["year"],
-                "Export Growth Rate" => $volume["gross_volume"] * 0.02, // Exemplo de cálculo fictício
-                "Import Growth Rate" => $volume["gross_volume"] * 0.015, // Exemplo de cálculo fictício
-            ];
+            // Para cada mês do ano, formate o ano e o mês juntos
+            for ($month = 1; $month <= 12; $month++) {
+                $data[] = [
+                    "year" =>
+                        $volume["year"] . str_pad($month, 2, "0", STR_PAD_LEFT), // Formato: "YYYY-MM"
+                    "Volume bruto" => $volume["gross_volume"] * 0.02, // Exemplo de cálculo fictício
+                    "Volume líquido de vendas" =>
+                        $volume["gross_volume"] * 0.015, // Exemplo de cálculo fictício
+                ];
+            }
         }
 
         return Inertia::render("Central/Dashboard/DashboardCentral", [
             "admin" => Auth::guard("admin")->user(),
-            "data" => $data,
+            "gross_volume" => $data,
         ]);
     }
 }

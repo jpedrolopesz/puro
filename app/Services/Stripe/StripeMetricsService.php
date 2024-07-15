@@ -18,55 +18,65 @@ class StripeMetricsService
      *
      * @return array
      */
-    public function getAnnualGrossVolumes()
+    public function getMonthlyGrossVolumes()
     {
         try {
-            $annualVolumes = [];
+            $monthlyVolumes = [];
 
             // Definir anos inicial e final para consulta (ajuste conforme necessidade)
-            $startYear = 1970; // Ano inicial
+            $startYear = 2020; // Ano inicial
             $endYear = date("Y"); // Ano atual
 
-            // Loop para buscar volumes brutos anuais
+            // Loop para buscar volumes brutos mensais
             for ($year = $startYear; $year <= $endYear; $year++) {
-                $grossVolume = 0;
+                for ($month = 1; $month <= 12; $month++) {
+                    // Definir data inicial e final para o mês atual
+                    $startDate = strtotime("$year-$month-01");
+                    $endDate = strtotime(
+                        date(
+                            "Y-m-d",
+                            strtotime("first day of next month", $startDate)
+                        )
+                    );
 
-                // Definir data inicial e final para o ano atual
-                $startDate = strtotime($year . "-01-01");
-                $endDate = strtotime($year + 1 . "-01-01");
+                    $grossVolume = 0;
 
-                // Faz uma chamada à API do Stripe para obter as transações de saldo
-                $params = [
-                    "limit" => 100,
-                    "created" => [
-                        "gte" => $startDate,
-                        "lt" => $endDate,
-                    ],
-                ];
+                    // Faz uma chamada à API do Stripe para obter as transações de saldo
+                    $params = [
+                        "limit" => 100,
+                        "created" => [
+                            "gte" => $startDate,
+                            "lt" => $endDate,
+                        ],
+                    ];
 
-                $balanceTransactions = \Stripe\BalanceTransaction::all($params);
+                    $balanceTransactions = \Stripe\BalanceTransaction::all(
+                        $params
+                    );
 
-                foreach ($balanceTransactions->data as $transaction) {
-                    if (
-                        $transaction->type === "charge" &&
-                        $transaction->created >= $startDate &&
-                        $transaction->created < $endDate
-                    ) {
-                        $grossVolume += $transaction->amount;
+                    foreach ($balanceTransactions->data as $transaction) {
+                        if (
+                            $transaction->type === "charge" &&
+                            $transaction->created >= $startDate &&
+                            $transaction->created < $endDate
+                        ) {
+                            $grossVolume += $transaction->amount;
+                        }
                     }
-                }
 
-                // Armazenar os volumes brutos para o ano atual
-                $annualVolumes[] = [
-                    "year" => $year,
-                    "gross_volume" => $grossVolume,
-                ];
+                    // Armazenar os volumes brutos para o mês atual
+                    $monthlyVolumes[] = [
+                        "year" => $year,
+                        "month" => $month,
+                        "gross_volume" => $grossVolume,
+                    ];
+                }
             }
 
-            return $annualVolumes;
+            return $monthlyVolumes;
         } catch (\Exception $e) {
             Log::error(
-                "Falha ao obter volume bruto anual: " . $e->getMessage()
+                "Falha ao obter volume bruto mensal: " . $e->getMessage()
             );
             return ["error" => $e->getMessage()];
         }

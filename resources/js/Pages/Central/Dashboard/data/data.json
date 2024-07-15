@@ -1,0 +1,27 @@
+[
+  {
+    "month": 20200701,
+    "Volume bruto": 0.0,
+    "Volume líquido de vendas": 0.0
+  },
+  {
+    "month": 20210701,
+    "Volume bruto": 4736.7,
+    "Volume líquido de vendas": 3552.525
+  },
+  {
+    "month": 20220701,
+    "Volume bruto": 2066.9,
+    "Volume líquido de vendas": 1550.175
+  },
+  {
+    "month": 20230701,
+    "Volume bruto": 576.0,
+    "Volume líquido de vendas": 432.0
+  },
+  {
+    "month": 20240701,
+    "Volume bruto": 5726.0,
+    "Volume líquido de vendas": 4322.0
+  }
+]
