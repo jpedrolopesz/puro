@@ -5,19 +5,43 @@ import { ChartTooltip } from "@/Components/ui/chart";
 import { defineProps } from "vue";
 
 const props = defineProps({
-    gross_volume: {
-        type: Array,
+    data: {
+        type: Object,
         required: true,
     },
 });
+
+const data = props.data;
+
+const extractYears = (data) => {
+    const yearsSet = new Set();
+
+    data.forEach((item) => {
+        Object.keys(item)
+            .filter((key) => /^\d{4}$/.test(key))
+            .forEach((year) => yearsSet.add(year));
+    });
+
+    return [...yearsSet].sort();
+};
+
+// Função para gerar cores diferentes com base nos anos
+const generateColors = (years) => {
+    const colors = ["#3B82F6", "#EF4444", "#10B981"]; // Cores disponíveis
+
+    return years.map((year, index) => colors[index % colors.length]);
+};
+
+const categories = extractYears(data);
+const colors = generateColors(categories);
 </script>
 
 <template>
     <LineChart
-        :data="gross_volume"
-        index="year"
-        :categories="['Volume bruto', 'Volume líquido de vendas']"
-        :colors="['#3B82F6', '#EF4444']"
+        :data="data"
+        index="month"
+        :categories="categories"
+        :colors="colors"
         :y-formatter="
             (tick, i) => {
                 return typeof tick === 'number'

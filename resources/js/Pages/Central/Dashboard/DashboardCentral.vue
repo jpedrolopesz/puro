@@ -6,21 +6,15 @@ import DateRangePicker from "./Components/DateRangePicker.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, ref } from "vue";
-import dataApi from "./data/data.json";
+import data from "./data/data.json";
 
-const props = defineProps({
-    gross_volume: {
-        type: Object,
-        required: true,
-    },
-});
-const filteredData = ref(props.gross_volume);
+const filteredData = ref(data);
 
 function handleUpdateData(newData) {
     filteredData.value = newData;
 }
 
-console.log(filteredData.value);
+console.log(data);
 </script>
 
 <template>
@@ -29,13 +23,13 @@ console.log(filteredData.value);
             <h2 class="text-3xl font-bold tracking-tight">Dashboard Central</h2>
             <div class="flex items-center space-x-2">
                 <DateRangePicker
-                    :data="dataApi"
+                    :data="filteredData"
                     @updateData="handleUpdateData"
                 />
             </div>
         </div>
 
-        <ChartlineOverview :gross_volume="filteredData" />
+        <ChartlineOverview :data="data" />
 
         <Tabs default-value="overview" class="space-y-4">
             <TabsList>

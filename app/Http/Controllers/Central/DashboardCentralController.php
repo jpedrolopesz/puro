@@ -3,53 +3,54 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
-use App\Services\Stripe\StripeMetricsService;
-use Illuminate\Http\Request;
+use App\Models\Payment;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Request;
 use Inertia\Inertia;
 
 class DashboardCentralController extends Controller
 {
-    protected $stripeMetricsService;
-
-    public function __construct(StripeMetricsService $stripeMetricsService)
+    public function index(Request $request)
     {
-        $this->stripeMetricsService = $stripeMetricsService;
-    }
-    public function index()
-    {
-        //$grossVolume = $this->stripeMetricsService->getGrossVolume();
-        //$allPayments = $this->stripeMetricsService->getAllPayments();
-        //$otherMetrics = $this->stripeMetricsService->getOtherMetrics();
+        // Construir a query base
+        $query = Payment::select(
+            DB::raw("SUM(amount) as total_amount"),
+            DB::raw("YEAR(payment_date) as year"),
+            DB::raw("MONTH(payment_date) as month")
+        )
+            ->groupBy(
+                DB::raw("YEAR(payment_date)"),
+                DB::raw("MONTH(payment_date)")
+            )
+            ->orderBy(DB::raw("YEAR(payment_date)"))
+            ->orderBy(DB::raw("MONTH(payment_date)"));
 
-        //dd($grossVolume);
-        //dd($allPayments);
-        // dd($otherMetrics);
-        //
-        //
-        //
-        // Obter o volume bruto de pagamentos
-        $annualVolumes = $this->stripeMetricsService->getMonthlyGrossVolumes();
+        // Recuperar os dados
+        $payments = $query->get();
 
-        // Montar os dados no formato desejado
-        $data = [];
-
-        foreach ($annualVolumes as $volume) {
-            // Para cada mês do ano, formate o ano e o mês juntos
-            for ($month = 1; $month <= 12; $month++) {
-                $data[] = [
-                    "year" =>
-                        $volume["year"] . str_pad($month, 2, "0", STR_PAD_LEFT), // Formato: "YYYY-MM"
-                    "Volume bruto" => $volume["gross_volume"] * 0.02, // Exemplo de cálculo fictício
-                    "Volume líquido de vendas" =>
-                        $volume["gross_volume"] * 0.015, // Exemplo de cálculo fictício
+        // Agrupar por mês e montar a estrutura desejada
+        $groupedData = [];
+        foreach ($payments as $payment) {
+            $monthName = Carbon::create()
+                ->month($payment->month)
+                ->format("F"); // Nome do mês
+            if (!isset($groupedData[$monthName])) {
+                $groupedData[$monthName] = [
+                    "month" => $monthName,
                 ];
             }
+            $groupedData[$monthName][(string) $payment->year] =
+                $payment->total_amount;
         }
+
+        // Transformar array associativo em array simples
+        $result = ["date" => array_values($groupedData)];
 
         return Inertia::render("Central/Dashboard/DashboardCentral", [
             "admin" => Auth::guard("admin")->user(),
-            "gross_volume" => $data,
+            "resultDate" => $result,
         ]);
     }
 }

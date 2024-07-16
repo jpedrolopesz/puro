@@ -10,14 +10,25 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
-        "stripe_payment_id",
         "user_id",
         "amount",
         "currency",
-        // Adicione outros campos conforme necessário
+        "status",
+        "description",
+        "payment_date",
+        "customer_name",
+        "customer_email",
+        "receipt_email",
+        "application_fee_amount",
+        "capture_method",
     ];
 
-    // Relacionamento com o usuário (se necessário)
+    protected $guarded = [
+        "stripe_payment_id",
+        "payment_method_type",
+        "payment_method_last4",
+        "payment_method_brand",
+    ];
     public function user()
     {
         return $this->belongsTo(User::class);

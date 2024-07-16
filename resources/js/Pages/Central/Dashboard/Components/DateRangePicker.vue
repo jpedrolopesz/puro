@@ -15,22 +15,22 @@ import {
 const emit = defineEmits(["updateData"]);
 const props = defineProps({
     data: {
-        type: Array,
+        type: Object,
         required: true,
     },
 });
 
 const currentDate = new Date();
 const date = ref({
-    start: new Date(2024, 5, 10),
+    start: new Date(2019, 1, 1),
     end: addDays(startOfDay(currentDate), 0),
 });
 
 // Reset function
 function resetDate() {
     date.value = {
-        start: null,
-        end: null,
+        start: new Date(2019, 1, 1),
+        end: addDays(startOfDay(currentDate), 0),
     };
     emit("updateData", props.data); // Emit the original data to reset the chart
 }
