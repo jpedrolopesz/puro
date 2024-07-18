@@ -38,7 +38,7 @@ import { Link } from "@inertiajs/vue3";
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
                 <DropdownMenuItem>
-                    <Link href="/profile/account"> Profile </Link>
+                    <Link :href="route('tenant.profile.edit')"> Profile </Link>
                     <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
                 </DropdownMenuItem>
                 <DropdownMenuItem>
@@ -49,7 +49,6 @@ import { Link } from "@inertiajs/vue3";
                     Settings
                     <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
-                <DropdownMenuItem>New Team</DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

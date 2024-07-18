@@ -3,14 +3,13 @@
 namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use Inertia\Inertia;
 use App\Models\Tenant;
 use App\Models\Domain;
 use App\Models\User;
 use Illuminate\Support\Facades\DB;
 
-class DashboardController extends Controller
+class DashboardTenantController extends Controller
 {
     public function index()
     {

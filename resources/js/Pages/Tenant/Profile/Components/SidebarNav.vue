@@ -22,8 +22,8 @@ const sidebarNavItems: Item[] = [
         href: "/profile/account",
     },
     {
-        title: "Appearance",
-        href: "/profile/appearance",
+        title: "Billing",
+        href: "/profile/billing",
     },
 ];
 
