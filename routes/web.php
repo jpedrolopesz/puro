@@ -4,7 +4,6 @@ use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
     DashboardCentralController,
-    BillingCentralController,
     MailCentralController,
     PlansCentralController,
     PaymentCentralController,
@@ -30,15 +29,16 @@ Route::post("/stripe/webhook", [
 Route::get("/payments", [PaymentCentralController::class, "index"])->name(
     "payments.index"
 );
+
+Route::get("/payments/{paymentsId}", [
+    PaymentCentralController::class,
+    "details",
+])->name("payments.details");
+
 Route::get("/sync-payments", [
     PaymentCentralController::class,
     "syncPayments",
 ])->name("sync.payments");
-
-Route::get("/billing-central/connect-stripe", [
-    BillingCentralController::class,
-    "connectStripe",
-]);
 
 Route::middleware("auth:admin")->group(function () {
     Route::get("/dashboard", [
@@ -64,27 +64,6 @@ Route::middleware("auth:admin")->group(function () {
         PlansCentralController::class,
         "edit",
     ])->name("plan.edit");
-
-    ######## BILLING ########
-    Route::get("/billing", [BillingCentralController::class, "index"])->name(
-        "billing.index"
-    );
-
-    Route::get("/billing/{paymentsId}", [
-        BillingCentralController::class,
-        "details",
-    ])->name("billing.details");
-
-    Route::get("/billing-central", [BillingCentralController::class, "index"]);
-
-    Route::get("/billing-central/connect-stripe", [
-        BillingCentralController::class,
-        "connectStripe",
-    ]);
-    Route::get("/billing-central/stripe-callback", [
-        BillingCentralController::class,
-        "handleStripeCallback",
-    ]);
 
     ######## Mail ########
 

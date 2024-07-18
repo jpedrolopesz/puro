@@ -5,7 +5,7 @@ import ChartlineOverview from "./Components/ChartlineOverview.vue";
 import DateRangePicker from "./Components/DateRangePicker.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { defineProps, ref, watch } from "vue";
+import { defineProps, ref } from "vue";
 //import data from "./data/data.json";
 
 const props = defineProps({
@@ -13,9 +13,12 @@ const props = defineProps({
         type: Array,
         required: true,
     },
+    totalRevenue: { type: Number, required: true },
 });
 
 const data = props.monthlyPayments;
+
+console.log(props.totalRevenue);
 
 const filteredData = ref(data);
 

@@ -9,7 +9,6 @@ class GetDashboardData
 {
     public function execute()
     {
-        // Construir a query base
         $query = Payment::select(
             DB::raw("SUM(amount) as total_amount"),
             DB::raw("YEAR(payment_date) as year"),
@@ -19,8 +18,8 @@ class GetDashboardData
                 DB::raw("YEAR(payment_date)"),
                 DB::raw("MONTH(payment_date)")
             )
-            ->orderBy(DB::raw("YEAR(payment_date)"), "desc")
-            ->orderBy(DB::raw("MONTH(payment_date)"), "desc");
+            ->orderBy(DB::raw("YEAR(payment_date)"))
+            ->orderBy(DB::raw("MONTH(payment_date)"));
 
         // Recuperar os dados
         $payments = $query->get();
@@ -41,47 +40,27 @@ class GetDashboardData
             12 => "December",
         ];
 
-        // Calcular a receita total
-        $totalRevenue = $payments->sum("total_amount");
-
-        // Calcular a variação percentual em relação ao mês anterior
-        $currentMonthRevenue = $payments->first()->total_amount ?? 0;
-        $previousMonthRevenue = $payments->skip(1)->first()->total_amount ?? 0;
-        $percentageChange =
-            $previousMonthRevenue != 0
-                ? (($currentMonthRevenue - $previousMonthRevenue) /
-                        $previousMonthRevenue) *
-                    100
-                : 0;
+        // Identificar todos os anos presentes nos pagamentos
+        $years = $payments->pluck("year")->unique()->sort()->values();
 
         // Agrupar por mês e montar a estrutura desejada
         $groupedData = [];
         foreach ($months as $monthNumber => $monthName) {
             $groupedData[$monthName] = ["month" => $monthName];
+            // Inicializar todos os anos com 0
+            foreach ($years as $year) {
+                $groupedData[$monthName][(string) $year] = 0;
+            }
         }
 
+        // Preencher os valores reais dos pagamentos
         foreach ($payments as $payment) {
             $monthName = $months[$payment->month]; // Nome do mês
             $groupedData[$monthName][(string) $payment->year] =
                 $payment->total_amount;
         }
 
-        // Preencher os meses que não têm valores com 0
-        foreach ($groupedData as $monthName => $data) {
-            foreach ($payments as $payment) {
-                if (!isset($groupedData[$monthName][(string) $payment->year])) {
-                    $groupedData[$monthName][(string) $payment->year] = 0;
-                }
-            }
-        }
-
         // Transformar array associativo em array simples
-        $groupedDataArray = array_values($groupedData);
-
-        return [
-            "monthlyPayments" => $groupedDataArray,
-            "totalRevenue" => $totalRevenue,
-            "percentageChange" => $percentageChange,
-        ];
+        return array_values($groupedData);
     }
 }

@@ -19,7 +19,7 @@ class StripePaymentIntentsManager
         // Configure a chave secreta do Stripe
         // Stripe::setApiKey(config("services.stripe.secret"));
 
-        $limit = 2; // Define o número máximo de registros por página
+        $limit = 5; // Define o número máximo de registros por página
         $offset = 0;
         $allPaymentIntents = [];
 
