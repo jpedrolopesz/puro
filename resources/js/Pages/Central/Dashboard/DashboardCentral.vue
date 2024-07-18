@@ -1,20 +1,27 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
-import Overview from "./Components/Overview.vue";
+
 import DateRangePicker from "./Components/DateRangePicker.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { defineProps, ref } from "vue";
-import data from "./data/data.json";
+import { defineProps, ref, watch } from "vue";
+//import data from "./data/data.json";
+
+const props = defineProps({
+    monthlyPayments: {
+        type: Array,
+        required: true,
+    },
+});
+
+const data = props.monthlyPayments;
 
 const filteredData = ref(data);
 
 function handleUpdateData(newData) {
     filteredData.value = newData;
 }
-
-console.log(data);
 </script>
 
 <template>
@@ -28,8 +35,6 @@ console.log(data);
                 />
             </div>
         </div>
-
-        <ChartlineOverview :data="data" />
 
         <Tabs default-value="overview" class="space-y-4">
             <TabsList>
@@ -173,8 +178,9 @@ console.log(data);
                         <CardHeader>
                             <CardTitle>Overview</CardTitle>
                         </CardHeader>
+
                         <CardContent class="pl-2">
-                            <Overview />
+                            <ChartlineOverview :data="data" />
                         </CardContent>
                     </Card>
                 </div>

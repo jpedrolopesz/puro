@@ -14,9 +14,7 @@ defineProps<{
 <template>
     <Card class="text-sm">
         <CardHeader v-if="title" class="p-3 border-b">
-            <CardTitle>
-                {{ title }}
-            </CardTitle>
+            <CardTitle> {{ title }} </CardTitle>
         </CardHeader>
         <CardContent class="p-3 min-w-[180px] flex flex-col gap-1">
             <div

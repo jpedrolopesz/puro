@@ -16,15 +16,30 @@ class StripePaymentIntentsManager
         Stripe::setApiKey(
             "sk_test_51LRjEpGQW0U1PfqxjAwrWJaaaML9e8xOtowprEoQOF8j2z2Nvn9a5P8KkvDpgVzmeBpCdczITYNhvI1DMYs18qRb00e3YMKUXY"
         );
-        // Faz uma chamada à API para buscar todos os PaymentIntents
-        $paymentIntents = \Stripe\PaymentIntent::all(["limit" => 999]);
+        // Configure a chave secreta do Stripe
+        // Stripe::setApiKey(config("services.stripe.secret"));
 
-        // Salva os pagamentos no banco de dados
-        foreach ($paymentIntents->data as $paymentIntent) {
-            self::savePaymentToDatabase($paymentIntent);
-        }
+        $limit = 2; // Define o número máximo de registros por página
+        $offset = 0;
+        $allPaymentIntents = [];
 
-        return $paymentIntents->data;
+        do {
+            // Faz uma chamada à API para buscar PaymentIntents com limite e offset
+            $paymentIntents = \Stripe\PaymentIntent::all([
+                "limit" => $limit,
+                "offset" => $offset,
+            ]);
+
+            // Salva os pagamentos no banco de dados
+            foreach ($paymentIntents->data as $paymentIntent) {
+                self::savePaymentToDatabase($paymentIntent);
+                $allPaymentIntents[] = $paymentIntent;
+            }
+
+            $offset += $limit;
+        } while ($paymentIntents->has_more);
+
+        return $allPaymentIntents;
     }
 
     public static function getPaymentIntentDetails($paymentId)

@@ -7,7 +7,8 @@ use App\Http\Controllers\Central\{
     BillingCentralController,
     MailCentralController,
     PlansCentralController,
-    PaymentCentralController
+    PaymentCentralController,
+    StripeWebhookController
 };
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -21,6 +22,10 @@ Route::get("/", function () {
         "phpVersion" => PHP_VERSION,
     ]);
 });
+Route::post("/stripe/webhook", [
+    StripeWebhookController::class,
+    "handleWebhook",
+]);
 
 Route::get("/payments", [PaymentCentralController::class, "index"])->name(
     "payments.index"

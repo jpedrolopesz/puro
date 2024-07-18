@@ -15,7 +15,7 @@ import {
 const emit = defineEmits(["updateData"]);
 const props = defineProps({
     data: {
-        type: Object,
+        type: Array,
         required: true,
     },
 });
