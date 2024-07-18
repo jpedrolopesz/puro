@@ -33,8 +33,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-console.log(props.tenantDetails);
 </script>
 
 <template>
@@ -194,6 +192,12 @@ console.log(props.tenantDetails);
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.id }}
+                                </CardDescription>
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Domain</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.domain.domain }}
                                 </CardDescription>
                                 <CardTitle class="text-gray-800/90 text-sm">
                                     Creator name</CardTitle

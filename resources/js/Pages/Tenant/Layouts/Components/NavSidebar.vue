@@ -1,31 +1,24 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { cn } from "../lib/utils";
-import { accounts } from "./Components/accounts";
-import NavList, { type LinkProp } from "./Components/NavList.vue";
-import AccountSwitcher from "./Components/AccountSwitcher.vue";
-import { Separator } from "../Components/ui/separator";
-import { TooltipProvider } from "../Components/ui/tooltip";
+import { cn } from "@/lib/utils";
+import NavList, { type LinkProp } from "./NavList.vue";
+import { Separator } from "@/Components/ui/separator";
+import { TooltipProvider } from "@/Components/ui/tooltip";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+
 import {
     ResizableHandle,
     ResizablePanel,
     ResizablePanelGroup,
-} from "../Components/ui/resizable";
+} from "@/Components/ui/resizable";
 
 interface UserProps {
-    // VOU TER QUE ADICIONAR CONTAS VINCULADA EM UM UNICO PERFIL
-    accounts: {
-        label: string;
-        email: string;
-        icon: string;
-    }[];
-
     defaultLayout?: number[];
     defaultCollapsed?: boolean;
 }
 
 const props = withDefaults(defineProps<UserProps>(), {
-    defaultLayout: () => [265, 440, 655],
+    defaultLayout: () => [30],
 });
 
 const isCollapsed = ref(false);
@@ -42,22 +35,6 @@ const links: LinkProp[] = [
         title: "Dashboard",
         label: "",
         icon: "lucide:inbox",
-        variant: "ghost",
-        route: route("tenant.dashboard"),
-        current: route().current("tenant.dashboard"),
-    },
-    {
-        title: "Users",
-        label: "972",
-        icon: "lucide:user-2",
-        variant: "ghost",
-        route: route("tenant.dashboard"),
-        current: route().current("tenant.dashboard"),
-    },
-    {
-        title: "Billing",
-        label: "",
-        icon: "lucide:shopping-cart",
         variant: "ghost",
         route: route("tenant.dashboard"),
         current: route().current("tenant.dashboard"),
@@ -101,14 +78,25 @@ const links2: LinkProp[] = [
         route: "/promotions",
     },
 ];
+
+const links3: LinkProp[] = [
+    {
+        title: "Log out",
+
+        icon: "lucide:log-out",
+        variant: "ghost",
+        route: "/social",
+    },
+];
 </script>
 
 <template>
     <TooltipProvider :delay-duration="0">
         <ResizablePanelGroup
+            style="height: h-lvh"
             id="resize-panel-group-1"
             direction="horizontal"
-            class="h-full max-h-[800px] items-stretch"
+            class="h-lvh items-stretch"
         >
             <ResizablePanel
                 id="resize-panel-1"
@@ -125,24 +113,38 @@ const links2: LinkProp[] = [
                 @expand="onExpand"
                 @collapse="onCollapse"
             >
-                <div
-                    class="mb-1"
-                    :class="
-                        cn(
-                            'flex h-[52px] items-center justify-center',
-                            isCollapsed ? 'h-[52px]' : 'px-2',
-                        )
-                    "
-                >
-                    <AccountSwitcher
-                        :is-collapsed="isCollapsed"
-                        :accounts="accounts"
-                    />
+                <div class="flex flex-col h-full justify-between">
+                    <!-- Início -->
+                    <div
+                        class="mb-1"
+                        :class="
+                            cn(
+                                'flex h-[52px] items-center justify-center',
+                                isCollapsed ? 'h-[52px]' : 'px-2',
+                            )
+                        "
+                    >
+                        <ApplicationLogo
+                            class="w-10 h-10 fill-current text-gray-500"
+                        />
+                    </div>
+
+                    <Separator />
+                    <NavList :is-collapsed="isCollapsed" :links="links" />
+
+                    <!-- Meio -->
+                    <Separator />
+
+                    <div class="flex-grow">
+                        <NavList :is-collapsed="isCollapsed" :links="links2" />
+                    </div>
+                    <Separator />
+
+                    <!-- Fim -->
+                    <div class="mb-1">
+                        <NavList :is-collapsed="isCollapsed" :links="links3" />
+                    </div>
                 </div>
-                <Separator />
-                <NavList :is-collapsed="isCollapsed" :links="links" />
-                <Separator />
-                <NavList :is-collapsed="isCollapsed" :links="links2" />
             </ResizablePanel>
             <ResizableHandle id="resize-handle-1" with-handle />
             <ResizablePanel
@@ -150,7 +152,7 @@ const links2: LinkProp[] = [
                 :default-size="defaultLayout[1]"
                 :min-size="30"
             >
-                <slot />
+                <slot class="h-lvh" />
             </ResizablePanel>
         </ResizablePanelGroup>
     </TooltipProvider>

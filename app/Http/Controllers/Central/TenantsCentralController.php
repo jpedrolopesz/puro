@@ -29,6 +29,7 @@ class TenantsCentralController extends Controller
             "activityLogs",
             "resourceUsage",
             "supportTickets",
+            "domain",
         ])->find($id);
 
         return Inertia::render("Central/Tenants/TenantViewDetails", [

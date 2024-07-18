@@ -24,9 +24,6 @@ class CreateTenantsTable extends Migration
             $table->text("tenancy_about")->nullable();
             $table->foreignId("creator_id")->constrained("users");
 
-            //$table->string("stripe_id")->nullable()->index();
-            //$table->timestamp("trial_ends_at")->nullable();
-
             $table->timestamps();
             $table->json("data")->nullable();
         });

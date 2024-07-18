@@ -5,6 +5,8 @@ import { cn } from "@/lib/utils";
 import NavList, { type LinkProp } from "./NavList.vue";
 import { Separator } from "@/Components/ui/separator";
 import { TooltipProvider } from "@/Components/ui/tooltip";
+import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+
 import {
     ResizableHandle,
     ResizablePanel,
@@ -112,11 +114,22 @@ const links2: LinkProp[] = [
         route: "/promotions",
     },
 ];
+
+const links3: LinkProp[] = [
+    {
+        title: "Log out",
+
+        icon: "lucide:log-out",
+        variant: "ghost",
+        route: "/social",
+    },
+];
 </script>
 
 <template>
     <TooltipProvider :delay-duration="0">
         <ResizablePanelGroup
+            style="height: h-lvh"
             id="resize-panel-group-1"
             direction="horizontal"
             class="h-lvh items-stretch"
@@ -136,21 +149,35 @@ const links2: LinkProp[] = [
                 @expand="onExpand"
                 @collapse="onCollapse"
             >
-                <div
-                    class="mb-1"
-                    :class="
-                        cn(
-                            'flex h-[52px] items-center justify-center',
-                            isCollapsed ? 'h-[52px]' : 'px-2',
-                        )
-                    "
-                >
-                    <span :is-collapsed="isCollapsed">Logo aqui</span>
+                <div class="flex flex-col h-full justify-between">
+                    <div
+                        class="mb-1"
+                        :class="
+                            cn(
+                                'flex h-[52px] items-center justify-center',
+                                isCollapsed ? 'h-[52px]' : 'px-2',
+                            )
+                        "
+                    >
+                        <ApplicationLogo
+                            class="w-10 h-10 fill-current text-gray-500"
+                        />
+                    </div>
+
+                    <Separator />
+                    <NavList :is-collapsed="isCollapsed" :links="links" />
+
+                    <Separator />
+
+                    <div class="flex-grow">
+                        <NavList :is-collapsed="isCollapsed" :links="links2" />
+                    </div>
+                    <Separator />
+
+                    <div class="mb-1">
+                        <NavList :is-collapsed="isCollapsed" :links="links3" />
+                    </div>
                 </div>
-                <Separator />
-                <NavList :is-collapsed="isCollapsed" :links="links" />
-                <Separator />
-                <NavList :is-collapsed="isCollapsed" :links="links2" />
             </ResizablePanel>
             <ResizableHandle id="resize-handle-1" with-handle />
             <ResizablePanel
