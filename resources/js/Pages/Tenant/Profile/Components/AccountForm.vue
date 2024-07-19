@@ -86,13 +86,6 @@ async function onSubmit(values: any) {
 </script>
 
 <template>
-    <div>
-        <h3 class="text-lg font-medium">Account</h3>
-        <p class="text-sm text-muted-foreground">
-            Update your account settings. Set your preferred language and
-            timezone.
-        </p>
-    </div>
     <Form
         v-slot="{ setValues }"
         :validation-schema="accountFormSchema"

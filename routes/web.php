@@ -9,6 +9,7 @@ use App\Http\Controllers\Central\{
     PaymentCentralController,
     StripeWebhookController
 };
+use App\Http\Controllers\Subscription\StripeCheckoutController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -21,6 +22,7 @@ Route::get("/", function () {
         "phpVersion" => PHP_VERSION,
     ]);
 });
+
 Route::post("/stripe/webhook", [
     StripeWebhookController::class,
     "handleWebhook",

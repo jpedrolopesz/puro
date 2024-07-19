@@ -2,9 +2,6 @@
 import { ref, computed } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 
-import { cn } from "@/lib/utils";
-import { Button } from "@/Components/ui/button";
-
 interface Item {
     title: string;
     href: string;
@@ -22,8 +19,8 @@ const sidebarNavItems: Item[] = [
         href: "/profile/account",
     },
     {
-        title: "Billing",
-        href: "/profile/billing",
+        title: "Plans",
+        href: "/profile/plans",
     },
 ];
 

@@ -5,6 +5,18 @@ import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
+import CheckoutPage from "../../SubscriptionPlans/CheckoutPage.vue";
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from "@/Components/ui/alert-dialog";
 
 import {
     Card,
@@ -100,21 +112,29 @@ const currentPlan = ref({
 </script>
 
 <template>
-    <div>
-        <h3 class="text-lg font-medium">Plans</h3>
-        <p class="text-sm text-muted-foreground">
-            If you wish to keep using the application please choose a
-            subscription plan below.
-        </p>
-    </div>
-
-    <div class="mt-5 md:col-span-2 md:mt-0">
+    <div class="mt-5 md:col-span-2 md:mt-0 f">
         <div class="flex items-center space-x-2">
             <Label for="airplane-mode">Monthly</Label>
 
             <Switch id="airplane-mode" @click="planSelect = !planSelect" />
             <Label for="airplane-mode">Annually</Label>
         </div>
+
+        <AlertDialog>
+            <AlertDialogTrigger as-child>
+                <Button variant="outline"> Show Dialog </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+                <AlertDialogTitle>oi</AlertDialogTitle>
+                <CheckoutPage>
+                    <AlertDialogCancel variant="outline" class="w-14 mr-4">
+                        Close
+                    </AlertDialogCancel>
+
+                    <Button class="w-full"> Continue </Button>
+                </CheckoutPage>
+            </AlertDialogContent>
+        </AlertDialog>
 
         <div v-if="planSelect" class="my-5 grid grid-cols-3 gap-4">
             <Card v-for="plan in plansMonthly">

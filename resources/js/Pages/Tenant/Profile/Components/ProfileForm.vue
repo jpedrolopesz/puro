@@ -86,12 +86,6 @@ const onSubmit = handleSubmit((values) => {
 </script>
 
 <template>
-    <div>
-        <h3 class="text-lg font-medium">Profile</h3>
-        <p class="text-sm text-muted-foreground">
-            This is how others will see you on the site.
-        </p>
-    </div>
     <form class="space-y-8" @submit="onSubmit">
         <FormField v-slot="{ componentField }" name="username">
             <FormItem>

@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Subscription\StripeCheckoutController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
@@ -26,6 +27,16 @@ Route::group(
     ],
     function () {
         Route::middleware("auth")->group(function () {
+            Route::post("/subscription", [
+                StripeCheckoutController::class,
+                "subscription",
+            ]);
+
+            Route::get("/stripe/checkout", [
+                StripeCheckoutController::class,
+                "index",
+            ])->name("stripe.checkout");
+
             Route::get("/dashboard", [
                 DashboardTenantController::class,
                 "index",
@@ -40,9 +51,9 @@ Route::group(
                 return Inertia::render("Tenant/Profile/Account");
             })->name("profile.account");
 
-            Route::get("/profile/billing", function () {
-                return Inertia::render("Tenant/Profile/Billing");
-            })->name("profile.billing");
+            Route::get("/profile/plans", function () {
+                return Inertia::render("Tenant/Profile/Plans");
+            })->name("profile.plans");
 
             Route::patch("/profile", [
                 ProfileTenantController::class,
