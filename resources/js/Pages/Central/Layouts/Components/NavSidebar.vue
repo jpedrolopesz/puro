@@ -124,6 +124,8 @@ const links3: LinkProp[] = [
         route: "/social",
     },
 ];
+
+//const layout = useCookie<number[]>('splitter:layout')
 </script>
 
 <template>
@@ -133,6 +135,7 @@ const links3: LinkProp[] = [
             id="resize-panel-group-1"
             direction="horizontal"
             class="h-lvh items-stretch"
+            auto-save-id="any-id"
         >
             <ResizablePanel
                 id="resize-panel-1"

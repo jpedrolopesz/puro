@@ -13,7 +13,6 @@ class StripeCheckoutController extends Controller
 {
     public function __construct()
     {
-        // Configure o Stripe com sua chave secreta ao inicializar o controlador
         Stripe::setApiKey(
             "sk_test_51LRjEpGQW0U1PfqxjAwrWJaaaML9e8xOtowprEoQOF8j2z2Nvn9a5P8KkvDpgVzmeBpCdczITYNhvI1DMYs18qRb00e3YMKUXY"
         );

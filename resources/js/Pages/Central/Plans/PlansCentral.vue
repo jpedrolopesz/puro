@@ -12,10 +12,10 @@ import { columns } from "./Components/columns";
     <Head title="Plans" />
 
     <AuthenticatedCentralLayout>
-        <div class="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
+        <main class="space-y-8">
             <div class="flex items-center justify-between space-y-2">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight">Plans</h2>
+                    <h2 class="text-2xl font-bold tracking-tight">Payments</h2>
                     <p class="text-muted-foreground">
                         Here&apos;s a list of your tasks for this month!
                     </p>
@@ -23,6 +23,6 @@ import { columns } from "./Components/columns";
             </div>
 
             <DataTable :data="plans" :columns="columns" />
-        </div>
+        </main>
     </AuthenticatedCentralLayout>
 </template>

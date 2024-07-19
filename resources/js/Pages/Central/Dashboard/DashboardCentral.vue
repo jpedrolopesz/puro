@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import { Head } from "@inertiajs/vue3";
+
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
 
 import DateRangePicker from "./Components/DateRangePicker.vue";
@@ -28,16 +30,25 @@ function handleUpdateData(newData) {
 </script>
 
 <template>
+    <Head title="Dashboard" />
+
     <AuthenticatedCentralLayout>
-        <div class="flex items-center justify-between space-y-2">
-            <h2 class="text-3xl font-bold tracking-tight">Dashboard Central</h2>
-            <div class="flex items-center space-x-2">
+        <main class="space-y-8">
+            <div class="flex items-center justify-between space-y-2">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight">
+                        Dashboard Central
+                    </h2>
+                    <p class="text-muted-foreground">
+                        Here&apos;s a list of your tasks for this month!
+                    </p>
+                </div>
                 <DateRangePicker
                     :data="filteredData"
                     @updateData="handleUpdateData"
                 />
             </div>
-        </div>
+        </main>
 
         <Tabs default-value="overview" class="space-y-4">
             <TabsList>

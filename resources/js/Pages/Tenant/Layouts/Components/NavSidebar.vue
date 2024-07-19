@@ -96,6 +96,7 @@ const links3: LinkProp[] = [
             style="height: h-lvh"
             id="resize-panel-group-1"
             direction="horizontal"
+            auto-save-id="any-id"
             class="h-lvh items-stretch"
         >
             <ResizablePanel
