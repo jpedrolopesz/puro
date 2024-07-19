@@ -6,8 +6,6 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
 
 <template>
     <AuthenticatedCentralLayout>
-        <div class="min-h-screen flex-col md:flex">
-            <Mail :accounts="accounts" :mails="mails" :nav-collapsed-size="4" />
-        </div>
+        <Mail :accounts="accounts" :mails="mails" :nav-collapsed-size="4" />
     </AuthenticatedCentralLayout>
 </template>

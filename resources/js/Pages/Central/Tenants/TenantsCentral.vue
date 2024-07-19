@@ -5,7 +5,7 @@ import { Head } from "@inertiajs/vue3";
 import DataTable from "./Components/DataTable.vue";
 import { columns } from "./Components/columns";
 
-import { PropType, defineProps } from "vue";
+import { defineProps } from "vue";
 
 const props = defineProps({
     tenantsLists: {

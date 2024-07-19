@@ -4,11 +4,8 @@ import { Search } from "lucide-vue-next";
 import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
 import type { Mail } from "../data/mails";
-import AccountSwitcher from "./AccountSwitcher.vue";
 import MailList from "./MailList.vue";
 import MailDisplay from "./MailDisplay.vue";
-import Nav, { type LinkProp } from "./MailNav.vue";
-import { cn } from "@/lib/utils";
 import { Separator } from "@/Components/ui/separator";
 import { Input } from "@/Components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
@@ -83,7 +80,7 @@ function onExpand() {
         <ResizablePanelGroup
             id="resize-panel-group-1"
             direction="horizontal"
-            class="max-h-[800px] items-stretch"
+            class="max-h-full items-stretch"
         >
             <ResizablePanel
                 id="resize-panel-1"
@@ -92,7 +89,7 @@ function onExpand() {
             >
                 <Tabs default-value="all">
                     <div class="flex items-center px-4 py-2">
-                        <h1 class="text-xl font-bold">Inbox</h1>
+                        <h1 class="text-xl font-bold ml-4">Inbox</h1>
                         <TabsList class="ml-auto">
                             <TabsTrigger
                                 value="all"
@@ -108,7 +105,7 @@ function onExpand() {
                             </TabsTrigger>
                         </TabsList>
                     </div>
-                    <Separator />
+                    <Separator class="my-1" />
                     <div
                         class="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
                     >
@@ -147,5 +144,6 @@ function onExpand() {
                 <MailDisplay :mail="selectedMailData" />
             </ResizablePanel>
         </ResizablePanelGroup>
+        <Separator />
     </TooltipProvider>
 </template>
