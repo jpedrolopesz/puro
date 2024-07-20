@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-export const billingSchema = z.object({
-  id: z.string(),
+export const paymentsSchema = z.object({
+  stripe_payment_id: z.number(),
   customer: z.object({
     Name: z.string(),
     Email: z.string().email(),
@@ -28,4 +28,4 @@ export const billingSchema = z.object({
   status: z.string(),
 });
 
-export type Billing = z.infer<typeof billingSchema>;
+export type Payments = z.infer<typeof paymentsSchema>;

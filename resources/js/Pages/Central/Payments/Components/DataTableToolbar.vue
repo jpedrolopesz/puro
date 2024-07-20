@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Billing } from "../data/schema";
+import type { Payments } from "../data/schema";
 
 import { priorities, subscriptionStatuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
@@ -11,7 +11,7 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Billing>;
+    table: Table<Payments>;
 }
 
 const props = defineProps<DataTableToolbarProps>();
@@ -25,13 +25,17 @@ const isFiltered = computed(
     <div class="flex items-center justify-between">
         <div class="flex flex-1 items-center space-x-2">
             <Input
-                placeholder="Filter tasks..."
+                placeholder="Filter payments..."
                 :model-value="
-                    (table.getColumn('id')?.getFilterValue() as string) ?? ''
+                    (table
+                        .getColumn('description')
+                        ?.getFilterValue() as string) ?? ''
                 "
                 class="h-8 w-[150px] lg:w-[250px]"
                 @input="
-                    table.getColumn('id')?.setFilterValue($event.target.value)
+                    table
+                        .getColumn('description')
+                        ?.setFilterValue($event.target.value)
                 "
             />
             <DataTableFacetedFilter

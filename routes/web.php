@@ -9,17 +9,24 @@ use App\Http\Controllers\Central\{
     PaymentCentralController,
     StripeWebhookController
 };
-use App\Http\Controllers\Subscription\StripeCheckoutController;
-use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::get("/", function () {
+    if (Auth::guard("admin")->check()) {
+        $user = Auth::guard("admin")->user();
+        return response()->json([
+            "authenticated" => true,
+            "user" => $user,
+        ]);
+    }
+
+    return response()->json(["authenticated" => false]);
+
     return Inertia::render("Welcome", [
         "canLogin" => Route::has("login"),
         "canRegister" => Route::has("register"),
-        "laravelVersion" => Application::VERSION,
-        "phpVersion" => PHP_VERSION,
     ]);
 });
 
@@ -27,20 +34,6 @@ Route::post("/stripe/webhook", [
     StripeWebhookController::class,
     "handleWebhook",
 ]);
-
-Route::get("/payments", [PaymentCentralController::class, "index"])->name(
-    "payments.index"
-);
-
-Route::get("/payments/{paymentsId}", [
-    PaymentCentralController::class,
-    "details",
-])->name("payments.details");
-
-Route::get("/sync-payments", [
-    PaymentCentralController::class,
-    "syncPayments",
-])->name("sync.payments");
 
 Route::middleware("auth:admin")->group(function () {
     Route::get("/dashboard", [
@@ -57,7 +50,22 @@ Route::middleware("auth:admin")->group(function () {
         "details",
     ])->name("tenant.details");
 
-    ######## Plans ########
+    ######## PAYMENTS ########
+    Route::get("/payments", [PaymentCentralController::class, "index"])->name(
+        "payments.index"
+    );
+
+    Route::get("/payments/{paymentsId}", [
+        PaymentCentralController::class,
+        "details",
+    ])->name("payments.details");
+
+    Route::get("/sync-payments", [
+        PaymentCentralController::class,
+        "syncPayments",
+    ])->name("sync.payments");
+
+    ######## PLANS ########
 
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
@@ -80,11 +88,8 @@ Route::middleware("auth:admin")->group(function () {
     );
     Route::get("/profile/account", function () {
         return Inertia::render("Central/Profile/Account");
-    })->name("profile.appearanc");
+    })->name("profile.account");
 
-    Route::get("/profile/appearanc", function () {
-        return Inertia::render("Central/Profile/Appearance");
-    })->name("profile.appearance");
     Route::patch("/profile", [ProfileCentralController::class, "update"])->name(
         "profile.update"
     );

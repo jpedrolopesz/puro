@@ -26,6 +26,13 @@ Route::group(
         ],
     ],
     function () {
+        Route::get("/", function () {
+            return Inertia::render("Tenant/Welcome", [
+                "canLogin" => Route::has("login"),
+                "canRegister" => Route::has("register"),
+            ]);
+        });
+
         Route::middleware("auth")->group(function () {
             Route::post("/subscription", [
                 StripeCheckoutController::class,

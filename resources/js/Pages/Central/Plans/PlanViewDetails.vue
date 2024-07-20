@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import { Head } from "@inertiajs/vue3";
+
 import { ChevronLeft, PlusCircle, Upload } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
-import { ToggleGroup, ToggleGroupItem } from "@/Components/ui/toggle-group";
 import {
     Card,
     CardContent,
@@ -31,7 +32,7 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 
-import { Link } from "@inertiajs/vue3";
+import { Link, Head } from "@inertiajs/vue3";
 import { defineProps } from "vue";
 
 function formatDate(timestamp) {
@@ -47,10 +48,10 @@ const props = defineProps({
 </script>
 
 <template>
+    <Head title="Plan Details" />
+
     <AuthenticatedCentralLayout>
-        <main
-            class="grid flex-1 items-start gap-4 p-4 sm:px-1 sm:py-0 md:gap-8"
-        >
+        <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <div class="flex items-center gap-4">
                     <Link :href="route('plans.index')">

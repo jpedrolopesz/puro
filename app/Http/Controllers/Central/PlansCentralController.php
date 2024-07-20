@@ -59,7 +59,7 @@ class PlansCentralController extends Controller
                 ];
             }
 
-            return Inertia::render("Central/Plans/Create/PlanCreate", [
+            return Inertia::render("Central/Plans/PlanViewDetails", [
                 "product" => [
                     "id" => $product->id,
                     "name" => $product->name,

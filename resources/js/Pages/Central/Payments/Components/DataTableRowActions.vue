@@ -3,8 +3,8 @@ import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
 import { Link } from "@inertiajs/vue3";
 
-import { billingSchema } from "../data/schema";
-import type { Billing } from "../data/schema";
+import { paymentsSchema } from "../data/schema";
+import type { Payments } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { Button } from "@/Components/ui/button";
@@ -12,23 +12,17 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
     DropdownMenuLabel,
 } from "@/Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
-    row: Row<Billing>;
+    row: Row<Payments>;
 }
 const props = defineProps<DataTableRowActionsProps>();
 
-const billingSchema = computed(() => billingSchema.parse(props.row.original));
+const paymentsSchema = computed(() => paymentsSchema.parse(props.row.original));
 </script>
 
 <template>
@@ -48,12 +42,12 @@ const billingSchema = computed(() => billingSchema.parse(props.row.original));
             <DropdownMenuItem
                 ><Link
                     :href="
-                        route('billing.details', {
-                            paymentsId: props.row.original.id,
+                        route('payments.details', {
+                            paymentsId: props.row.original.stripe_payment_id,
                         })
                     "
-                    >View payment details</Link
-                ></DropdownMenuItem
+                    >View payment details
+                </Link></DropdownMenuItem
             >
         </DropdownMenuContent>
     </DropdownMenu>

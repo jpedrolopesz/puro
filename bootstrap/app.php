@@ -27,7 +27,8 @@ return Application::configure(basePath: dirname(__DIR__))
             append: [
                 \App\Http\Middleware\HandleInertiaRequests::class,
                 \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-                // "auth.admin" => \App\Http\Middleware\AdminRedirectIfAuthenticated::class,
+                "auth.admin" =>
+                    \App\Http\Middleware\AdminRedirectIfAuthenticated::class,
                 // "auth.token" =>\App\Http\Middleware\AuthenticateWithToken::class,
             ]
         );

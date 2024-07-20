@@ -4,7 +4,6 @@ import NavMenu from "./Components/NavMenu.vue";
 import { Separator } from "@/Components/ui/separator";
 import AuthenticatedLayout from "../Layouts/AuthenticatedLayout.vue";
 
-// Definindo as props que o componente vai receber
 const props = defineProps({
     title: {
         type: String,
@@ -21,7 +20,6 @@ const props = defineProps({
     <AuthenticatedLayout>
         <div class="space-y-6">
             <div class="space-y-0.5">
-                <!-- Usando a prop title para definir o título -->
                 <h2 class="text-2xl font-bold tracking-tight">{{ title }}</h2>
                 <p class="text-muted-foreground">{{ description }}</p>
             </div>

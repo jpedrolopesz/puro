@@ -1,9 +1,6 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
-
-import { cn } from "@/lib/utils";
-import { Button } from "@/Components/ui/button";
 
 interface Item {
     title: string;
@@ -20,10 +17,6 @@ const sidebarNavItems: Item[] = [
     {
         title: "Account",
         href: "/profile/account",
-    },
-    {
-        title: "Appearance",
-        href: "/profile/appearance",
     },
 ];
 

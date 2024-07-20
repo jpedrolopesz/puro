@@ -37,7 +37,7 @@ const links: LinkProp[] = [
     {
         title: "Dashboard",
         label: "",
-        icon: "lucide:inbox",
+        icon: "lucide:area-chart",
         variant: "ghost",
         route: route("admin.dashboard"),
         current: route().current("admin.dashboard"),
@@ -45,32 +45,37 @@ const links: LinkProp[] = [
     {
         title: "Tenants",
         label: "972",
-        icon: "lucide:user-2",
+        icon: "lucide:building-2",
         variant: "ghost",
         route: route("tenants.index"),
-        current: route().current("tenants.index"),
+        current:
+            route().current("tenants.index") ||
+            route().current("tenant.details"),
     },
 
     {
         title: "Payments",
         label: "",
-        icon: "lucide:shopping-cart",
+        icon: "lucide:hand-coins",
         variant: "ghost",
         route: route("payments.index"),
-        current: route().current("payments.index"),
+        current:
+            route().current("payments.index") ||
+            route().current("payment.details"),
     },
     {
         title: "Plans",
         label: "6",
-        icon: "lucide:archive",
+        icon: "lucide:package-open",
         variant: "ghost",
         route: route("plans.index"),
-        current: route().current("plans.index"),
+        current:
+            route().current("plans.index") || route().current("plan.details"),
     },
     {
         title: "Mails",
         label: "6",
-        icon: "lucide:message-square",
+        icon: "lucide:mails",
         variant: "ghost",
         route: route("mails.index"),
         current: route().current("mails.index"),
@@ -116,6 +121,15 @@ const links2: LinkProp[] = [
 ];
 
 const links3: LinkProp[] = [
+    {
+        title: "Profile",
+        icon: "lucide:user-cog",
+        variant: "ghost",
+        route: route("profile.edit"),
+        current:
+            route().current("profile.edit") ||
+            route().current("profile.account"),
+    },
     {
         title: "Log out",
 

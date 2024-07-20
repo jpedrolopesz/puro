@@ -39,9 +39,7 @@ const props = defineProps({
     <Head title="Tenant Details" />
 
     <AuthenticatedCentralLayout>
-        <main
-            class="grid flex-1 items-start gap-4 p-4 sm:px-1 sm:py-0 md:gap-8"
-        >
+        <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <div class="flex items-center gap-4">
                     <Link :href="route('tenants.index')">
