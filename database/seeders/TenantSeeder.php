@@ -32,9 +32,13 @@ class TenantSeeder extends Seeder
         ]);
 
         // Adicionar usuário (criador)
-        $creator = User::firstOrCreate(
+        $creator = User::updateOrCreate(
             ["email" => "admin@example.com"],
-            ["name" => "Joao Zamonelo", "password" => bcrypt("password")] // Ajuste o password conforme necessário
+            [
+                "name" => "Joao Zamonelo",
+                "password" => bcrypt("password"),
+                "tenant_id" => 1,
+            ]
         );
 
         // Adicionar tenant

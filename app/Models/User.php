@@ -55,8 +55,8 @@ class User extends Authenticatable
         );
     }
 
-    public function tenants()
+    public function tenant()
     {
-        return $this->tenants(Tenant::class, "creator_id");
+        return $this->belongsTo(Tenant::class, "tenant_id");
     }
 }

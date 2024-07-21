@@ -18,10 +18,12 @@ class AdminRedirectIfAuthenticated
 
     public function handle(Request $request, Closure $next, $guard = null)
     {
+        // Verifica se o valor de $guard é "admin" e se o usuário está autenticado com o guard "admin"
         if ($guard === "admin" && Auth::guard("admin")->check()) {
             return redirect()->route("admin.dashboard");
         }
 
+        // Verifica se o usuário está autenticado com o guard "web"
         if (Auth::guard("web")->check()) {
             $user = Auth::guard("web")->user();
             $tenant = Tenant::find($user->tenant_id);
@@ -41,10 +43,12 @@ class AdminRedirectIfAuthenticated
             }
         }
 
-        $guards = empty($guard) ? [null] : [$guard];
+        // Se $guard não estiver definido ou for nulo, use uma lista padrão de guards para verificar
+        $guards = empty($guard) ? ["web"] : [$guard];
+
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                // Redireciona o usuário autenticado para uma rota específica
+                // Redireciona o usuário autenticado para a rota principal
                 return redirect("/");
             }
         }

@@ -16,7 +16,8 @@ return new class extends Migration {
             $table->string("email")->unique();
             $table->timestamp("email_verified_at")->nullable();
             $table->string("password");
-            $table->foreignId("tenant_id")->nullable();
+            // $table->foreignId("tenant_id")->nullable();
+            $table->unsignedBigInteger("tenant_id")->nullable();
 
             $table
                 ->enum("role", ["super_admin", "admin", "user"])

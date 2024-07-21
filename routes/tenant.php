@@ -12,6 +12,7 @@ use App\Http\Controllers\Tenant\{
     DashboardTenantController,
     ProfileTenantController
 };
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 Route::group(
@@ -26,11 +27,21 @@ Route::group(
         ],
     ],
     function () {
+        Route::get("/dashboard", [
+            DashboardTenantController::class,
+            "index",
+        ])->name("dashboard");
+
         Route::get("/", function () {
-            return Inertia::render("Tenant/Welcome", [
-                "canLogin" => Route::has("login"),
-                "canRegister" => Route::has("register"),
-            ]);
+            if (Auth::guard("web")->check()) {
+                $user = Auth::guard("web")->user();
+                return response()->json([
+                    "authenticated" => true,
+                    "user" => $user,
+                ]);
+            }
+
+            return response()->json(["authenticated" => false]);
         });
 
         Route::middleware("auth")->group(function () {
@@ -43,11 +54,6 @@ Route::group(
                 StripeCheckoutController::class,
                 "index",
             ])->name("stripe.checkout");
-
-            Route::get("/dashboard", [
-                DashboardTenantController::class,
-                "index",
-            ])->name("dashboard");
 
             Route::get("/profile", [
                 ProfileTenantController::class,

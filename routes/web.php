@@ -35,7 +35,7 @@ Route::post("/stripe/webhook", [
     "handleWebhook",
 ]);
 
-Route::middleware("auth:admin")->group(function () {
+Route::middleware("auth.admin")->group(function () {
     Route::get("/dashboard", [
         DashboardCentralController::class,
         "index",
