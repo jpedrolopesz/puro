@@ -18,7 +18,6 @@ class AdminRedirectIfAuthenticated
 
     public function handle(Request $request, Closure $next, $guard = null)
     {
-        // Verifica se o valor de $guard é "admin" e se o usuário está autenticado com o guard "admin"
         if ($guard === "admin" && Auth::guard("admin")->check()) {
             return redirect()->route("admin.dashboard");
         }
