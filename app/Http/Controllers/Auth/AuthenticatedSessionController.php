@@ -38,8 +38,6 @@ class AuthenticatedSessionController extends Controller
         $request->session()->regenerate();
 
         if (Auth::guard("admin")->check()) {
-            Log::info("Redirecionando para admin.dashboard");
-
             return redirect()->route("admin.dashboard");
         } elseif (Auth::guard("web")->check()) {
             $user = Auth::guard("web")->user();

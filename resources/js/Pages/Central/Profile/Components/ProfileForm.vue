@@ -28,8 +28,6 @@ import {
 import { Button } from "@/Components/ui/button";
 import { toast } from "@/Components/ui/toast";
 
-const verifiedEmails = ref(["m@example.com", "m@google.com", "m@support.com"]);
-
 const profileFormSchema = toTypedSchema(
     z.object({
         username: z
@@ -101,7 +99,7 @@ const onSubmit = handleSubmit((values) => {
                 <FormControl>
                     <Input
                         type="text"
-                        placeholder="shadcn"
+                        :placeholder="$page.props.auth.admin.name"
                         v-bind="componentField"
                     />
                 </FormControl>
@@ -116,25 +114,13 @@ const onSubmit = handleSubmit((values) => {
         <FormField v-slot="{ componentField }" name="email">
             <FormItem>
                 <FormLabel>Email</FormLabel>
-
-                <Select v-bind="componentField">
-                    <FormControl>
-                        <SelectTrigger>
-                            <SelectValue placeholder="Select an email" />
-                        </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                        <SelectGroup>
-                            <SelectItem
-                                v-for="email in verifiedEmails"
-                                :key="email"
-                                :value="email"
-                            >
-                                {{ email }}
-                            </SelectItem>
-                        </SelectGroup>
-                    </SelectContent>
-                </Select>
+                <FormControl>
+                    <Input
+                        type="text"
+                        :placeholder="$page.props.auth.admin.email"
+                        v-bind="componentField"
+                    />
+                </FormControl>
                 <FormDescription>
                     You can manage verified email addresses in your email
                     settings.

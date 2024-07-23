@@ -17,7 +17,7 @@ Route::get("/", function () {
     if (Auth::guard("admin")->check()) {
         $user = Auth::guard("admin")->user();
         return response()->json([
-            "authenticated" => true,
+            "authenticated" => Auth::guard("admin")->check(),
             "user" => $user,
         ]);
     }
@@ -36,6 +36,9 @@ Route::post("/stripe/webhook", [
 ]);
 
 Route::middleware("auth.admin")->group(function () {
+    ######## AUTH ########
+
+    ######## DASHBOARD ########
     Route::get("/dashboard", [
         DashboardCentralController::class,
         "index",

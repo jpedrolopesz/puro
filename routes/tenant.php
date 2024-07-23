@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Subscription\StripeCheckoutController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
@@ -27,10 +28,10 @@ Route::group(
         ],
     ],
     function () {
-        Route::get("/dashboard", [
-            DashboardTenantController::class,
-            "index",
-        ])->name("dashboard");
+        Route::get("login", [
+            AuthenticatedSessionController::class,
+            "create",
+        ])->name("login");
 
         Route::get("/", function () {
             if (Auth::guard("web")->check()) {
@@ -44,7 +45,12 @@ Route::group(
             return response()->json(["authenticated" => false]);
         });
 
-        Route::middleware("auth")->group(function () {
+        Route::middleware(["auth.tenant"])->group(function () {
+            Route::get("/dashboard", [
+                DashboardTenantController::class,
+                "index",
+            ])->name("dashboard");
+
             Route::post("/subscription", [
                 StripeCheckoutController::class,
                 "subscription",

@@ -25,6 +25,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->alias([
             "auth.admin" =>
                 \App\Http\Middleware\AdminRedirectIfAuthenticated::class,
+            "auth.tenant" =>
+                \App\Http\Middleware\TenantRedirectIfAuthenticated::class,
         ]);
 
         $middleware->validateCsrfTokens(except: ["stripe/*"]);
