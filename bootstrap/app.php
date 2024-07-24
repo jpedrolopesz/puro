@@ -22,19 +22,12 @@ return Application::configure(basePath: dirname(__DIR__))
         }
     )
     ->withMiddleware(function (Middleware $middleware) {
-        $middleware->alias([
-            "auth.admin" =>
-                \App\Http\Middleware\AdminRedirectIfAuthenticated::class,
-            "auth.tenant" =>
-                \App\Http\Middleware\TenantRedirectIfAuthenticated::class,
-        ]);
-
+        $middleware->redirectTo(guests: "/login", users: "/dashboard");
         $middleware->validateCsrfTokens(except: ["stripe/*"]);
         $middleware->web(
             append: [
                 \App\Http\Middleware\HandleInertiaRequests::class,
                 \Illuminate\Http\Middleware\AddLinkHeadersForPreloadedAssets::class,
-                // "auth.token" =>\App\Http\Middleware\AuthenticateWithToken::class,
             ]
         );
 
