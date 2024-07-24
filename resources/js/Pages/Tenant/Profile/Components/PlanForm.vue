@@ -5,7 +5,7 @@ import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
-import CheckoutPage from "../../SubscriptionPlans/CheckoutPage.vue";
+import CheckoutPage from "@/Pages/Subscription/StripeCheckout.vue";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -36,7 +36,7 @@ const plansMonthly = ref([
         name: "Basic Plan",
         price: 10,
         slug: "month",
-        stripe_id: "stripe_basic_monthly",
+        price_id: "price_1LSRHkGQW0U1PfqxJO7EGsHx",
         detail: [
             { id: 1, name: "Access to basic features" },
             { id: 2, name: "5GB Cloud Storage" },
@@ -47,7 +47,7 @@ const plansMonthly = ref([
         name: "Standard Plan",
         price: 20,
         slug: "month",
-        stripe_id: "stripe_standard_monthly",
+        price_id: "price_1LSmsIGQW0U1PfqxxsV7db73",
         detail: [
             { id: 1, name: "Access to standard features" },
             { id: 2, name: "10GB Cloud Storage" },
@@ -59,7 +59,7 @@ const plansMonthly = ref([
         name: "Premium Plan",
         price: 30,
         slug: "month",
-        stripe_id: "stripe_premium_monthly",
+        price_id: "price_1LSRIVGQW0U1PfqxnFnKpQmh",
         detail: [
             { id: 1, name: "Access to all features" },
             { id: 2, name: "50GB Cloud Storage" },
@@ -74,7 +74,7 @@ const plansYearly = ref([
         name: "Basic Plan",
         price: 100,
         slug: "year",
-        stripe_id: "stripe_basic_yearly",
+        price_id: "price_1LTBIAGQW0U1Pfqxdr82APbW",
         detail: [
             { id: 1, name: "Access to basic features" },
             { id: 2, name: "5GB Cloud Storage" },
@@ -85,7 +85,7 @@ const plansYearly = ref([
         name: "Standard Plan",
         price: 200,
         slug: "year",
-        stripe_id: "stripe_standard_yearly",
+        price_id: "price_1Lb6p6GQW0U1PfqxjKs6uVX2",
         detail: [
             { id: 1, name: "Access to standard features" },
             { id: 2, name: "10GB Cloud Storage" },
@@ -97,7 +97,7 @@ const plansYearly = ref([
         name: "Premium Plan",
         price: 300,
         slug: "year",
-        stripe_id: "stripe_premium_yearly",
+        price_id: "price_1Lb6kvGQW0U1PfqxQFJJcEBN",
         detail: [
             { id: 1, name: "Access to all features" },
             { id: 2, name: "50GB Cloud Storage" },
@@ -107,8 +107,13 @@ const plansYearly = ref([
 ]);
 
 const currentPlan = ref({
-    stripe_price: "stripe_standard_monthly",
+    stripe_price: "price_1Lb6kvGQW0U1PfqxQFJJcEBN",
 });
+
+// Função para manipular o clique no plano
+function handlePlanClick(plan) {
+    console.log(`Selected plan: ${plan.name},  All: ${plan.price_id}`);
+}
 </script>
 
 <template>
@@ -119,22 +124,6 @@ const currentPlan = ref({
             <Switch id="airplane-mode" @click="planSelect = !planSelect" />
             <Label for="airplane-mode">Annually</Label>
         </div>
-
-        <AlertDialog>
-            <AlertDialogTrigger as-child>
-                <Button variant="outline"> Show Dialog </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-                <AlertDialogTitle>oi</AlertDialogTitle>
-                <CheckoutPage>
-                    <AlertDialogCancel variant="outline" class="w-14 mr-4">
-                        Close
-                    </AlertDialogCancel>
-
-                    <Button class="w-full"> Continue </Button>
-                </CheckoutPage>
-            </AlertDialogContent>
-        </AlertDialog>
 
         <div v-if="planSelect" class="my-5 grid grid-cols-3 gap-4">
             <Card v-for="plan in plansMonthly">
@@ -157,33 +146,51 @@ const currentPlan = ref({
                     <div v-if="currentPlan !== null">
                         <Button
                             size="lg"
-                            v-if="plan.stripe_id === currentPlan.stripe_price"
+                            v-if="plan.price_id === currentPlan.stripe_price"
                             disabled
                         >
                             Active plan
                         </Button>
-
-                        <Button
-                            size="lg"
-                            v-else-if="
-                                plan.stripe_id !== currentPlan.stripe_price
-                            "
-                        >
-                            <Link
-                                href="
-                                    route(
-                                        'register.subscription',
-                                        plan.id,
-                                    )
-                                "
-                            >
-                                Update
-                            </Link>
-                        </Button>
+                        <AlertDialog>
+                            <AlertDialogTrigger as-child>
+                                <Button
+                                    @click="
+                                        () => {
+                                            handlePlanClick(plan); // Atualiza o selectedPlan
+                                            console.log(
+                                                `Opening modal with price_id: ${plan.price_id}`,
+                                            );
+                                        }
+                                    "
+                                    size="lg"
+                                    v-if="
+                                        plan.price_id !==
+                                        currentPlan.stripe_price
+                                    "
+                                >
+                                    Update
+                                </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                                <AlertDialogTitle
+                                    >Select Your Plan</AlertDialogTitle
+                                >
+                                <CheckoutPage :priceId="plan.price_id">
+                                    <AlertDialogCancel
+                                        variant="outline"
+                                        class="w-14 mr-4"
+                                    >
+                                        Close
+                                    </AlertDialogCancel>
+                                    <Button class="w-full">Continue</Button>
+                                </CheckoutPage>
+                            </AlertDialogContent>
+                        </AlertDialog>
                     </div>
 
                     <Button v-else-if="currentPlan !== true">
                         <Link
+                            @click="handlePlanClick(plan)"
                             size="lg"
                             v-if="plan.stripe_id"
                             href="
@@ -247,6 +254,7 @@ const currentPlan = ref({
                         </Button>
 
                         <Button
+                            @click="handlePlanClick(plan)"
                             size="lg"
                             v-else-if="
                                 plan.stripe_id !== currentPlan.stripe_price
@@ -267,6 +275,7 @@ const currentPlan = ref({
 
                     <Button v-else-if="currentPlan !== true">
                         <Link
+                            @click="handlePlanClick(plan)"
                             size="lg"
                             v-if="plan.stripe_id"
                             href="

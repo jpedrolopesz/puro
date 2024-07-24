@@ -56,11 +56,6 @@ Route::group(
                 "subscription",
             ]);
 
-            Route::get("/stripe/checkout", [
-                StripeCheckoutController::class,
-                "index",
-            ])->name("stripe.checkout");
-
             Route::get("/profile", [
                 ProfileTenantController::class,
                 "edit",

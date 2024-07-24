@@ -1,4 +1,21 @@
 <template>
+    <CardHeader>
+        <CardTitle>Payment Method</CardTitle>
+        <CardDescription>
+            Add a new payment method to your account.
+        </CardDescription>
+    </CardHeader>
+    <CardContent class="grid gap-6">
+        <div class="grid gap-2">
+            <Label for="name">Name</Label>
+            <Input id="name" placeholder="First Last" />
+        </div>
+        <div class="grid gap-2">
+            <Label for="number">Card number</Label>
+            <Input id="number" placeholder="" />
+        </div>
+    </CardContent>
+
     <div>
         <form @submit.prevent="submitForm">
             <div>
@@ -10,24 +27,17 @@
                     required
                 />
             </div>
+
             <div>
-                <label for="additionalInfo">Additional Info:</label>
+                <label for="card-holder-name">Card Holder Name:</label>
                 <input
                     type="text"
-                    id="additionalInfo"
-                    v-model="form.additional_info"
+                    id="card-holder-name"
+                    v-model="cardHolderName"
                     required
                 />
             </div>
-            <div>
-                <label for="amount">Amount (cents):</label>
-                <input
-                    type="number"
-                    id="amount"
-                    v-model="form.amount"
-                    required
-                />
-            </div>
+
             <div id="card-element">
                 <!-- A Stripe Element será inserida aqui -->
             </div>
@@ -40,20 +50,31 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from "vue";
+import {
+    Card,
+    CardContent,
+    CardDescription,
+    CardFooter,
+    CardHeader,
+    CardTitle,
+} from "@/Components/ui/card";
+
+import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
+
+import { onMounted, defineProps } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
 import { useForm } from "@inertiajs/vue3";
 
-// Substitua pela sua chave pública do Stripe
-const stripePromise = loadStripe(
-    "pk_test_51LRjEpGQW0U1Pfqxy4rwka8HWdsBTnY2S2Jsiz9vUB8XstTHI47i3NuYkyJH1ZZ6sbhoOqlepPENnrJjy2kA9sCm00kus3pIY8",
-);
+const props = defineProps<{
+    priceId: number | string | null;
+}>();
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
 const form = useForm({
-    price_id: "",
-    additional_info: "",
-    token: "",
-    amount: 0,
+    price_id: props.priceId ? props.priceId.toString() : "",
+    payment_method_id: "",
 });
 
 let stripe: any;
@@ -65,16 +86,23 @@ const submitForm = async () => {
         return;
     }
 
-    const { token, error } = await stripe.createToken(cardElement);
+    const cardHolderName = document.getElementById(
+        "card-holder-name",
+    ) as HTMLInputElement;
+
+    const { paymentMethod, error } = await stripe.createPaymentMethod({
+        type: "card",
+        card: cardElement,
+        billing_details: { name: cardHolderName.value }, // Adicionando o nome do titular
+    });
 
     if (error) {
-        // Exibir erro
         console.error(error.message);
         document.getElementById("card-errors")!.textContent = error.message;
         return;
     }
 
-    form.token = token!.id;
+    form.payment_method_id = paymentMethod.id;
 
     form.post("/subscription", {
         onSuccess: (page) => {
@@ -83,13 +111,11 @@ const submitForm = async () => {
                     .handleCardAction(page.props.payment_intent_client_secret)
                     .then((result) => {
                         if (result.error) {
-                            // Handle error here
                             console.error(result.error.message);
                             document.getElementById(
                                 "card-errors",
                             )!.textContent = result.error.message;
                         } else {
-                            // The payment has been processed!
                             form.post("/subscription/confirm", {
                                 data: {
                                     payment_intent_id: result.paymentIntent.id,
@@ -104,12 +130,10 @@ const submitForm = async () => {
                         }
                     });
             } else {
-                // Lida com sucesso
                 console.log("Payment successful:", page.props);
             }
         },
         onError: (errors) => {
-            // Lida com erros
             console.error("Errors:", errors);
         },
     });
@@ -123,7 +147,3 @@ onMounted(async () => {
     cardElement.mount("#card-element");
 });
 </script>
-
-<style scoped>
-/* Adicione qualquer estilo necessário aqui */
-</style>
