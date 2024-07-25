@@ -5,7 +5,7 @@ import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
-import CheckoutPage from "@/Pages/Subscription/StripeCheckout.vue";
+import StripeCheckout from "@/Pages/Subscription/StripeCheckout.vue";
 import {
     AlertDialog,
     AlertDialogAction,
@@ -172,18 +172,14 @@ function handlePlanClick(plan) {
                                 </Button>
                             </AlertDialogTrigger>
                             <AlertDialogContent>
-                                <AlertDialogTitle
-                                    >Select Your Plan</AlertDialogTitle
-                                >
-                                <CheckoutPage :priceId="plan.price_id">
+                                <StripeCheckout :priceId="plan.price_id">
                                     <AlertDialogCancel
                                         variant="outline"
                                         class="w-14 mr-4"
                                     >
                                         Close
                                     </AlertDialogCancel>
-                                    <Button class="w-full">Continue</Button>
-                                </CheckoutPage>
+                                </StripeCheckout>
                             </AlertDialogContent>
                         </AlertDialog>
                     </div>

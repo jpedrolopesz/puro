@@ -1,68 +1,66 @@
 <template>
-    <CardHeader>
-        <CardTitle>Payment Method</CardTitle>
-        <CardDescription>
-            Add a new payment method to your account.
-        </CardDescription>
-    </CardHeader>
-    <CardContent class="grid gap-6">
-        <div class="grid gap-2">
-            <Label for="name">Name</Label>
-            <Input id="name" placeholder="First Last" />
-        </div>
-        <div class="grid gap-2">
-            <Label for="number">Card number</Label>
-            <Input id="number" placeholder="" />
-        </div>
-    </CardContent>
-
-    <div>
+    <div class="space-y-2">
+        <h2 class="text-3xl font-semibold mb-6 text-gray-800">Subscribe</h2>
         <form @submit.prevent="submitForm">
-            <div>
-                <label for="priceId">Price ID:</label>
+            <div class="mb-4">
+                <Label for="cardholder-name">Cardholder Name</Label>
                 <input
                     type="text"
-                    id="priceId"
-                    v-model="form.price_id"
-                    required
-                />
-            </div>
-
-            <div>
-                <label for="card-holder-name">Card Holder Name:</label>
-                <input
-                    type="text"
-                    id="card-holder-name"
+                    id="cardholder-name"
+                    placeholder="Name"
                     v-model="cardHolderName"
                     required
+                    class="w-full h-9 rounded-md border border-gray-300 bg-transparent px-3 py-1 text-sm shadow-sm focus:border-gray-300 focus:ring-0"
                 />
             </div>
 
-            <div id="card-element">
-                <!-- A Stripe Element será inserida aqui -->
+            <div class="mb-4">
+                <Label for="card-number">Card Number</Label>
+
+                <div
+                    id="card-number"
+                    type="number"
+                    class="p-2 border border-gray-300 rounded-md shadow-sm"
+                ></div>
             </div>
-            <div id="card-errors" role="alert"></div>
-            <button type="submit" :disabled="form.processing">
-                Start Subscription
-            </button>
+
+            <div class="mb-4 flex space-x-2">
+                <div class="w-1/2">
+                    <Label for="expiry-date">Expiry Date</Label>
+
+                    <div
+                        id="card-expiry"
+                        class="p-2 border border-gray-300 rounded-md shadow-sm"
+                    ></div>
+                </div>
+                <div class="w-1/2">
+                    <Label for="card-cvc">CVC</Label>
+                    <div
+                        id="card-cvc"
+                        class="p-2 border border-gray-300 rounded-md shadow-sm"
+                    ></div>
+                </div>
+            </div>
+
+            <div id="card-errors" role="alert" class="mt-2 text-red-500"></div>
+
+            <div class="flex mt-10">
+                <slot />
+
+                <Button type="submit" :disabled="form.processing" class="w-full"
+                    >Subscription</Button
+                >
+            </div>
         </form>
     </div>
 </template>
 
 <script setup lang="ts">
-import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/Components/ui/card";
-
-import { Input } from "@/Components/ui/input";
+import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
+import { Input } from "@/Components/ui/input";
 
-import { onMounted, defineProps } from "vue";
+import { onMounted, ref } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
 import { useForm } from "@inertiajs/vue3";
 
@@ -72,28 +70,31 @@ const props = defineProps<{
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 
+const cardHolderName = ref("");
+
 const form = useForm({
     price_id: props.priceId ? props.priceId.toString() : "",
     payment_method_id: "",
 });
 
 let stripe: any;
-let cardElement: any;
+let cardNumber: any;
+let cardExpiry: any;
+let cardCvc: any;
 
 const submitForm = async () => {
-    if (!stripe || !cardElement) {
-        console.error("Stripe or cardElement not initialized");
+    if (!stripe || !cardNumber || !cardExpiry || !cardCvc) {
+        console.error("Stripe or card elements not initialized");
         return;
     }
 
-    const cardHolderName = document.getElementById(
-        "card-holder-name",
-    ) as HTMLInputElement;
-
+    // Create a payment method using the card elements
     const { paymentMethod, error } = await stripe.createPaymentMethod({
         type: "card",
-        card: cardElement,
-        billing_details: { name: cardHolderName.value }, // Adicionando o nome do titular
+        card: cardNumber,
+        billing_details: {
+            name: cardHolderName.value,
+        },
     });
 
     if (error) {
@@ -143,7 +144,15 @@ onMounted(async () => {
     stripe = await stripePromise;
     const elements = stripe.elements();
 
-    cardElement = elements.create("card");
-    cardElement.mount("#card-element");
+    cardNumber = elements.create("cardNumber", {
+        showIcon: true,
+    });
+
+    cardExpiry = elements.create("cardExpiry");
+    cardCvc = elements.create("cardCvc");
+
+    cardNumber.mount("#card-number");
+    cardExpiry.mount("#card-expiry");
+    cardCvc.mount("#card-cvc");
 });
 </script>
