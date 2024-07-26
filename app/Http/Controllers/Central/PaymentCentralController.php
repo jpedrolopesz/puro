@@ -4,7 +4,11 @@ namespace App\Http\Controllers\Central;
 
 use App\Services\Stripe\StripePaymentIntentsManager;
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessStripePayments;
 use App\Models\Payment;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Bus;
+use Illuminate\Support\Facades\Log;
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
@@ -134,32 +138,22 @@ class PaymentCentralController extends Controller
         }
     }
 
-    public function syncPayments()
+    public function processPayments(Request $request)
     {
-        try {
-            // Recupera todos os pagamentos do Stripe
-            $paymentIntents = StripePaymentIntentsManager::getAllPaymentIntents();
+        $paymentIntents = StripePaymentIntentsManager::getAllPaymentIntents();
 
-            // Itera sobre os pagamentos para salvá-los no banco de dados
-            foreach ($paymentIntents as $paymentIntent) {
-                StripePaymentIntentsManager::savePaymentToDatabase(
-                    $paymentIntent
-                );
-            }
+        // Criação da batch com os jobs
+        $batch = Bus::batch([
+            ...array_map(
+                fn($paymentIntent) => new ProcessStripePayments(
+                    $paymentIntent->id
+                ),
+                $paymentIntents
+            ),
+        ])->dispatch();
 
-            return response()->json([
-                "success" => true,
-                "message" => "Pagamentos sincronizados com sucesso.",
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "message" => "Falha ao sincronizar pagamentos.",
-                    "error" => $e->getMessage(),
-                ],
-                500
-            );
-        }
+        $progress = $batch->progress();
+
+        Log::info("Batch Progress: $progress%");
     }
 }

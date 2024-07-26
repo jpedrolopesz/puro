@@ -55,11 +55,14 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/payments", [PaymentCentralController::class, "index"])->name(
         "payments.index"
     );
-
     Route::get("/payments/{paymentsId}", [
         PaymentCentralController::class,
         "details",
     ])->name("payments.details");
+    Route::post("/process-payments", [
+        PaymentCentralController::class,
+        "processPayments",
+    ]);
 
     Route::get("/sync-payments", [
         PaymentCentralController::class,
@@ -71,10 +74,15 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
     );
-    Route::get("/plans/{planId}", [
+    Route::get("/plans/{productId}", [
         PlansCentralController::class,
-        "edit",
+        "details",
     ])->name("plan.edit");
+
+    Route::put("/plans/{productId}", [
+        PlansCentralController::class,
+        "update",
+    ])->name("plan.update");
 
     ######## Mail ########
 

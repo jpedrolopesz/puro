@@ -1,6 +1,5 @@
 <template>
     <div class="space-y-2">
-        <h2 class="text-3xl font-semibold mb-6 text-gray-800">Subscribe</h2>
         <form @submit.prevent="submitForm">
             <div class="mb-4">
                 <Label for="cardholder-name">Cardholder Name</Label>
@@ -44,13 +43,12 @@
 
             <div id="card-errors" role="alert" class="mt-2 text-red-500"></div>
 
-            <div class="flex mt-10">
-                <slot />
-
-                <Button type="submit" :disabled="form.processing" class="w-full"
-                    >Subscription</Button
-                >
-            </div>
+            <Button
+                type="submit"
+                :disabled="form.processing"
+                class="w-full mt-10"
+                >Subscription</Button
+            >
         </form>
     </div>
 </template>
@@ -60,13 +58,15 @@ import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Input } from "@/Components/ui/input";
 
-import { onMounted, ref } from "vue";
+import { onMounted, ref, defineProps } from "vue";
 import { loadStripe } from "@stripe/stripe-js";
 import { useForm } from "@inertiajs/vue3";
 
 const props = defineProps<{
     priceId: number | string | null;
 }>();
+
+console.log(props);
 
 const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLIC_KEY);
 

@@ -48,7 +48,7 @@ const planSchema = computed(() => planSchema.parse(props.row.original));
             <DropdownMenuItem
                 ><Link
                     :href="
-                        route('plan.edit', {
+                        route('plan.update', {
                             planId: props.row.original.id,
                         })
                     "

@@ -2,6 +2,7 @@
 import Layouts from "./Layouts.vue";
 import PlanForm from "./Components/PlanForm.vue";
 import { Head } from "@inertiajs/vue3";
+import PlansTest from "../../Subscription/SubscriptionPlans/PlansTest.vue";
 </script>
 
 <template>

@@ -2,9 +2,10 @@
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Order } from "../data/schema";
-import { MixerHorizontalIcon } from "@radix-icons/vue";
+import { MixerHorizontalIcon, PlusIcon } from "@radix-icons/vue";
+import PlanForm from "../Partils/PlanForm.vue";
 
-import { Button } from "../../../../Components/ui/button";
+import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuCheckboxItem,
@@ -12,7 +13,17 @@ import {
     DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "../../../../Components/ui/dropdown-menu";
+} from "@/Components/ui/dropdown-menu";
+import { Separator } from "@/Components/ui/separator";
+
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/Components/ui/sheet";
 
 interface DataTableViewOptionsProps {
     table: Table<Task>;
@@ -31,6 +42,23 @@ const columns = computed(() =>
 </script>
 
 <template>
+    <Sheet>
+        <SheetTrigger
+            ><Button size="sm" class="ml-auto h-8 mr-2">
+                <PlusIcon class="mr-2 h-4 w-4" />
+                Plan
+            </Button></SheetTrigger
+        >
+        <SheetContent>
+            <SheetHeader>
+                <SheetTitle>Add Plan</SheetTitle>
+                <Separator />
+            </SheetHeader>
+
+            <PlanForm />
+        </SheetContent>
+    </Sheet>
+
     <DropdownMenu>
         <DropdownMenuTrigger as-child>
             <Button
@@ -44,6 +72,7 @@ const columns = computed(() =>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" class="w-[150px]">
             <DropdownMenuLabel>Toggle columns</DropdownMenuLabel>
+
             <DropdownMenuSeparator />
 
             <DropdownMenuCheckboxItem

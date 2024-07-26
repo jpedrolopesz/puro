@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-import { Head } from "@inertiajs/vue3";
+import { Head, Link, useForm } from "@inertiajs/vue3";
+import { defineProps, ref } from "vue";
+import { SymbolIcon } from "@radix-icons/vue";
 
 import { ChevronLeft, PlusCircle, Upload } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
@@ -32,9 +34,6 @@ import {
     SelectValue,
 } from "@/Components/ui/select";
 
-import { Link, Head } from "@inertiajs/vue3";
-import { defineProps } from "vue";
-
 function formatDate(timestamp) {
     const date = new Date(timestamp * 1000);
     return date.toLocaleDateString();
@@ -44,7 +43,30 @@ const props = defineProps({
         type: Object as () => any,
         required: true,
     },
+    prices: {
+        type: Object as () => any,
+        required: true,
+    },
 });
+
+console.log(props.prices);
+
+const form = useForm({
+    name: props.product.name,
+    description: props.product.description,
+    status: false,
+});
+
+function updateProduct() {
+    form.put(route("plan.update", { productId: props.product.id }), {
+        onSuccess: () => {
+            // Redirect or notify user of success
+        },
+        onError: (errors) => {
+            // Handle form errors
+        },
+    });
+}
 </script>
 
 <template>
@@ -79,8 +101,7 @@ const props = defineProps({
                     </Badge>
 
                     <div class="hidden items-center gap-2 md:ml-auto md:flex">
-                        <Button variant="outline" size="sm"> Discard </Button>
-                        <Button size="sm"> Save Product </Button>
+                        <Button size="sm" @click="updateProduct"> Save</Button>
                     </div>
                 </div>
                 <div
@@ -93,8 +114,10 @@ const props = defineProps({
                             <CardHeader>
                                 <CardTitle>Plan Details</CardTitle>
                                 <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
+                                    Product or Service Name: Visible to
+                                    customers. Description: Appears at checkout
+                                    and in the customer portal, in quotation
+                                    marks.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -105,7 +128,7 @@ const props = defineProps({
                                             id="name"
                                             type="text"
                                             class="w-full"
-                                            v-model="product.name"
+                                            v-model="form.name"
                                         />
                                     </div>
                                     <div class="grid gap-3">
@@ -115,7 +138,7 @@ const props = defineProps({
                                         <Textarea
                                             id="description"
                                             class="min-h-22"
-                                            v-model="product.description"
+                                            v-model="form.description"
                                         />
                                     </div>
                                 </div>
@@ -124,9 +147,16 @@ const props = defineProps({
 
                         <Card>
                             <CardHeader class="px-7">
-                                <CardTitle>Plans</CardTitle>
+                                <CardTitle>Prices</CardTitle>
                                 <CardDescription>
-                                    Recent orders from your store.
+                                    You can only edit the values of prices
+                                    without a subscription. For other changes,
+                                    it is recommended to create a new price.
+                                    <a
+                                        class="text-gray-600 text-xs after:content-['_ⓘ'] ..."
+                                        href="https://docs.stripe.com/products-prices/pricing-models#flat-rate"
+                                        target="_blank"
+                                    ></a>
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
@@ -134,34 +164,49 @@ const props = defineProps({
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead> Price </TableHead>
-                                            <TableHead> Recurrency </TableHead>
-                                            <TableHead> Assinantes </TableHead>
+                                            <TableHead> Subscribers </TableHead>
                                             <TableHead> Date </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         <TableRow
-                                            v-for="price in product.prices"
+                                            v-for="price in props.prices"
                                             :key="price.id"
                                         >
                                             <TableCell>
-                                                {{ price.unit_amount / 100 }}
+                                                <div class="flex flex-col">
+                                                    <div
+                                                        class="flex items-end font-semibold space-x-1.5"
+                                                    >
+                                                        <span class="uppercase">
+                                                            {{
+                                                                price.currency
+                                                            }} </span
+                                                        ><span>
+                                                            {{
+                                                                price.unit_amount /
+                                                                100
+                                                            }}
+                                                        </span>
+                                                    </div>
+
+                                                    <div
+                                                        class="flex items-center space-x-1 font-normal text-xs"
+                                                    >
+                                                        <SymbolIcon
+                                                            class="w-3 h-3"
+                                                        />
+                                                        <span>
+                                                            {{
+                                                                price.recurring
+                                                                    .interval
+                                                            }}
+                                                        </span>
+                                                    </div>
+                                                </div>
                                             </TableCell>
                                             <TableCell>
-                                                <span v-if="price.recurring">
-                                                    {{
-                                                        price.recurring.interval
-                                                    }}
-                                                    /
-                                                    {{
-                                                        price.recurring
-                                                            .interval_count
-                                                    }}
-                                                </span>
-                                            </TableCell>
-                                            <TableCell>
-                                                Assinantes
-                                                {{ price.active }}
+                                                Subscribers {{ price.active }}
                                             </TableCell>
                                             <TableCell>
                                                 {{ formatDate(price.created) }}
@@ -173,7 +218,7 @@ const props = defineProps({
                             <CardFooter class="justify-center border-t p-4">
                                 <Button size="sm" variant="ghost" class="gap-1">
                                     <PlusCircle class="h-3.5 w-3.5" />
-                                    Add Variant
+                                    Create a new price
                                 </Button>
                             </CardFooter>
                         </Card>
@@ -212,43 +257,10 @@ const props = defineProps({
                                 </div>
                             </CardContent>
                         </Card>
-                        <Card class="overflow-hidden">
-                            <CardHeader>
-                                <CardTitle>Plan imgs</CardTitle>
-                                <CardDescription>
-                                    Lipsum dolor sit amet, consectetur
-                                    adipiscing elit
-                                </CardDescription>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="grid gap-2">
-                                    <div class="grid grid-cols-2 gap-2">
-                                        <button>
-                                            <img
-                                                alt="Product image"
-                                                class="aspect-square w-full rounded-md object-cover"
-                                                height="84"
-                                                src="/images/placeholder.svg"
-                                                width="84"
-                                            />
-                                        </button>
-                                        <button
-                                            class="flex aspect-square w-full items-center justify-center rounded-md border border-dashed"
-                                        >
-                                            <Upload
-                                                class="h-4 w-4 text-muted-foreground"
-                                            />
-                                            <span class="sr-only">Upload</span>
-                                        </button>
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
                     </div>
                 </div>
                 <div class="flex items-center justify-center gap-2 md:hidden">
-                    <Button variant="outline" size="sm"> Discard </Button>
-                    <Button size="sm"> Save Plan</Button>
+                    <Button size="sm" @click="updateProduct"> Save </Button>
                 </div>
             </div>
         </main>

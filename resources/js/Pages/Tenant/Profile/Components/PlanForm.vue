@@ -1,22 +1,21 @@
 <script lang="ts" setup>
 import { ref } from "vue";
-import { Head, Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage } from "@inertiajs/vue3";
 import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
 import StripeCheckout from "@/Pages/Subscription/StripeCheckout.vue";
+
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-    AlertDialogTrigger,
-} from "@/Components/ui/alert-dialog";
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogTrigger,
+} from "@/Components/ui/dialog";
 
 import {
     Card,
@@ -109,11 +108,6 @@ const plansYearly = ref([
 const currentPlan = ref({
     stripe_price: "price_1Lb6kvGQW0U1PfqxQFJJcEBN",
 });
-
-// Função para manipular o clique no plano
-function handlePlanClick(plan) {
-    console.log(`Selected plan: ${plan.name},  All: ${plan.price_id}`);
-}
 </script>
 
 <template>
@@ -151,17 +145,10 @@ function handlePlanClick(plan) {
                         >
                             Active plan
                         </Button>
-                        <AlertDialog>
-                            <AlertDialogTrigger as-child>
+
+                        <Dialog>
+                            <DialogTrigger as-child>
                                 <Button
-                                    @click="
-                                        () => {
-                                            handlePlanClick(plan); // Atualiza o selectedPlan
-                                            console.log(
-                                                `Opening modal with price_id: ${plan.price_id}`,
-                                            );
-                                        }
-                                    "
                                     size="lg"
                                     v-if="
                                         plan.price_id !==
@@ -170,18 +157,50 @@ function handlePlanClick(plan) {
                                 >
                                     Update
                                 </Button>
-                            </AlertDialogTrigger>
-                            <AlertDialogContent>
-                                <StripeCheckout :priceId="plan.price_id">
-                                    <AlertDialogCancel
-                                        variant="outline"
-                                        class="w-14 mr-4"
+                            </DialogTrigger>
+                            <DialogContent class="max-w-2xl h-auto">
+                                <div class="flex flex-col justify-between">
+                                    <div
+                                        class="flex items-center justify-between mb-4"
                                     >
-                                        Close
-                                    </AlertDialogCancel>
-                                </StripeCheckout>
-                            </AlertDialogContent>
-                        </AlertDialog>
+                                        <h5
+                                            class="text-2xl lg:text-3xl font-semibold text-gray-700"
+                                        >
+                                            {{ plan.name }}
+                                        </h5>
+                                        <div class="text-gray-800 font-bold">
+                                            <span class="text-3xl lg:text-5xl"
+                                                >${{ plan.price }}</span
+                                            >
+                                            <span
+                                                class="text-slate-500 font-medium text-md"
+                                                >/{{ plan.slug }}</span
+                                            >
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="flex items-center my-2">
+                                    <h4
+                                        class="pr-4 text-sm lg:text-md font-semibold uppercase"
+                                    >
+                                        Subscribed
+                                    </h4>
+                                    <div
+                                        class="flex-1 border-t-2 border-gray-200"
+                                    ></div>
+                                </div>
+
+                                <StripeCheckout :priceId="plan.price_id" />
+
+                                <div class="">
+                                    <p
+                                        class="text-xs mt-2 font-medium leading-none text-gray-500"
+                                    >
+                                        Powered by Puro | Terms Privacy
+                                    </p>
+                                </div>
+                            </DialogContent>
+                        </Dialog>
                     </div>
 
                     <Button v-else-if="currentPlan !== true">
