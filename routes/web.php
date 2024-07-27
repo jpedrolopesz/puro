@@ -84,6 +84,11 @@ Route::middleware("auth:admin")->group(function () {
         "update",
     ])->name("plan.update");
 
+    Route::post("/plans/create", [
+        PlansCentralController::class,
+        "create",
+    ])->name("plan.create");
+
     ######## Mail ########
 
     Route::get("/mail", [MailCentralController::class, "index"])->name(

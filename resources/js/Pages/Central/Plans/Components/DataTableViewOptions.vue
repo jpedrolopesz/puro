@@ -52,7 +52,7 @@ const columns = computed(() =>
         <SheetContent>
             <SheetHeader>
                 <SheetTitle>Add Plan</SheetTitle>
-                <Separator />
+                <SheetDescription><Separator /></SheetDescription>
             </SheetHeader>
 
             <PlanForm />

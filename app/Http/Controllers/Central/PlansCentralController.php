@@ -53,4 +53,45 @@ class PlansCentralController extends Controller
             return back()->withErrors(["error" => $e->getMessage()]);
         }
     }
+
+    public function create(Request $request)
+    {
+        dd($request->all());
+        try {
+            // Valida os dados de entrada
+            $request->validate([
+                "name" => "required|string|max:255",
+                "description" => "nullable|string",
+                "price" => "nullable|numeric|min:0",
+                "currency" => "required_with:price|string|size:3", // Assuming currency code is 3 letters (e.g., 'usd')
+                "recurring" => "nullable|array",
+                "recurring.interval" =>
+                    "nullable|string|in:day,week,month,year",
+                "recurring.interval_count" => "nullable|integer|min:1",
+            ]);
+
+            $product = Product::create([
+                "name" => $request->input("name"),
+                "description" => $request->input("description"),
+            ]);
+
+            if ($request->has("price")) {
+                $price = Price::create([
+                    "unit_amount" => $request->input("price") * 100, // Multiplicado por 100 para armazenar em centavos
+                    "currency" => $request->input("currency"),
+                    "product" => $product->id,
+                    "recurring" => $request->input("recurring")
+                        ? [
+                            "interval" => $request->input("recurring.interval"),
+                            "interval_count" => $request->input(
+                                "recurring.interval_count"
+                            ),
+                        ]
+                        : null,
+                ]);
+            }
+        } catch (\Exception $e) {
+            return back()->withErrors(["error" => $e->getMessage()]);
+        }
+    }
 }
