@@ -36,10 +36,8 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        // Envia os dados para o backend usando Inertia
         await router.post("/plans/create", values, {
             onSuccess: () => {
-                // Exibe mensagem de sucesso
                 toast({
                     title: "Product Created",
                     description: h(
@@ -53,11 +51,9 @@ const onSubmit = handleSubmit(async (values) => {
                     ),
                 });
 
-                // Reseta o formulário após o envio bem-sucedido
                 resetForm();
             },
             onError: (errors) => {
-                // Exibe mensagem de erro
                 toast({
                     title: "Error",
                     description: h(
