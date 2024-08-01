@@ -4,6 +4,8 @@ import { Check, ChevronsUpDown } from "lucide-vue-next";
 
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
+import { Input } from "@/Components/ui/input";
+
 import {
     Command,
     CommandEmpty,
@@ -18,19 +20,23 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
-const frameworks = [
-    { value: "next.js", label: "Next.js" },
-    { value: "sveltekit", label: "SvelteKit" },
-    { value: "nuxt", label: "Nuxt" },
-    { value: "remix", label: "Remix" },
-    { value: "astro", label: "Astro" },
+const recurrings = [
+    { value: "daily", label: "Daily" },
+    { value: "weekly", label: "Weekly" },
+    { value: "monthly", label: "Monthly" },
+    { value: "quarterly", label: "Quarterly" },
+    { value: "semiannual", label: "Semiannual" },
+    { value: "annual", label: "Annual" },
 ];
 
 const open = ref(false);
 const value = ref("");
+
+console.log(value);
 </script>
 
 <template>
+    <Input class="rounded-none rounded-l-md w-full" type="text" />
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
             <Button
@@ -41,10 +47,10 @@ const value = ref("");
             >
                 {{
                     value
-                        ? frameworks.find(
-                              (framework) => framework.value === value,
-                          )?.label
-                        : "Select framework..."
+                        ? recurrings.find(
+                              (recurring) => recurring.value === value,
+                          )?.value
+                        : "Select recurring..."
                 }}
                 <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
             </Button>
@@ -54,9 +60,9 @@ const value = ref("");
                 <CommandList>
                     <CommandGroup>
                         <CommandItem
-                            v-for="framework in frameworks"
-                            :key="framework.value"
-                            :value="framework.value"
+                            v-for="recurring in recurrings"
+                            :key="recurring.value"
+                            :value="recurring.value"
                             @select="
                                 (ev) => {
                                     if (typeof ev.detail.value === 'string') {
@@ -66,12 +72,12 @@ const value = ref("");
                                 }
                             "
                         >
-                            {{ framework.label }}
+                            {{ recurring.label }}
                             <Check
                                 :class="
                                     cn(
                                         'ml-auto h-4 w-4',
-                                        value === framework.value
+                                        value === recurring.value
                                             ? 'opacity-100'
                                             : 'opacity-0',
                                     )

@@ -25,18 +25,16 @@ const formSchema = toTypedSchema(
         description: z.string().max(255),
         price: z.number().min(0).max(255),
         currency: z.string().length(3).optional(), // Exemplo para códigos de moeda de 3 letras
-        recurringInterval: z.string().optional(),
-        recurringIntervalCount: z.number().min(1).optional(),
+        recurringInterval: z.string().min(2).max(255),
     }),
 );
-//// continuar aqui
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
 });
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post("/plans/create", values, {
+        await router.post("plans/create", values, {
             onSuccess: () => {
                 toast({
                     title: "Product Created",
@@ -123,29 +121,14 @@ const onSubmit = handleSubmit(async (values) => {
                 <FormLabel>Price</FormLabel>
 
                 <FormControl>
-                    <div class="flex items-center mx-auto">
-                        <div class="w-full">
-                            <Input
-                                class="rounded-none rounded-l-md w-full"
-                                type="text"
-                                placeholder="Enter currency code (e.g., USD)"
-                            />
-                        </div>
-                        <div>
-                            <CurrencyCombobox
-                                v-slot="{ componentField }"
-                                v-bind="componentField"
-                                name="currency"
-                            />
-                        </div>
-                    </div>
+                    <CurrencyCombobox v-bind="componentField" />
 
                     <FormMessage />
                 </FormControl>
             </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="RecurringInterval">
+        <FormField v-slot="{ componentField }" name="recurringInterval">
             <FormItem>
                 <FormLabel>Recurring Interval</FormLabel>
 
