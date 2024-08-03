@@ -74,10 +74,10 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/plans", [PlansCentralController::class, "index"])->name(
         "plans.index"
     );
-    Route::get("/plans/{productId}", [
+    Route::get("/plan/{productID}", [
         PlansCentralController::class,
         "details",
-    ])->name("plan.edit");
+    ])->name("plan.details");
 
     Route::put("/plans/{productId}", [
         PlansCentralController::class,

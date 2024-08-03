@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h } from "vue";
+import { h, ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
@@ -36,6 +36,8 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
 });
+
+const selectedCurrency = ref();
 
 const onSubmit = handleSubmit(async (values) => {
     try {
@@ -86,40 +88,43 @@ const onSubmit = handleSubmit(async (values) => {
 </script>
 
 <template>
-    <form class="w-full space-y-2" @submit="onSubmit">
-        <FormField v-slot="{ componentField }" name="name">
-            <FormItem>
-                <FormLabel>Name</FormLabel>
-                <FormControl>
-                    <Input
-                        type="text"
-                        placeholder="Enter product name"
-                        v-bind="componentField"
-                    />
-                </FormControl>
-                <FormDescription class="text-xs">
-                    This is the name of your product.
-                </FormDescription>
-                <FormMessage />
-            </FormItem>
-        </FormField>
-
-        <FormField v-slot="{ componentField }" name="description">
-            <FormItem>
-                <FormLabel>Description</FormLabel>
-                <FormControl>
-                    <Input
-                        type="text"
-                        placeholder="Enter product description"
-                        v-bind="componentField"
-                    />
-                </FormControl>
-                <FormDescription class="text-xs">
-                    Optional description for the product.
-                </FormDescription>
-                <FormMessage />
-            </FormItem>
-        </FormField>
+    <form class="w-full space-y-3" @submit="onSubmit">
+        <div>
+            <FormField v-slot="{ componentField }" name="name">
+                <FormItem>
+                    <FormLabel>Name</FormLabel>
+                    <FormControl>
+                        <Input
+                            type="text"
+                            placeholder="Enter product name"
+                            v-bind="componentField"
+                        />
+                    </FormControl>
+                    <FormDescription class="text-xs">
+                        This is the name of your product.
+                    </FormDescription>
+                    <FormMessage class="" />
+                </FormItem>
+            </FormField>
+        </div>
+        <div>
+            <FormField v-slot="{ componentField }" name="description">
+                <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                        <Input
+                            type="text"
+                            placeholder="Enter product description"
+                            v-bind="componentField"
+                        />
+                    </FormControl>
+                    <FormDescription class="text-xs">
+                        Optional description for the product.
+                    </FormDescription>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+        </div>
 
         <div>
             <Label>Price / Currency</Label>
@@ -133,9 +138,8 @@ const onSubmit = handleSubmit(async (values) => {
                             class="rounded-none rounded-l-md"
                             type="number"
                             v-bind="componentField"
-                            placeholder="$ 0,00"
+                            placeholder=" 0,00"
                         />
-
                         <FormMessage />
                     </FormControl>
                 </FormItem>
@@ -143,7 +147,10 @@ const onSubmit = handleSubmit(async (values) => {
             <FormField v-slot="{ componentField }" name="currency">
                 <FormItem>
                     <FormControl>
-                        <CurrencyCombobox v-bind="componentField" />
+                        <CurrencyCombobox
+                            v-model="selectedCurrency"
+                            v-bind="componentField"
+                        />
 
                         <FormMessage />
                     </FormControl>
@@ -151,18 +158,22 @@ const onSubmit = handleSubmit(async (values) => {
             </FormField>
         </div>
 
-        <FormField v-slot="{ componentField }" name="recurring">
-            <FormItem>
-                <FormLabel>Recurring Interval</FormLabel>
+        <div>
+            <FormField v-slot="{ componentField }" name="recurring">
+                <FormItem>
+                    <FormLabel>Recurring Interval</FormLabel>
 
-                <FormControl>
-                    <RecurringIntervalCombobox v-bind="componentField" />
+                    <FormControl>
+                        <RecurringIntervalCombobox v-bind="componentField" />
 
-                    <FormMessage />
-                </FormControl>
-            </FormItem>
-        </FormField>
+                        <FormMessage />
+                    </FormControl>
+                </FormItem>
+            </FormField>
+        </div>
 
-        <Button type="submit">Create Product</Button>
+        <div>
+            <Button class="mt-10" type="submit">Create Product</Button>
+        </div>
     </form>
 </template>

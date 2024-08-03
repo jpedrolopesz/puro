@@ -1,10 +1,18 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head } from "@inertiajs/vue3";
+import { defineProps } from "vue";
 
 import plans from "./data/plans.json";
 import DataTable from "./Components/DataTable.vue";
 import { columns } from "./Components/columns";
+
+const props = defineProps({
+    plans: {
+        type: Object,
+        required: true,
+    },
+});
 </script>
 
 <template>
@@ -18,7 +26,7 @@ import { columns } from "./Components/columns";
                 </div>
             </div>
 
-            <DataTable :data="plans" :columns="columns" />
+            <DataTable :data="props.plans" :columns="columns" />
         </main>
     </AuthenticatedCentralLayout>
 </template>

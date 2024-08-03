@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, defineEmits } from "vue";
+import { ref, defineEmits, watch } from "vue";
 
 import { Check, ChevronsUpDown } from "lucide-vue-next";
 
@@ -21,7 +21,13 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
-const currencys = [
+interface Currency {
+    value: string;
+    label: string;
+    abbreviation: string;
+    symbol: string;
+}
+const currencys: Currency[] = [
     {
         value: "usd",
         label: "US Dollar (USD)",
@@ -140,69 +146,87 @@ const currencys = [
 ];
 
 const props = defineProps({
-    modelValue: String,
-    "onUpdate:modelValue": Function,
+    modelValue: {
+        type: String,
+        default: "",
+    },
 });
 
-const emit = defineEmits(["update:modelValue"]);
+const emit = defineEmits(["update:modelValue", "blur", "input", "change"]);
 
 const open = ref(false);
-const selectedValue = ref(props.modelValue || "");
+const selectedValue = ref<Currency | null>(null);
 
-// Atualize o valor selecionado e emita o evento de atualização
-const updateValue = (newValue: string) => {
-    selectedValue.value = newValue;
-    emit("update:modelValue", newValue);
-    open.value = false;
+watch(
+    () => props.modelValue,
+    (newValue) => {
+        selectedValue.value = newValue || "";
+    },
+);
+
+const updateValue = (value: string) => {
+    const currency = currencys.find((c) => c.value === value);
+    if (currency) {
+        selectedValue.value = currency;
+        emit("update:modelValue", currency.value);
+
+        open.value = false;
+    }
 };
 </script>
 
 <template>
-    <Popover v-model:open="open">
-        <PopoverTrigger as-child>
-            <Button
-                variant="outline"
-                role="combobox"
-                :aria-expanded="open"
-                class="rounded-none rounded-r-md w-24 justify-between"
-            >
-                {{
-                    selectedValue
-                        ? currencys.find(
-                              (currency) => currency.value === selectedValue,
-                          )?.abbreviation
-                        : "Select"
-                }}
-                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
-            </Button>
-        </PopoverTrigger>
-        <PopoverContent class="w-[200px] p-0">
-            <Command>
-                <CommandInput class="h-9" placeholder="Search currency..." />
-                <CommandEmpty>No currency found.</CommandEmpty>
-                <CommandList>
-                    <CommandGroup>
-                        <CommandItem
-                            v-for="currency in currencys"
-                            :key="currency.value"
-                            :value="currency.value"
-                            @select="() => updateValue(currency.value)"
-                        >
-                            {{ currency.label }}
-                            <Check
-                                :class="
-                                    cn(
-                                        'ml-auto h-4 w-4',
-                                        selectedValue === currency.value
-                                            ? 'opacity-100'
-                                            : 'opacity-0',
-                                    )
-                                "
-                            />
-                        </CommandItem>
-                    </CommandGroup>
-                </CommandList>
-            </Command>
-        </PopoverContent>
-    </Popover>
+    <div>
+        <Popover v-model:open="open">
+            <PopoverTrigger as-child>
+                <Button
+                    variant="outline"
+                    role="combobox"
+                    :aria-expanded="open"
+                    class="rounded-none rounded-r-md w-24 justify-between"
+                >
+                    {{
+                        selectedValue
+                            ? currencys.find(
+                                  (currency) =>
+                                      currency.value === selectedValue,
+                              )?.abbreviation
+                            : "Select"
+                    }}
+                    <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent class="w-[200px] p-0">
+                <Command>
+                    <CommandInput
+                        class="h-9"
+                        placeholder="Search currency..."
+                    />
+                    <CommandEmpty>No currency found.</CommandEmpty>
+                    <CommandList>
+                        <CommandGroup>
+                            <CommandItem
+                                v-for="currency in currencys"
+                                :key="currency.value"
+                                :value="currency.value"
+                                @select="() => updateValue(currency.value)"
+                            >
+                                {{ currency.label }}
+                                <Check
+                                    :class="
+                                        cn(
+                                            'ml-auto h-4 w-4',
+                                            selectedValue === currency.value
+                                                ? 'opacity-100'
+                                                : 'opacity-0',
+                                        )
+                                    "
+                                />
+                            </CommandItem>
+                        </CommandGroup>
+                    </CommandList>
+                </Command>
+            </PopoverContent>
+        </Popover>
+    </div>
 </template>
