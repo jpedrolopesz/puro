@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
+
 import { Check, ChevronsUpDown } from "lucide-vue-next";
 
 import { cn } from "@/lib/utils";
@@ -138,87 +139,70 @@ const currencys = [
     },
 ];
 
+const props = defineProps({
+    modelValue: String,
+    "onUpdate:modelValue": Function,
+});
+
+const emit = defineEmits(["update:modelValue"]);
+
 const open = ref(false);
-const value = ref("usd");
+const selectedValue = ref(props.modelValue || "");
+
+// Atualize o valor selecionado e emita o evento de atualização
+const updateValue = (newValue: string) => {
+    selectedValue.value = newValue;
+    emit("update:modelValue", newValue);
+    open.value = false;
+};
 </script>
 
 <template>
-    <div class="flex items-center mx-auto">
-        <div class="w-full">
-            <Input
-                class="rounded-none rounded-l-md w-full"
-                type="number"
-                :placeholder="
-                    value
-                        ? currencys.find((currency) => currency.value === value)
-                              ?.symbol
-                        : 'Select'
-                "
-            />
-        </div>
-        <div>
-            <Popover v-model:open="open">
-                <PopoverTrigger as-child>
-                    <Button
-                        variant="outline"
-                        role="combobox"
-                        :aria-expanded="open"
-                        class="rounded-none rounded-r-md w-24 justify-between"
-                    >
-                        {{
-                            value
-                                ? currencys.find(
-                                      (currency) => currency.value === value,
-                                  )?.abbreviation
-                                : "Select"
-                        }}
-                        <ChevronsUpDown
-                            class="ml-2 h-4 w-4 shrink-0 opacity-50"
-                        />
-                    </Button>
-                </PopoverTrigger>
-                <PopoverContent class="w-[200px] p-0">
-                    <Command>
-                        <CommandInput
-                            class="h-9"
-                            placeholder="Search currency..."
-                        />
-                        <CommandEmpty>No currency found.</CommandEmpty>
-                        <CommandList>
-                            <CommandGroup>
-                                <CommandItem
-                                    v-for="currency in currencys"
-                                    :key="currency.value"
-                                    :value="currency.value"
-                                    @select="
-                                        (ev) => {
-                                            if (
-                                                typeof ev.detail.value ===
-                                                'string'
-                                            ) {
-                                                value = ev.detail.value;
-                                            }
-                                            open = false;
-                                        }
-                                    "
-                                >
-                                    {{ currency.label }}
-                                    <Check
-                                        :class="
-                                            cn(
-                                                'ml-auto h-4 w-4',
-                                                value === currency.value
-                                                    ? 'opacity-100'
-                                                    : 'opacity-0',
-                                            )
-                                        "
-                                    />
-                                </CommandItem>
-                            </CommandGroup>
-                        </CommandList>
-                    </Command>
-                </PopoverContent>
-            </Popover>
-        </div>
-    </div>
+    <Popover v-model:open="open">
+        <PopoverTrigger as-child>
+            <Button
+                variant="outline"
+                role="combobox"
+                :aria-expanded="open"
+                class="rounded-none rounded-r-md w-24 justify-between"
+            >
+                {{
+                    selectedValue
+                        ? currencys.find(
+                              (currency) => currency.value === selectedValue,
+                          )?.abbreviation
+                        : "Select"
+                }}
+                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+            </Button>
+        </PopoverTrigger>
+        <PopoverContent class="w-[200px] p-0">
+            <Command>
+                <CommandInput class="h-9" placeholder="Search currency..." />
+                <CommandEmpty>No currency found.</CommandEmpty>
+                <CommandList>
+                    <CommandGroup>
+                        <CommandItem
+                            v-for="currency in currencys"
+                            :key="currency.value"
+                            :value="currency.value"
+                            @select="() => updateValue(currency.value)"
+                        >
+                            {{ currency.label }}
+                            <Check
+                                :class="
+                                    cn(
+                                        'ml-auto h-4 w-4',
+                                        selectedValue === currency.value
+                                            ? 'opacity-100'
+                                            : 'opacity-0',
+                                    )
+                                "
+                            />
+                        </CommandItem>
+                    </CommandGroup>
+                </CommandList>
+            </Command>
+        </PopoverContent>
+    </Popover>
 </template>

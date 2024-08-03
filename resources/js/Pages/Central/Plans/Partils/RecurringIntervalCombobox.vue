@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref, defineEmits } from "vue";
 import { Check, ChevronsUpDown } from "lucide-vue-next";
 
 import { cn } from "@/lib/utils";
@@ -20,6 +20,7 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
+// Defina suas opções aqui
 const recurrings = [
     { value: "daily", label: "Daily" },
     { value: "weekly", label: "Weekly" },
@@ -29,14 +30,25 @@ const recurrings = [
     { value: "annual", label: "Annual" },
 ];
 
-const open = ref(false);
-const value = ref("");
+const props = defineProps({
+    modelValue: String,
+    "onUpdate:modelValue": Function,
+});
 
-console.log(value);
+const emit = defineEmits(["update:modelValue"]);
+
+const open = ref(false);
+const selectedValue = ref(props.modelValue || "");
+
+// Atualize o valor selecionado e emita o evento de atualização
+const updateValue = (newValue: string) => {
+    selectedValue.value = newValue;
+    emit("update:modelValue", newValue);
+    open.value = false;
+};
 </script>
 
 <template>
-    <Input class="rounded-none rounded-l-md w-full" type="text" />
     <Popover v-model:open="open">
         <PopoverTrigger as-child>
             <Button
@@ -46,10 +58,10 @@ console.log(value);
                 class="w-full justify-between"
             >
                 {{
-                    value
+                    selectedValue
                         ? recurrings.find(
-                              (recurring) => recurring.value === value,
-                          )?.value
+                              (recurring) => recurring.value === selectedValue,
+                          )?.label
                         : "Select recurring..."
                 }}
                 <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
@@ -57,27 +69,22 @@ console.log(value);
         </PopoverTrigger>
         <PopoverContent class="w-[300px] p-0">
             <Command>
+                <CommandInput placeholder="Search recurring..." />
+                <CommandEmpty>Nothing found.</CommandEmpty>
                 <CommandList>
                     <CommandGroup>
                         <CommandItem
                             v-for="recurring in recurrings"
                             :key="recurring.value"
                             :value="recurring.value"
-                            @select="
-                                (ev) => {
-                                    if (typeof ev.detail.value === 'string') {
-                                        value = ev.detail.value;
-                                    }
-                                    open = false;
-                                }
-                            "
+                            @select="() => updateValue(recurring.value)"
                         >
                             {{ recurring.label }}
                             <Check
                                 :class="
                                     cn(
                                         'ml-auto h-4 w-4',
-                                        value === recurring.value
+                                        selectedValue === recurring.value
                                             ? 'opacity-100'
                                             : 'opacity-0',
                                     )

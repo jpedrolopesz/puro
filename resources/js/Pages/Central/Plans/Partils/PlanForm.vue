@@ -15,6 +15,7 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
+import { Label } from "@/Components/ui/label";
 import { toast } from "@/Components/ui/toast";
 import CurrencyCombobox from "./CurrencyCombobox.vue";
 import RecurringIntervalCombobox from "./RecurringIntervalCombobox.vue";
@@ -24,8 +25,12 @@ const formSchema = toTypedSchema(
         name: z.string().min(2).max(255),
         description: z.string().max(255),
         price: z.number().min(0).max(255),
-        currency: z.string().length(3).optional(), // Exemplo para códigos de moeda de 3 letras
-        recurringInterval: z.string().min(2).max(255),
+        currency: z.string({
+            required_error: "Please select a currency.",
+        }),
+        recurring: z.string({
+            required_error: "Please select a recurring.",
+        }),
     }),
 );
 const { handleSubmit, resetForm } = useForm({
@@ -116,19 +121,37 @@ const onSubmit = handleSubmit(async (values) => {
             </FormItem>
         </FormField>
 
-        <FormField v-slot="{ componentField }" name="price">
-            <FormItem>
-                <FormLabel>Price</FormLabel>
+        <div>
+            <Label>Price / Currency</Label>
+        </div>
 
-                <FormControl>
-                    <CurrencyCombobox v-bind="componentField" />
+        <div class="flex w-full">
+            <FormField v-slot="{ componentField }" name="price">
+                <FormItem>
+                    <FormControl>
+                        <Input
+                            class="rounded-none rounded-l-md"
+                            type="number"
+                            v-bind="componentField"
+                            placeholder="$ 0,00"
+                        />
 
-                    <FormMessage />
-                </FormControl>
-            </FormItem>
-        </FormField>
+                        <FormMessage />
+                    </FormControl>
+                </FormItem>
+            </FormField>
+            <FormField v-slot="{ componentField }" name="currency">
+                <FormItem>
+                    <FormControl>
+                        <CurrencyCombobox v-bind="componentField" />
 
-        <FormField v-slot="{ componentField }" name="recurringInterval">
+                        <FormMessage />
+                    </FormControl>
+                </FormItem>
+            </FormField>
+        </div>
+
+        <FormField v-slot="{ componentField }" name="recurring">
             <FormItem>
                 <FormLabel>Recurring Interval</FormLabel>
 
