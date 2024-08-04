@@ -2,28 +2,18 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 
-import {
-  subscriptionStatuses,
-  priorities,
-  intervals,
-  currencys,
-} from "../data/data";
-import type { Order } from "../data/schema";
+import { priorities } from "../data/data";
+import type { Plan } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
 import { Checkbox } from "@/Components/ui/checkbox";
-import { Badge } from "@/Components/ui/badge";
-
-function formatAmount(amount) {
-  return (amount / 100).toFixed(2);
-}
 
 function formatDate(timestamp) {
   const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds
   return date.toLocaleDateString(); // Adjust the format as needed
 }
 
-export const columns: ColumnDef<Order>[] = [
+export const columns: ColumnDef<Plan>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -53,7 +43,7 @@ export const columns: ColumnDef<Order>[] = [
       h(
         Link,
         {
-          href: `/plans/${row.getValue("id")}`,
+          href: `/plan/${row.getValue("id")}`,
           class: "w-24 truncate",
         },
         () => row.getValue("id"),

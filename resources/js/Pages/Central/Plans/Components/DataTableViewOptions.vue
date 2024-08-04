@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Order } from "../data/schema";
 import { MixerHorizontalIcon, PlusIcon } from "@radix-icons/vue";
-import PlanForm from "../Partils/PlanForm.vue";
+import PlanCreateForm from "../Partils/PlanCreateForm.vue";
 
 import { Button } from "@/Components/ui/button";
 import {
@@ -55,7 +55,7 @@ const columns = computed(() =>
                 <SheetDescription><Separator /></SheetDescription>
             </SheetHeader>
 
-            <PlanForm />
+            <PlanCreateForm />
         </SheetContent>
     </Sheet>
 

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
-import { Link } from "@inertiajs/vue3";
+import { Link, useForm } from "@inertiajs/vue3";
 
 import { planSchema } from "../data/schema";
 import type { Plan } from "../data/schema";

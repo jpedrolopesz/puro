@@ -162,6 +162,7 @@ watch(
     (newValue) => {
         selectedValue.value = newValue || "";
     },
+    { immediate: true },
 );
 
 const updateValue = (value: string) => {

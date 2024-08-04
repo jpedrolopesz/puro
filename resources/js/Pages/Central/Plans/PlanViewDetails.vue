@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import PriceUpdateForm from "./Partils/PriceUpdateForm.vue";
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
-import { SymbolIcon } from "@radix-icons/vue";
+import { SymbolIcon, DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { ChevronLeft, PlusCircle, Upload } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
@@ -10,6 +11,28 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
+import {
+    Sheet,
+    SheetContent,
+    SheetDescription,
+    SheetHeader,
+    SheetTitle,
+    SheetTrigger,
+} from "@/Components/ui/sheet";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+} from "@/Components/ui/dropdown-menu";
 import {
     Card,
     CardContent,
@@ -43,18 +66,14 @@ const props = defineProps({
         type: Object as () => any,
         required: true,
     },
-    prices: {
-        type: Object as () => any,
-        required: true,
-    },
 });
 
-console.log(props.prices);
+console.log(props.product);
 
 const form = useForm({
     name: props.product.name,
     description: props.product.description,
-    status: false,
+    active: props.product.active.toString(),
 });
 
 function updateProduct() {
@@ -166,11 +185,13 @@ function updateProduct() {
                                             <TableHead> Price </TableHead>
                                             <TableHead> Subscribers </TableHead>
                                             <TableHead> Date </TableHead>
+                                            <TableHead> Action </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
                                         <TableRow
-                                            v-for="price in props.prices"
+                                            v-for="price in props.product
+                                                .prices"
                                             :key="price.id"
                                         >
                                             <TableCell>
@@ -211,6 +232,41 @@ function updateProduct() {
                                             <TableCell>
                                                 {{ formatDate(price.created) }}
                                             </TableCell>
+                                            <TableCell>
+                                                <Sheet>
+                                                    <SheetTrigger>
+                                                        <Button
+                                                            variant="ghost"
+                                                            class="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+                                                        >
+                                                            <DotsHorizontalIcon
+                                                                class="h-4 w-4"
+                                                            />
+                                                            <span
+                                                                class="sr-only"
+                                                                >Open menu</span
+                                                            >
+                                                        </Button>
+                                                    </SheetTrigger>
+                                                    <SheetContent>
+                                                        <SheetHeader>
+                                                            <SheetTitle
+                                                                >Edit Price
+                                                            </SheetTitle>
+                                                            <SheetDescription
+                                                                ><Separator
+                                                            /></SheetDescription>
+                                                        </SheetHeader>
+
+                                                        <PriceUpdateForm
+                                                            :data="
+                                                                props.product
+                                                                    .prices
+                                                            "
+                                                        />
+                                                    </SheetContent>
+                                                </Sheet>
+                                            </TableCell>
                                         </TableRow>
                                     </TableBody>
                                 </Table>
@@ -232,24 +288,25 @@ function updateProduct() {
                                 <div class="grid gap-6">
                                     <div class="grid gap-3">
                                         <Label for="status">Status</Label>
-                                        <Select>
+                                        <Select v-model="form.active">
                                             <SelectTrigger
                                                 id="status"
                                                 aria-label="Select status"
                                             >
                                                 <SelectValue
-                                                    placeholder="Select status"
+                                                    :placeholder="
+                                                        product.active
+                                                            ? 'Active'
+                                                            : 'Inactive'
+                                                    "
                                                 />
                                             </SelectTrigger>
                                             <SelectContent>
-                                                <SelectItem value="draft">
-                                                    Draft
-                                                </SelectItem>
-                                                <SelectItem value="published">
+                                                <SelectItem value="true">
                                                     Active
                                                 </SelectItem>
-                                                <SelectItem value="archived">
-                                                    Archived
+                                                <SelectItem value="false">
+                                                    Inactive
                                                 </SelectItem>
                                             </SelectContent>
                                         </Select>

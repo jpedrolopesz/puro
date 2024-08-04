@@ -84,6 +84,11 @@ Route::middleware("auth:admin")->group(function () {
         "update",
     ])->name("plan.update");
 
+    Route::put("/plans/{productID}", [
+        PlansCentralController::class,
+        "destroy",
+    ])->name("plan.destroy");
+
     Route::post("/plans/create", [
         PlansCentralController::class,
         "create",
