@@ -43,6 +43,8 @@ class PlansCentralController extends Controller
         try {
             $formattedData = $this->priceGetDetailsAction->execute($productID);
 
+            dd($formattedData);
+
             return Inertia::render("Central/Plans/PlanViewDetails", [
                 "product" => $formattedData,
             ]);

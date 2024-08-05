@@ -24,6 +24,9 @@ const props = defineProps<{
     data: { currency: string }[];
 }>();
 
+const price = ref(props.data[0]?.unit_amount || 0);
+const selectedCurrency = ref(props.data[0]?.currency || "");
+
 console.log(props.data[0].currency);
 
 watch(
@@ -34,8 +37,7 @@ watch(
 );
 const formSchema = toTypedSchema(
     z.object({
-        name: z.string().min(2).max(255),
-        description: z.string().max(255),
+        description: z.string().max(255).optional(),
         price: z.number().min(0).max(255),
         currency: z.string({
             required_error: "Please select a currency.",
@@ -48,8 +50,6 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
 });
-
-const selectedCurrency = ref("usd"); // Defina o valor inicial se necessário
 
 const onSubmit = handleSubmit(async (values) => {
     try {
@@ -102,27 +102,9 @@ const onSubmit = handleSubmit(async (values) => {
 <template>
     <form class="w-full space-y-3" @submit="onSubmit">
         <div>
-            <FormField v-slot="{ componentField }" name="name">
-                <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                        <Input
-                            type="text"
-                            placeholder="Enter product name"
-                            v-bind="componentField"
-                        />
-                    </FormControl>
-                    <FormDescription class="text-xs">
-                        This is the name of your product.
-                    </FormDescription>
-                    <FormMessage class="" />
-                </FormItem>
-            </FormField>
-        </div>
-        <div>
             <FormField v-slot="{ componentField }" name="description">
                 <FormItem>
-                    <FormLabel>Description</FormLabel>
+                    <FormLabel>Price Description</FormLabel>
                     <FormControl>
                         <Input
                             type="text"
@@ -131,7 +113,7 @@ const onSubmit = handleSubmit(async (values) => {
                         />
                     </FormControl>
                     <FormDescription class="text-xs">
-                        Optional description for the product.
+                        Use to organize your prices. Not displayed to customers.
                     </FormDescription>
                     <FormMessage />
                 </FormItem>
@@ -149,8 +131,7 @@ const onSubmit = handleSubmit(async (values) => {
                         <Input
                             class="rounded-none rounded-l-md"
                             type="number"
-                            v-bind="componentField"
-                            :value="props.data[0].unit_amount"
+                            v-model="price"
                             placeholder=" 0,00"
                         />
                         <FormMessage />
@@ -160,12 +141,7 @@ const onSubmit = handleSubmit(async (values) => {
             <FormField v-slot="{ componentField }" name="currency">
                 <FormItem>
                     <FormControl>
-                        <CurrencyCombobox
-                            v-model="selectedCurrency"
-                            v-bind="componentField"
-                            :value="props.data[0].currency"
-                        />
-
+                        <CurrencyCombobox v-model="selectedCurrency" />
                         <FormMessage />
                     </FormControl>
                 </FormItem>
@@ -179,8 +155,7 @@ const onSubmit = handleSubmit(async (values) => {
 
                     <FormControl>
                         <RecurringIntervalCombobox
-                            :value="props.data[0].recurring.interval"
-                            v-bind="componentField"
+                            v-model="props.data[0].recurring.interval"
                         />
 
                         <FormMessage />
@@ -190,7 +165,7 @@ const onSubmit = handleSubmit(async (values) => {
         </div>
 
         <div>
-            <Button class="mt-10" type="submit">Create Product</Button>
+            <Button class="mt-10" type="submit">Update</Button>
         </div>
     </form>
 </template>
