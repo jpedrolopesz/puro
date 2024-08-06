@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref, watch } from "vue";
+import { h, ref } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
@@ -23,68 +23,41 @@ import RecurringIntervalCombobox from "./RecurringIntervalCombobox.vue";
 const formSchema = toTypedSchema(
     z.object({
         name: z.string().min(2).max(255),
-        description: z.string().max(255),
+        description: z.string().max(255).optional(),
         price: z.number().min(0).max(255),
-        currency: z.string({
-            required_error: "Please select a currency.",
-        }),
-        recurring: z.string({
-            required_error: "Please select a recurring.",
-        }),
+        currency: z.string().nonempty("Please select a currency."),
+        recurring: z.string().nonempty("Please select a recurring."),
     }),
 );
+
+const selectedCurrency = ref();
+
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
 });
 
-const selectedCurrency = ref();
-
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post("plans/create", values, {
-            onSuccess: () => {
-                toast({
-                    title: "Product Created",
-                    description: h(
-                        "pre",
-                        { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-                        h(
-                            "code",
-                            { class: "text-white" },
-                            "Product created successfully.",
-                        ),
-                    ),
-                });
-
-                resetForm();
-            },
-            onError: (errors) => {
-                toast({
-                    title: "Error",
-                    description: h(
-                        "pre",
-                        { class: "mt-2 w-[340px] rounded-md bg-red-500 p-4" },
-                        h(
-                            "code",
-                            { class: "text-white" },
-                            errors.message || "An error occurred.",
-                        ),
-                    ),
-                });
-            },
-        });
+        await router.post("plans/create", values);
+        showToast("Product Created", "Product created successfully.");
+        resetForm();
     } catch (error) {
-        // Exibe mensagem de erro em caso de exceção
-        toast({
-            title: "Error",
-            description: h(
-                "pre",
-                { class: "mt-2 w-[340px] rounded-md bg-red-500 p-4" },
-                h("code", { class: "text-white" }, error.message),
-            ),
-        });
+        showToast("Error", error.message || "An error occurred.");
     }
 });
+
+function showToast(title: string, description: string) {
+    toast({
+        title,
+        description: h(
+            "pre",
+            {
+                class: `mt-2 w-[340px] rounded-md ${title === "Error" ? "bg-red-500" : "bg-slate-950"} p-4`,
+            },
+            h("code", { class: "text-white" }, description),
+        ),
+    });
+}
 </script>
 
 <template>

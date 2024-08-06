@@ -15,88 +15,81 @@ import {
     FormMessage,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
 import { toast } from "@/Components/ui/toast";
 import CurrencyCombobox from "./CurrencyCombobox.vue";
 import RecurringIntervalCombobox from "./RecurringIntervalCombobox.vue";
 
 const props = defineProps<{
-    data: { currency: string }[];
+    data: {
+        id: string;
+        currency: string;
+        unit_amount: number;
+        recurring?: { interval: string };
+        description?: string;
+    }[];
 }>();
-
-const price = ref(props.data[0]?.unit_amount || 0);
-const selectedCurrency = ref(props.data[0]?.currency || "");
-
-console.log(props.data[0].currency);
-
-watch(
-    () => props.data[0]?.currency,
-    (newCurrency) => {
-        selectedCurrency.value = newCurrency || "";
-    },
-);
+const productId = props.data[0]?.id;
 const formSchema = toTypedSchema(
     z.object({
         description: z.string().max(255).optional(),
-        price: z.number().min(0).max(255),
-        currency: z.string({
-            required_error: "Please select a currency.",
-        }),
-        recurring: z.string({
-            required_error: "Please select a recurring.",
-        }),
+        price: z.number().min(0).max(10000),
+        currency: z.string().nonempty("Please select a currency."),
+        recurring: z.string().nonempty("Please select a recurring."),
     }),
 );
-const { handleSubmit, resetForm } = useForm({
+
+const { handleSubmit, resetForm, setValues, values } = useForm({
     validationSchema: formSchema,
+    initialValues: {
+        description: props.data[0]?.description || "",
+        price: props.data[0]?.unit_amount || 0,
+        currency: props.data[0]?.currency || "",
+        recurring: props.data[0]?.recurring?.interval || "",
+    },
 });
 
-const onSubmit = handleSubmit(async (values) => {
-    try {
-        await router.post("plans/create", values, {
-            onSuccess: () => {
-                toast({
-                    title: "Product Created",
-                    description: h(
-                        "pre",
-                        { class: "mt-2 w-[340px] rounded-md bg-slate-950 p-4" },
-                        h(
-                            "code",
-                            { class: "text-white" },
-                            "Product created successfully.",
-                        ),
-                    ),
-                });
+watch(
+    () => props.data[0],
+    (data) => {
+        if (data) {
+            setValues({
+                description: data.description || "",
+                price: data.unit_amount || 0,
+                currency: data.currency || "",
+                recurring: data.recurring?.interval || "",
+            });
+        }
+    },
+    { immediate: true },
+);
 
-                resetForm();
-            },
-            onError: (errors) => {
-                toast({
-                    title: "Error",
-                    description: h(
-                        "pre",
-                        { class: "mt-2 w-[340px] rounded-md bg-red-500 p-4" },
-                        h(
-                            "code",
-                            { class: "text-white" },
-                            errors.message || "An error occurred.",
-                        ),
-                    ),
-                });
-            },
-        });
+const onSubmit = handleSubmit(async (formValues) => {
+    if (!productId) {
+        showToast("Error", "Product ID is missing.");
+        return;
+    }
+
+    try {
+        await router.put(`/plans/${productId}`, formValues);
+        showToast("Product Updated", "Product updated successfully.");
+        resetForm();
     } catch (error) {
-        // Exibe mensagem de erro em caso de exceção
-        toast({
-            title: "Error",
-            description: h(
-                "pre",
-                { class: "mt-2 w-[340px] rounded-md bg-red-500 p-4" },
-                h("code", { class: "text-white" }, error.message),
-            ),
-        });
+        showToast("Error", error.message || "An error occurred.");
     }
 });
+
+function showToast(title: string, description: string) {
+    toast({
+        title,
+        description: h(
+            "pre",
+            {
+                class: `mt-2 w-[340px] rounded-md ${title === "Error" ? "bg-red-500" : "bg-slate-950"} p-4`,
+            },
+            h("code", { class: "text-white" }, description),
+        ),
+    });
+}
 </script>
 
 <template>
@@ -109,6 +102,7 @@ const onSubmit = handleSubmit(async (values) => {
                         <Input
                             type="text"
                             placeholder="Enter product description"
+                            v-model="values.description"
                             v-bind="componentField"
                         />
                     </FormControl>
@@ -120,10 +114,6 @@ const onSubmit = handleSubmit(async (values) => {
             </FormField>
         </div>
 
-        <div>
-            <Label>Price / Currency</Label>
-        </div>
-
         <div class="flex w-full">
             <FormField v-slot="{ componentField }" name="price">
                 <FormItem>
@@ -131,7 +121,8 @@ const onSubmit = handleSubmit(async (values) => {
                         <Input
                             class="rounded-none rounded-l-md"
                             type="number"
-                            v-model="price"
+                            v-model.number="values.price"
+                            v-bind="componentField"
                             placeholder=" 0,00"
                         />
                         <FormMessage />
@@ -141,7 +132,10 @@ const onSubmit = handleSubmit(async (values) => {
             <FormField v-slot="{ componentField }" name="currency">
                 <FormItem>
                     <FormControl>
-                        <CurrencyCombobox v-model="selectedCurrency" />
+                        <CurrencyCombobox
+                            v-model="values.currency"
+                            v-bind="componentField"
+                        />
                         <FormMessage />
                     </FormControl>
                 </FormItem>
@@ -152,12 +146,11 @@ const onSubmit = handleSubmit(async (values) => {
             <FormField v-slot="{ componentField }" name="recurring">
                 <FormItem>
                     <FormLabel>Recurring Interval</FormLabel>
-
                     <FormControl>
                         <RecurringIntervalCombobox
-                            v-model="props.data[0].recurring.interval"
+                            v-model="values.recurring"
+                            v-bind="componentField"
                         />
-
                         <FormMessage />
                     </FormControl>
                 </FormItem>

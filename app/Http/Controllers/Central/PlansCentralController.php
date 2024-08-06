@@ -43,8 +43,6 @@ class PlansCentralController extends Controller
         try {
             $formattedData = $this->priceGetDetailsAction->execute($productID);
 
-            dd($formattedData);
-
             return Inertia::render("Central/Plans/PlanViewDetails", [
                 "product" => $formattedData,
             ]);
@@ -85,7 +83,6 @@ class PlansCentralController extends Controller
 
     public function update(Request $request, $productId)
     {
-        //dd($request->all());
         try {
             $product = Product::retrieve($productId);
             $product->name = $request->input("name");
@@ -95,8 +92,11 @@ class PlansCentralController extends Controller
             $product->save();
 
             if ($request->has("price_id")) {
-                $price = Price::retrieve($request->input("price_id"));
+                $price = Price::retrieve($request->input($productId));
+                $price->description = $request->input("description");
                 $price->unit_amount = $request->input("price");
+                $price->currency = $request->input("currency");
+                $price->recurring = $request->input("recurring");
                 $price->save();
             }
         } catch (\Exception $e) {

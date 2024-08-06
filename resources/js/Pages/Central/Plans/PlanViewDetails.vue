@@ -227,7 +227,8 @@ function updateProduct() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
-                                                Subscribers {{ price.active }}
+                                                {{ price.subscription_count }}
+                                                active
                                             </TableCell>
                                             <TableCell>
                                                 {{ formatDate(price.created) }}
