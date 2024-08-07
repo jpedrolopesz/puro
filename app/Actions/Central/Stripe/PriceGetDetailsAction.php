@@ -41,6 +41,7 @@ class PriceGetDetailsAction
                 "currency" => $price["currency"],
                 "unit_amount" => $price["unit_amount"],
                 "active" => $price["active"],
+
                 "billing_scheme" => $price["billing_scheme"],
                 "trial_period_days" =>
                     $price["recurring"]["trial_period_days"] ?? null,
@@ -58,6 +59,7 @@ class PriceGetDetailsAction
             "name" => $product["name"],
             "description" => $product["description"] ?? null,
             "active" => $product["active"],
+            "default_price" => $product["default_price"],
             "created" => $product["created"],
             "updated" => $product["updated"] ?? null,
             "statement_descriptor" => $product["statement_descriptor"] ?? null,

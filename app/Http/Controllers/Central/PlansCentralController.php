@@ -92,15 +92,28 @@ class PlansCentralController extends Controller
             $product->save();
 
             if ($request->has("price_id")) {
-                $price = Price::retrieve($request->input($productId));
-                $price->description = $request->input("description");
-                $price->unit_amount = $request->input("price");
-                $price->currency = $request->input("currency");
-                $price->recurring = $request->input("recurring");
+                $priceId = $request->input("price_id");
+                $price = Price::retrieve($priceId);
+                $price->active = $request->input("active");
                 $price->save();
             }
         } catch (\Exception $e) {
             return back()->withErrors(["error" => $e->getMessage()]);
+        }
+    }
+
+    public function updatePrice(Request $request, $priceId)
+    {
+        try {
+            $price = Price::retrieve($priceId);
+            dd($price);
+            $currentActiveStatus = $request->input("active");
+            $price->active = !$currentActiveStatus;
+            $price->save();
+
+            return response()->json(["success" => true]);
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage()], 400);
         }
     }
 

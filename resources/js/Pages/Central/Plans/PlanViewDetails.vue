@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import PriceUpdateForm from "./Partils/PriceUpdateForm.vue";
+import PriceActiveSwitch from "./Partils/PriceActiveSwitch.vue";
+
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
 import { SymbolIcon, DotsHorizontalIcon } from "@radix-icons/vue";
@@ -11,14 +13,7 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
-import {
-    Sheet,
-    SheetContent,
-    SheetDescription,
-    SheetHeader,
-    SheetTitle,
-    SheetTrigger,
-} from "@/Components/ui/sheet";
+import { Separator } from "@/Components/ui/separator";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -61,6 +56,7 @@ function formatDate(timestamp) {
     const date = new Date(timestamp * 1000);
     return date.toLocaleDateString();
 }
+
 const props = defineProps({
     product: {
         type: Object as () => any,
@@ -75,6 +71,12 @@ const form = useForm({
     description: props.product.description,
     active: props.product.active.toString(),
 });
+
+const default_price_id = ref(
+    props.product.prices.find(
+        (price) => price.id === props.product.default_price,
+    )?.id || null,
+);
 
 function updateProduct() {
     form.put(route("plan.update", { productId: props.product.id }), {
@@ -183,6 +185,7 @@ function updateProduct() {
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead> Price </TableHead>
+                                            <TableHead> </TableHead>
                                             <TableHead> Subscribers </TableHead>
                                             <TableHead> Date </TableHead>
                                             <TableHead> Action </TableHead>
@@ -227,6 +230,19 @@ function updateProduct() {
                                                 </div>
                                             </TableCell>
                                             <TableCell>
+                                                <span
+                                                    v-if="
+                                                        price.id ===
+                                                        default_price_id
+                                                    "
+                                                >
+                                                    <Badge variant="outline">
+                                                        Default
+                                                    </Badge>
+                                                </span>
+                                                <span v-else> </span>
+                                            </TableCell>
+                                            <TableCell>
                                                 {{ price.subscription_count }}
                                                 active
                                             </TableCell>
@@ -234,39 +250,28 @@ function updateProduct() {
                                                 {{ formatDate(price.created) }}
                                             </TableCell>
                                             <TableCell>
-                                                <Sheet>
-                                                    <SheetTrigger>
-                                                        <Button
-                                                            variant="ghost"
-                                                            class="flex h-8 w-8 p-0 data-[state=open]:bg-muted"
+                                                <DropdownMenu>
+                                                    <DropdownMenuTrigger
+                                                        ><DotsHorizontalIcon
+                                                            class="mr-2 h-4 w-4"
+                                                    /></DropdownMenuTrigger>
+                                                    <DropdownMenuContent>
+                                                        <DropdownMenuLabel
+                                                            >Action</DropdownMenuLabel
                                                         >
-                                                            <DotsHorizontalIcon
-                                                                class="h-4 w-4"
-                                                            />
-                                                            <span
-                                                                class="sr-only"
-                                                                >Open menu</span
-                                                            >
-                                                        </Button>
-                                                    </SheetTrigger>
-                                                    <SheetContent>
-                                                        <SheetHeader>
-                                                            <SheetTitle
-                                                                >Edit Price
-                                                            </SheetTitle>
-                                                            <SheetDescription
-                                                                ><Separator
-                                                            /></SheetDescription>
-                                                        </SheetHeader>
+                                                        <DropdownMenuSeparator />
 
-                                                        <PriceUpdateForm
-                                                            :data="
-                                                                props.product
-                                                                    .prices
-                                                            "
-                                                        />
-                                                    </SheetContent>
-                                                </Sheet>
+                                                        <DropdownMenuItem>
+                                                            <PriceActiveSwitch
+                                                                :data="price"
+                                                                :default_price="
+                                                                    price.id ===
+                                                                    default_price_id
+                                                                "
+                                                            />
+                                                        </DropdownMenuItem>
+                                                    </DropdownMenuContent>
+                                                </DropdownMenu>
                                             </TableCell>
                                         </TableRow>
                                     </TableBody>
@@ -317,10 +322,7 @@ function updateProduct() {
                         </Card>
                     </div>
                 </div>
-                <div class="flex items-center justify-center gap-2 md:hidden">
-                    <Button size="sm" @click="updateProduct"> Save </Button>
-                </div>
             </div>
-        </main>
-    </AuthenticatedCentralLayout>
+        </main></AuthenticatedCentralLayout
+    >
 </template>

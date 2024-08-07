@@ -25,13 +25,17 @@ const props = defineProps<{
         currency: string;
         unit_amount: number;
         recurring?: { interval: string };
-        description?: string;
+        product: string;
+        nickname?: string;
+        tax_behavior?: string;
+        type: string;
     }[];
 }>();
-const productId = props.data[0]?.id;
+const priceId = props.data[0]?.id;
+
+// Form schema
 const formSchema = toTypedSchema(
     z.object({
-        description: z.string().max(255).optional(),
         price: z.number().min(0).max(10000),
         currency: z.string().nonempty("Please select a currency."),
         recurring: z.string().nonempty("Please select a recurring."),
@@ -41,19 +45,18 @@ const formSchema = toTypedSchema(
 const { handleSubmit, resetForm, setValues, values } = useForm({
     validationSchema: formSchema,
     initialValues: {
-        description: props.data[0]?.description || "",
         price: props.data[0]?.unit_amount || 0,
         currency: props.data[0]?.currency || "",
         recurring: props.data[0]?.recurring?.interval || "",
     },
 });
 
+// Watch for prop changes
 watch(
     () => props.data[0],
     (data) => {
         if (data) {
             setValues({
-                description: data.description || "",
                 price: data.unit_amount || 0,
                 currency: data.currency || "",
                 recurring: data.recurring?.interval || "",
@@ -64,14 +67,14 @@ watch(
 );
 
 const onSubmit = handleSubmit(async (formValues) => {
-    if (!productId) {
-        showToast("Error", "Product ID is missing.");
+    if (!priceId) {
+        showToast("Error", "Price ID is missing.");
         return;
     }
 
     try {
-        await router.put(`/plans/${productId}`, formValues);
-        showToast("Product Updated", "Product updated successfully.");
+        await router.put(`/plans/${priceId}`, formValues);
+        showToast("Price Updated", "Price updated successfully.");
         resetForm();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
@@ -94,26 +97,6 @@ function showToast(title: string, description: string) {
 
 <template>
     <form class="w-full space-y-3" @submit="onSubmit">
-        <div>
-            <FormField v-slot="{ componentField }" name="description">
-                <FormItem>
-                    <FormLabel>Price Description</FormLabel>
-                    <FormControl>
-                        <Input
-                            type="text"
-                            placeholder="Enter product description"
-                            v-model="values.description"
-                            v-bind="componentField"
-                        />
-                    </FormControl>
-                    <FormDescription class="text-xs">
-                        Use to organize your prices. Not displayed to customers.
-                    </FormDescription>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
-        </div>
-
         <div class="flex w-full">
             <FormField v-slot="{ componentField }" name="price">
                 <FormItem>
@@ -150,6 +133,7 @@ function showToast(title: string, description: string) {
                         <RecurringIntervalCombobox
                             v-model="values.recurring"
                             v-bind="componentField"
+                            :disabled="true"
                         />
                         <FormMessage />
                     </FormControl>

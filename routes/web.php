@@ -83,6 +83,10 @@ Route::middleware("auth:admin")->group(function () {
         PlansCentralController::class,
         "update",
     ])->name("plan.update");
+    Route::put("/price/{priceId}", [
+        PlansCentralController::class,
+        "updatePrice",
+    ])->name("price.update");
 
     Route::put("/plans/{productID}", [
         PlansCentralController::class,
