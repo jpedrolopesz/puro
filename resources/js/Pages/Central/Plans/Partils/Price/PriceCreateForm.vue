@@ -17,18 +17,25 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { toast } from "@/Components/ui/toast";
-import CurrencyCombobox from "./CurrencyCombobox.vue";
-import RecurringIntervalCombobox from "./RecurringIntervalCombobox.vue";
+import CurrencyCombobox from "../CurrencyCombobox.vue";
+import RecurringIntervalCombobox from "../RecurringIntervalCombobox.vue";
 
+const props = defineProps({
+    data: {
+        type: Object as () => any,
+        required: true,
+    },
+});
 const formSchema = toTypedSchema(
     z.object({
-        name: z.string().min(2).max(255),
-        description: z.string().max(255).optional(),
         price: z.number().min(0).max(255),
         currency: z.string().nonempty("Please select a currency."),
         recurring: z.string().nonempty("Please select a recurring."),
+        description: z.string().max(255).optional(),
     }),
 );
+
+console.log(props.data.id);
 
 const selectedCurrency = ref();
 
@@ -38,8 +45,14 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post(route("plan.create"), values);
-        showToast("Plan Created", "Plan created successfully.");
+        await router.post(route("plan.addPriceToProduct"), {
+            product_id: props.data.id, // Adicione o ID do produto aqui
+            price: values.price,
+            currency: values.currency,
+            recurring: values.recurring,
+            description: values.description,
+        });
+        showToast("Price Created", "Price created successfully.");
         resetForm();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
@@ -62,43 +75,6 @@ function showToast(title: string, description: string) {
 
 <template>
     <form class="w-full space-y-3" @submit="onSubmit">
-        <div>
-            <FormField v-slot="{ componentField }" name="name">
-                <FormItem>
-                    <FormLabel>Name</FormLabel>
-                    <FormControl>
-                        <Input
-                            type="text"
-                            placeholder="Enter product name"
-                            v-bind="componentField"
-                        />
-                    </FormControl>
-                    <FormDescription class="text-xs">
-                        This is the name of your product.
-                    </FormDescription>
-                    <FormMessage class="" />
-                </FormItem>
-            </FormField>
-        </div>
-        <div>
-            <FormField v-slot="{ componentField }" name="description">
-                <FormItem>
-                    <FormLabel>Description</FormLabel>
-                    <FormControl>
-                        <Input
-                            type="text"
-                            placeholder="Enter product description"
-                            v-bind="componentField"
-                        />
-                    </FormControl>
-                    <FormDescription class="text-xs">
-                        Optional description for the product.
-                    </FormDescription>
-                    <FormMessage />
-                </FormItem>
-            </FormField>
-        </div>
-
         <div>
             <Label>Price / Currency</Label>
         </div>
@@ -146,7 +122,26 @@ function showToast(title: string, description: string) {
         </div>
 
         <div>
-            <Button class="mt-10" type="submit">Create Product</Button>
+            <FormField v-slot="{ componentField }" name="description">
+                <FormItem>
+                    <FormLabel>Description</FormLabel>
+                    <FormControl>
+                        <Input
+                            type="text"
+                            placeholder="Enter product description"
+                            v-bind="componentField"
+                        />
+                    </FormControl>
+                    <FormDescription class="text-xs">
+                        Use to organize your prices. Not displayed to customers.
+                    </FormDescription>
+                    <FormMessage />
+                </FormItem>
+            </FormField>
+        </div>
+
+        <div>
+            <Button class="mt-10" type="submit">Create Price</Button>
         </div>
     </form>
 </template>

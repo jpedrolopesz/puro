@@ -41,7 +41,8 @@ function handleChange(checked: boolean) {
             <Label for="archiveprice">Archive price</Label>
             <Switch
                 id="price-active"
-                :checked="props.data.active"
+                :checked="!props.data.active"
+                :disabled="props.default_price"
                 @update:checked="handleChange"
             />
         </div>
@@ -51,7 +52,7 @@ function handleChange(checked: boolean) {
             <Switch
                 id="setdefault"
                 :checked="props.default_price"
-                :disabled="props.default_price"
+                :disabled="props.default_price || !props.data.active"
                 @update:checked="(checked) => emit('update', checked)"
             />
         </div>

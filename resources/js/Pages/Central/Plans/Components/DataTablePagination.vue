@@ -8,14 +8,14 @@ import {
     ChevronLeftIcon,
 } from "@radix-icons/vue";
 
-import { Button } from "../../../../Components/ui/button";
+import { Button } from "@/Components/ui/button";
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from "../../../../Components/ui/select";
+} from "@/Components/ui/select";
 
 interface DataTablePaginationProps {
     table: Table<Order>;

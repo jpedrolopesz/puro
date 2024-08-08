@@ -58,17 +58,19 @@ class PlansCentralController extends Controller
                 "name" => $request->input("name"),
                 "description" => $request->input("description"),
             ]);
+
+            // Verifica se o preço foi fornecido
             if ($request->has("price")) {
                 $recurringInterval = $request->input("recurring");
                 $recurringConfig = null;
 
+                // Configuração para pagamento recorrente, se aplicável
                 if ($recurringInterval) {
                     $recurringConfig = [
                         "interval" => $recurringInterval,
                         "interval_count" => 1,
                     ];
                 }
-
                 $price = Price::create([
                     "unit_amount" => $request->input("price") * 100,
                     "currency" => $request->input("currency"),
@@ -78,6 +80,45 @@ class PlansCentralController extends Controller
             }
         } catch (\Exception $e) {
             return back()->withErrors(["error" => $e->getMessage()]);
+        }
+    }
+
+    public function addPriceToProduct(Request $request)
+    {
+        try {
+            $productId = $request->input("product_id");
+            $priceAmount = $request->input("price");
+            $currency = $request->input("currency");
+            $recurringInterval = $request->input("recurring");
+            $description = $request->input("description");
+
+            // Busca o produto pelo ID fornecido
+            $product = Product::retrieve($productId, []);
+
+            // Configuração para pagamento recorrente, se aplicável
+            $recurringConfig = null;
+            if ($recurringInterval) {
+                $recurringConfig = [
+                    "interval" => $recurringInterval,
+                    "interval_count" => 1,
+                ];
+            }
+
+            // Cria um novo preço associado ao produto
+            $price = Price::create([
+                "unit_amount" => $priceAmount * 100, // Assumindo que o preço é em dólares e precisa ser convertido para centavos
+                "currency" => $currency,
+                "product" => $product->id, // ID do produto
+                "recurring" => $recurringConfig,
+                "description" => $description, // Adiciona a descrição se necessário
+            ]);
+
+            return response()->json(
+                ["success" => true, "price" => $price],
+                201
+            );
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage()], 500);
         }
     }
 
@@ -106,7 +147,6 @@ class PlansCentralController extends Controller
     {
         try {
             $price = Price::retrieve($priceId);
-            dd($price);
             $currentActiveStatus = $request->input("active");
             $price->active = !$currentActiveStatus;
             $price->save();

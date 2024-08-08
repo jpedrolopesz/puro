@@ -98,6 +98,11 @@ Route::middleware("auth:admin")->group(function () {
         "create",
     ])->name("plan.create");
 
+    Route::post("/plans/addPriceToProduct", [
+        PlansCentralController::class,
+        "addPriceToProduct",
+    ])->name("plan.addPriceToProduct");
+
     ######## Mail ########
 
     Route::get("/mail", [MailCentralController::class, "index"])->name(

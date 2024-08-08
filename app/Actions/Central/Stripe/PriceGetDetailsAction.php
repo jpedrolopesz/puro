@@ -9,18 +9,15 @@ class PriceGetDetailsAction
 {
     public function execute(string $productID): array
     {
-        // Buscar o produto com base no ID
         $productResponse = Product::retrieve($productID);
 
         if (!$productResponse) {
             throw new \Exception("Produto não encontrado.");
         }
 
-        // Buscar preços associados ao produto
         $pricesResponse = Price::all(["product" => $productID]);
         $prices = $pricesResponse->data;
 
-        // Formatar os dados
         return $this->formatData($productResponse, $prices);
     }
 
@@ -41,7 +38,6 @@ class PriceGetDetailsAction
                 "currency" => $price["currency"],
                 "unit_amount" => $price["unit_amount"],
                 "active" => $price["active"],
-
                 "billing_scheme" => $price["billing_scheme"],
                 "trial_period_days" =>
                     $price["recurring"]["trial_period_days"] ?? null,
