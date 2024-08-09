@@ -16,7 +16,10 @@ import {
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
-import { toast } from "@/Components/ui/toast";
+import { Toaster } from "@/Components/ui/toast";
+
+import { useToast } from "@/Components/ui/toast/use-toast";
+
 import CurrencyCombobox from "../CurrencyCombobox.vue";
 import RecurringIntervalCombobox from "../RecurringIntervalCombobox.vue";
 
@@ -31,7 +34,7 @@ const formSchema = toTypedSchema(
         price: z.number().min(0).max(255),
         currency: z.string().nonempty("Please select a currency."),
         recurring: z.string().nonempty("Please select a recurring."),
-        description: z.string().max(255).optional(),
+        nickname: z.string().max(255).optional(),
     }),
 );
 
@@ -45,19 +48,24 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post(route("plan.addPriceToProduct"), {
-            product_id: props.data.id, // Adicione o ID do produto aqui
-            price: values.price,
-            currency: values.currency,
-            recurring: values.recurring,
-            description: values.description,
-        });
+        await router.post(
+            route("plan.addPriceToProduct", { preserveScroll: true }),
+            {
+                product_id: props.data.id,
+                price: values.price,
+                currency: values.currency,
+                recurring: values.recurring,
+                nickname: values.nickname,
+            },
+        );
         showToast("Price Created", "Price created successfully.");
         resetForm();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
     }
 });
+
+const { toast } = useToast();
 
 function showToast(title: string, description: string) {
     toast({
@@ -122,7 +130,7 @@ function showToast(title: string, description: string) {
         </div>
 
         <div>
-            <FormField v-slot="{ componentField }" name="description">
+            <FormField v-slot="{ componentField }" name="nickname">
                 <FormItem>
                     <FormLabel>Description</FormLabel>
                     <FormControl>

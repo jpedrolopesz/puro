@@ -39,6 +39,8 @@ class PriceGetDetailsAction
                 "unit_amount" => $price["unit_amount"],
                 "active" => $price["active"],
                 "billing_scheme" => $price["billing_scheme"],
+                "nickname" => $price["nickname"],
+
                 "trial_period_days" =>
                     $price["recurring"]["trial_period_days"] ?? null,
                 "recurring" => [

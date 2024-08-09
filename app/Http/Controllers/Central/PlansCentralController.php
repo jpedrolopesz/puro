@@ -90,7 +90,7 @@ class PlansCentralController extends Controller
             $priceAmount = $request->input("price");
             $currency = $request->input("currency");
             $recurringInterval = $request->input("recurring");
-            $description = $request->input("description");
+            $nickname = $request->input("nickname");
 
             // Busca o produto pelo ID fornecido
             $product = Product::retrieve($productId, []);
@@ -110,13 +110,8 @@ class PlansCentralController extends Controller
                 "currency" => $currency,
                 "product" => $product->id, // ID do produto
                 "recurring" => $recurringConfig,
-                "description" => $description, // Adiciona a descrição se necessário
+                "nickname" => $nickname, // Adiciona a descrição se necessário
             ]);
-
-            return response()->json(
-                ["success" => true, "price" => $price],
-                201
-            );
         } catch (\Exception $e) {
             return response()->json(["error" => $e->getMessage()], 500);
         }
@@ -150,6 +145,25 @@ class PlansCentralController extends Controller
             $currentActiveStatus = $request->input("active");
             $price->active = !$currentActiveStatus;
             $price->save();
+
+            return response()->json(["success" => true]);
+        } catch (\Exception $e) {
+            return response()->json(["error" => $e->getMessage()], 400);
+        }
+    }
+
+    public function updateDefaultPrice(Request $request, $priceId)
+    {
+        try {
+            // Recupera o preço
+            $price = Price::retrieve($priceId);
+
+            // Recupera o produto associado ao preço
+            $productId = $price->product; // Supondo que o produto esteja acessível desta forma
+            $product = Product::retrieve($productId);
+
+            $product->default_price = $request->input("default_price");
+            $product->save();
 
             return response()->json(["success" => true]);
         } catch (\Exception $e) {

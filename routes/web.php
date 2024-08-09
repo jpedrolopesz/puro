@@ -102,6 +102,11 @@ Route::middleware("auth:admin")->group(function () {
         PlansCentralController::class,
         "addPriceToProduct",
     ])->name("plan.addPriceToProduct");
+    // web.php ou api.php
+    Route::put("/plan/{priceId}/default", [
+        PlansCentralController::class,
+        "updateDefaultPrice",
+    ])->name("plan.update.default");
 
     ######## Mail ########
 

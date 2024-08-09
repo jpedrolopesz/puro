@@ -13,6 +13,9 @@ import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
+import { Toaster } from "@/Components/ui/toast";
+import { useToast } from "@/Components/ui/toast/use-toast";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -62,6 +65,8 @@ const props = defineProps({
     },
 });
 
+console.log(props.product);
+
 const form = useForm({
     name: props.product.name,
     description: props.product.description,
@@ -89,12 +94,28 @@ function updateProduct() {
         },
     });
 }
+
+const { toast } = useToast();
 </script>
 
 <template>
     <Head title="Plan Details" />
 
     <AuthenticatedCentralLayout>
+        <Toaster />
+
+        <Button
+            @click="
+                () => {
+                    toast({
+                        title: 'Scheduled: Catch up',
+                        description: 'Friday, February 10, 2023 at 5:57 PM',
+                    });
+                }
+            "
+        >
+            Add to calendar
+        </Button>
         <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <header class="flex items-center gap-4">
@@ -215,6 +236,8 @@ function updateProduct() {
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Price</TableHead>
+                                        <TableHead></TableHead>
+                                        <TableHead>Description</TableHead>
                                         <TableHead>Subscribers</TableHead>
                                         <TableHead>Date</TableHead>
                                         <TableHead>Action</TableHead>
@@ -264,6 +287,13 @@ function updateProduct() {
                                                 >Archived</Badge
                                             >
                                         </TableCell>
+
+                                        <TableCell
+                                            ><span v-if="price.nickname">
+                                                {{ price.nickname }}
+                                            </span>
+                                            <span v-else>_</span>
+                                        </TableCell>
                                         <TableCell
                                             >{{
                                                 price.subscription_count
@@ -289,7 +319,6 @@ function updateProduct() {
                                                         <PriceActiveSwitch
                                                             :data="price"
                                                             :default_price="
-                                                                price.id ===
                                                                 default_price_id
                                                             "
                                                         />
