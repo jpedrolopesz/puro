@@ -138,8 +138,6 @@ const links3: LinkProp[] = [
         route: "/social",
     },
 ];
-
-//const layout = useCookie<number[]>('splitter:layout')
 </script>
 
 <template>

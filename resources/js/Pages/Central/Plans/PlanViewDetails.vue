@@ -2,10 +2,11 @@
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import PriceActiveSwitch from "./Partils/Price/PriceActiveSwitch.vue";
 import PriceCreateForm from "./Partils/Price/PriceCreateForm.vue";
+import PlanUpdateForm from "./Partils/PlanUpdateForm.vue";
+import DataTable from "./Components/PriceDetails/DataTable.vue";
 
 import { Head, Link, useForm } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
-import { SymbolIcon, DotsHorizontalIcon } from "@radix-icons/vue";
 import { ChevronLeft, PlusCircle } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
@@ -13,9 +14,7 @@ import { Input } from "@/Components/ui/input";
 import { Textarea } from "@/Components/ui/textarea";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
-import { Toaster } from "@/Components/ui/toast";
-import { useToast } from "@/Components/ui/toast/use-toast";
-
+import { ScrollArea } from "@/Components/ui/scroll-area";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -67,58 +66,20 @@ const props = defineProps({
 
 console.log(props.product);
 
-const form = useForm({
-    name: props.product.name,
-    description: props.product.description,
-    active: props.product.active.toString(),
-});
-
 const default_price_id = ref(
     props.product.prices.find(
         (price) => price.id === props.product.default_price,
     )?.id || null,
 );
-
-function formatDate(timestamp: number) {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString();
-}
-
-function updateProduct() {
-    form.put(route("plan.update", { productId: props.product.id }), {
-        onSuccess: () => {
-            // Redirect or notify user of success
-        },
-        onError: (errors) => {
-            // Handle form errors
-        },
-    });
-}
-
-const { toast } = useToast();
 </script>
 
 <template>
     <Head title="Plan Details" />
 
     <AuthenticatedCentralLayout>
-        <Toaster />
-
-        <Button
-            @click="
-                () => {
-                    toast({
-                        title: 'Scheduled: Catch up',
-                        description: 'Friday, February 10, 2023 at 5:57 PM',
-                    });
-                }
-            "
-        >
-            Add to calendar
-        </Button>
-        <main class="space-y-8 m-4 md:m-10 lg:m-20">
-            <div class="mx-auto grid flex-1 auto-rows-max gap-4">
-                <header class="flex items-center gap-4">
+        <main class="space-y-8 m-4 md:m-8 lg:m-20">
+            <div class="mx-auto grid auto-rows-max gap-2">
+                <header class="flex items-center gap-2">
                     <Link :href="route('plans.index')">
                         <Button variant="outline" size="icon" class="h-7 w-7">
                             <ChevronLeft class="h-4 w-4" />
@@ -133,8 +94,6 @@ const { toast } = useToast();
                     <Badge
                         :variant="product.active ? 'outline' : ''"
                         :class="[
-                            'ml-auto hover:none',
-                            'sm:ml-0',
                             product.active
                                 ? 'text-white bg-gray-800/80'
                                 : 'text-gray-800/80 bg-gray-400/40',
@@ -142,82 +101,32 @@ const { toast } = useToast();
                     >
                         {{ product.active ? "Active" : "Inactive" }}
                     </Badge>
-                    <div class="items-center gap-2 md:ml-auto md:flex">
-                        <Button size="sm" @click="updateProduct">Save</Button>
+
+                    <div class="items-center ml-auto">
+                        <Sheet>
+                            <SheetTrigger
+                                class="flex items-center justify-center"
+                            >
+                                <Button variant="outline" size="xs"
+                                    >Editar Plan</Button
+                                >
+                            </SheetTrigger>
+                            <SheetContent>
+                                <SheetHeader>
+                                    <SheetTitle>Editar Plan</SheetTitle>
+                                    <SheetDescription
+                                        ><Separator
+                                    /></SheetDescription>
+                                </SheetHeader>
+
+                                <PlanUpdateForm :data="props.product" />
+                            </SheetContent>
+                        </Sheet>
                     </div>
                 </header>
 
-                <div
-                    class="grid gap-4 md:grid-cols-[1fr_250px] lg:grid-cols-3 lg:gap-8"
-                >
-                    <Card class="lg:col-span-2">
-                        <CardHeader>
-                            <CardTitle>Plan Details</CardTitle>
-                            <CardDescription>
-                                Product or Service Name: Visible to customers.
-                                Description: Appears at checkout and in the
-                                customer portal, in quotation marks.
-                            </CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                            <div class="grid gap-6">
-                                <div class="grid gap-3">
-                                    <Label for="name">Name</Label>
-                                    <Input
-                                        id="name"
-                                        type="text"
-                                        class="w-full"
-                                        v-model="form.name"
-                                    />
-                                </div>
-                                <div class="grid gap-3">
-                                    <Label for="description">Description</Label>
-                                    <Textarea
-                                        id="description"
-                                        class="min-h-22"
-                                        v-model="form.description"
-                                    />
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card>
-                        <CardHeader>
-                            <CardTitle>Plan Status</CardTitle>
-                        </CardHeader>
-                        <CardContent>
-                            <div class="grid gap-6">
-                                <div class="grid gap-3">
-                                    <Label for="status">Status</Label>
-                                    <Select v-model="form.active">
-                                        <SelectTrigger
-                                            id="status"
-                                            aria-label="Select status"
-                                        >
-                                            <SelectValue
-                                                :placeholder="
-                                                    product.active
-                                                        ? 'Active'
-                                                        : 'Inactive'
-                                                "
-                                            />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            <SelectItem value="true"
-                                                >Active</SelectItem
-                                            >
-                                            <SelectItem value="false"
-                                                >Inactive</SelectItem
-                                            >
-                                        </SelectContent>
-                                    </Select>
-                                </div>
-                            </div>
-                        </CardContent>
-                    </Card>
-
-                    <Card class="md:col-span-3">
+                <div class="grid gap-5 md:grid-cols-[1fr_250px] lg:grid-cols-5">
+                    <Card class="md:col-span-4">
                         <CardHeader class="px-7">
                             <CardTitle>Prices</CardTitle>
                             <CardDescription>
@@ -232,103 +141,10 @@ const { toast } = useToast();
                             </CardDescription>
                         </CardHeader>
                         <CardContent>
-                            <Table>
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead>Price</TableHead>
-                                        <TableHead></TableHead>
-                                        <TableHead>Description</TableHead>
-                                        <TableHead>Subscribers</TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Action</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    <TableRow
-                                        v-for="price in props.product.prices"
-                                        :key="price.id"
-                                    >
-                                        <TableCell>
-                                            <div class="flex flex-col">
-                                                <div
-                                                    class="flex items-end font-semibold space-x-1.5"
-                                                >
-                                                    <span class="uppercase">{{
-                                                        price.currency
-                                                    }}</span>
-                                                    <span>{{
-                                                        price.unit_amount / 100
-                                                    }}</span>
-                                                </div>
-                                                <div
-                                                    class="flex items-center space-x-1 font-normal text-xs"
-                                                >
-                                                    <SymbolIcon
-                                                        class="w-3 h-3"
-                                                    />
-                                                    <span>{{
-                                                        price.recurring.interval
-                                                    }}</span>
-                                                </div>
-                                            </div>
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge
-                                                v-if="
-                                                    price.id ===
-                                                    default_price_id
-                                                "
-                                                variant="outline"
-                                                >Default</Badge
-                                            >
-                                            <Badge
-                                                v-if="price.active === false"
-                                                variant="outline"
-                                                >Archived</Badge
-                                            >
-                                        </TableCell>
-
-                                        <TableCell
-                                            ><span v-if="price.nickname">
-                                                {{ price.nickname }}
-                                            </span>
-                                            <span v-else>_</span>
-                                        </TableCell>
-                                        <TableCell
-                                            >{{
-                                                price.subscription_count
-                                            }}
-                                            active</TableCell
-                                        >
-                                        <TableCell>{{
-                                            formatDate(price.created)
-                                        }}</TableCell>
-                                        <TableCell>
-                                            <DropdownMenu>
-                                                <DropdownMenuTrigger>
-                                                    <DotsHorizontalIcon
-                                                        class="mr-2 h-4 w-4"
-                                                    />
-                                                </DropdownMenuTrigger>
-                                                <DropdownMenuContent>
-                                                    <DropdownMenuLabel
-                                                        >Action</DropdownMenuLabel
-                                                    >
-                                                    <DropdownMenuSeparator />
-                                                    <DropdownMenuItem>
-                                                        <PriceActiveSwitch
-                                                            :data="price"
-                                                            :default_price="
-                                                                default_price_id
-                                                            "
-                                                        />
-                                                    </DropdownMenuItem>
-                                                </DropdownMenuContent>
-                                            </DropdownMenu>
-                                        </TableCell>
-                                    </TableRow>
-                                </TableBody>
-                            </Table>
+                            <DataTable
+                                :data="props.product.prices"
+                                :priceDefault="default_price_id"
+                            />
                         </CardContent>
                         <CardFooter class="justify-center border-t p-4">
                             <Sheet>
@@ -351,10 +167,18 @@ const { toast } = useToast();
                                             ><Separator
                                         /></SheetDescription>
                                     </SheetHeader>
+
                                     <PriceCreateForm :data="props.product" />
                                 </SheetContent>
                             </Sheet>
                         </CardFooter>
+                    </Card>
+
+                    <Card class="md:col-span-1 hidden lg:block">
+                        <CardHeader>
+                            <CardTitle>Details</CardTitle>
+                        </CardHeader>
+                        <CardContent> </CardContent>
                     </Card>
                 </div>
             </div>
