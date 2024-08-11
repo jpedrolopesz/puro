@@ -18,62 +18,17 @@ const progress = ref(0);
 
 const startProcessing = async () => {
     processing.value = true;
-    progress.value = 0;
-
     try {
-        // Fazer uma solicitação para iniciar o processamento no backend
-        await router.post(
-            "/process-payments",
-            {},
-            {
-                onSuccess: () => {
-                    // Simulação de progresso para a barra de progresso
-                    const interval = setInterval(() => {
-                        if (progress.value >= 100) {
-                            clearInterval(interval);
-                            processing.value = false;
-                        } else {
-                            progress.value += 10;
-                        }
-                    }, 500);
-                },
-                onError: () => {
-                    processing.value = false;
-                    progress.value = 0;
-                },
-            },
-        );
+        // Faz a requisição POST para a rota de processamento
+        await router.post(route("processPayments"));
+        // Aqui você pode definir a lógica para o que fazer após o sucesso
     } catch (error) {
-        console.error("Error processing payments:", error);
+        console.error("Failed to process payments:", error);
+        // Aqui você pode definir a lógica para o que fazer em caso de erro
+    } finally {
         processing.value = false;
-        progress.value = 0;
     }
 };
-
-let jobIds = ref([]);
-
-onMounted(async () => {
-    const response = await router.post("/process-payments");
-    jobIds.value = response.data.job_ids;
-});
-
-const checkJobStatus = async (jobId) => {
-    try {
-        const interval = setInterval(async () => {
-            const response = await fetch(`/api/jobs/${jobId}`);
-            const jobData = await response.json();
-            // Atualize o estado aqui com base nos dados recebidos
-            if (jobData.status === "completed") {
-                clearInterval(interval);
-            }
-        }, 2000);
-    } catch (error) {
-        console.error(error);
-    }
-};
-
-// Chame checkJobStatus para cada jobId
-jobIds.value.forEach(checkJobStatus);
 </script>
 
 <template>

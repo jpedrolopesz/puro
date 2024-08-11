@@ -10,6 +10,7 @@ class Payment extends Model
     use HasFactory;
 
     protected $fillable = [
+        "stripe_payment_id",
         "user_id",
         "amount",
         "currency",
@@ -24,7 +25,6 @@ class Payment extends Model
     ];
 
     protected $guarded = [
-        "stripe_payment_id",
         "payment_method_type",
         "payment_method_last4",
         "payment_method_brand",

@@ -7,11 +7,13 @@ use App\Actions\Central\Stripe\Payment\{
     ProcessPaymentsAction
 };
 use App\Http\Controllers\Controller;
+use App\Jobs\ProcessStripePaymentsJob;
 use App\Services\Stripe\StripeService;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Exception;
+use Illuminate\Support\Facades\DB;
 
 class PaymentCentralController extends Controller
 {
@@ -32,6 +34,10 @@ class PaymentCentralController extends Controller
     public function index()
     {
         try {
+            $jobs = DB::table("jobs")->get();
+
+            //dd($jobs);
+
             $payments = Payment::all();
             return Inertia::render("Central/Payments/PaymentsCentral", [
                 "paymentLists" => $payments,
@@ -72,8 +78,7 @@ class PaymentCentralController extends Controller
     public function processPayments(Request $request)
     {
         try {
-            $this->processPaymentsAction->execute();
-            return response()->json(["success" => true]);
+            ProcessStripePaymentsJob::dispatch();
         } catch (Exception $e) {
             return response()->json(
                 [

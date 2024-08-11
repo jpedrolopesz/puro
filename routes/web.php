@@ -64,7 +64,7 @@ Route::middleware("auth:admin")->group(function () {
     Route::post("/process-payments", [
         PaymentCentralController::class,
         "processPayments",
-    ]);
+    ])->name("processPayments");
     Route::get("/sync-payments", [
         PaymentCentralController::class,
         "syncPayments",
