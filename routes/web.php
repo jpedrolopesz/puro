@@ -30,11 +30,13 @@ Route::get("/", function () {
     ]);
 });
 
+// Rota para o webhook do Stripe
 Route::post("/stripe/webhook", [
     StripeWebhookController::class,
     "handleWebhook",
 ]);
 
+// Rotas protegidas por middleware de autenticação
 Route::middleware("auth:admin")->group(function () {
     ######## DASHBOARD ########
     Route::get("/dashboard", [
@@ -63,14 +65,12 @@ Route::middleware("auth:admin")->group(function () {
         PaymentCentralController::class,
         "processPayments",
     ]);
-
     Route::get("/sync-payments", [
         PaymentCentralController::class,
         "syncPayments",
     ])->name("sync.payments");
 
     ######## PRODUCTS ########
-
     Route::get("/products", [ProductsCentralController::class, "index"])->name(
         "products.index"
     );
@@ -78,7 +78,6 @@ Route::middleware("auth:admin")->group(function () {
         ProductsCentralController::class,
         "details",
     ])->name("product.details");
-
     Route::put("/products/{productId}", [
         ProductsCentralController::class,
         "update",
@@ -87,42 +86,35 @@ Route::middleware("auth:admin")->group(function () {
         ProductsCentralController::class,
         "updatePrice",
     ])->name("price.update");
-
     Route::put("/products/{productID}", [
         ProductsCentralController::class,
         "destroy",
     ])->name("product.destroy");
-
     Route::post("/products/create", [
         ProductsCentralController::class,
         "create",
     ])->name("product.create");
-
     Route::post("/products/addPriceToProduct", [
         ProductsCentralController::class,
         "addPriceToProduct",
     ])->name("product.addPriceToProduct");
-    // web.php ou api.php
     Route::put("/product/{priceId}/default", [
         ProductsCentralController::class,
         "updateDefaultPrice",
     ])->name("product.update.default");
 
-    ######## Mail ########
-
+    ######## MAIL ########
     Route::get("/mail", [MailCentralController::class, "index"])->name(
         "mails.index"
     );
 
     ######## PROFILE ########
-
     Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"
     );
     Route::get("/profile/account", function () {
         return Inertia::render("Central/Profile/Account");
     })->name("profile.account");
-
     Route::patch("/profile", [ProfileCentralController::class, "update"])->name(
         "profile.update"
     );

@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Actions\Central\Stripe\{
+use App\Actions\Central\Stripe\Product\{
     GetProductsAndPricesAction,
     GetProductPriceDetailsAction,
     CreateProductAction,
