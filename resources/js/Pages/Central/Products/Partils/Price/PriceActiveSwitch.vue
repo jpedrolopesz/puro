@@ -23,11 +23,9 @@ const form = useForm({
     default_price: props.default_price, // Inicializa com o valor atual
 });
 
-console.log("Initial default_price:", props.default_price);
-
 // Função para atualizar o estado ativo do preço
 function handleChange(checked: boolean) {
-    form.put(route("plan.update", { priceId: props.data.id }), {
+    form.put(route("product.update", { priceId: props.data.id }), {
         active: checked,
         onSuccess: () => {
             emit("update");
@@ -42,9 +40,7 @@ function handleChange(checked: boolean) {
 function handleDefaultPriceChange() {
     form.default_price = props.data.id; // Atualiza o valor localmente
 
-    console.log("Updating default_price to:", form.default_price);
-
-    form.put(route("plan.update.default", { priceId: props.data.id }), {
+    form.put(route("product.update.default", { priceId: props.data.id }), {
         default_price: form.default_price,
         onSuccess: () => {
             emit("update");

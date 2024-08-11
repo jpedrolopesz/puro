@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Order } from "../data/schema";
 import { MixerHorizontalIcon, PlusIcon } from "@radix-icons/vue";
-import PlanCreateForm from "../Partils/PlanCreateForm.vue";
+import ProductCreateForm from "../Partils/ProductCreateForm.vue";
 
 import { Button } from "@/Components/ui/button";
 import {
@@ -46,16 +46,16 @@ const columns = computed(() =>
         <SheetTrigger
             ><Button size="sm" class="ml-auto h-8 mr-2">
                 <PlusIcon class="mr-2 h-4 w-4" />
-                Plan
+                Product
             </Button></SheetTrigger
         >
         <SheetContent>
             <SheetHeader>
-                <SheetTitle>Add Plan</SheetTitle>
+                <SheetTitle>Add Product</SheetTitle>
                 <SheetDescription><Separator /></SheetDescription>
             </SheetHeader>
 
-            <PlanCreateForm />
+            <ProductCreateForm />
         </SheetContent>
     </Sheet>
 

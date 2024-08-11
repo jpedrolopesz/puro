@@ -5,7 +5,7 @@ use App\Http\Controllers\Central\{
     TenantsCentralController,
     DashboardCentralController,
     MailCentralController,
-    PlansCentralController,
+    ProductsCentralController,
     PaymentCentralController,
     StripeWebhookController
 };
@@ -69,44 +69,44 @@ Route::middleware("auth:admin")->group(function () {
         "syncPayments",
     ])->name("sync.payments");
 
-    ######## PLANS ########
+    ######## PRODUCTS ########
 
-    Route::get("/plans", [PlansCentralController::class, "index"])->name(
-        "plans.index"
+    Route::get("/products", [ProductsCentralController::class, "index"])->name(
+        "products.index"
     );
-    Route::get("/plan/{productID}", [
-        PlansCentralController::class,
+    Route::get("/product/{productID}", [
+        ProductsCentralController::class,
         "details",
-    ])->name("plan.details");
+    ])->name("product.details");
 
-    Route::put("/plans/{productId}", [
-        PlansCentralController::class,
+    Route::put("/products/{productId}", [
+        ProductsCentralController::class,
         "update",
-    ])->name("plan.update");
+    ])->name("product.update");
     Route::put("/price/{priceId}", [
-        PlansCentralController::class,
+        ProductsCentralController::class,
         "updatePrice",
     ])->name("price.update");
 
-    Route::put("/plans/{productID}", [
-        PlansCentralController::class,
+    Route::put("/products/{productID}", [
+        ProductsCentralController::class,
         "destroy",
-    ])->name("plan.destroy");
+    ])->name("product.destroy");
 
-    Route::post("/plans/create", [
-        PlansCentralController::class,
+    Route::post("/products/create", [
+        ProductsCentralController::class,
         "create",
-    ])->name("plan.create");
+    ])->name("product.create");
 
-    Route::post("/plans/addPriceToProduct", [
-        PlansCentralController::class,
+    Route::post("/products/addPriceToProduct", [
+        ProductsCentralController::class,
         "addPriceToProduct",
-    ])->name("plan.addPriceToProduct");
+    ])->name("product.addPriceToProduct");
     // web.php ou api.php
-    Route::put("/plan/{priceId}/default", [
-        PlansCentralController::class,
+    Route::put("/product/{priceId}/default", [
+        ProductsCentralController::class,
         "updateDefaultPrice",
-    ])->name("plan.update.default");
+    ])->name("product.update.default");
 
     ######## Mail ########
 

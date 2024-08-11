@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-export const planSchema = z.object({
+export const productSchema = z.object({
   id: z.number(),
   customer: z.object({
     Name: z.string(),
@@ -12,4 +12,4 @@ export const planSchema = z.object({
   amount: z.string(),
 });
 
-export type Plan = z.infer<typeof planSchema>;
+export type Product = z.infer<typeof productSchema>;

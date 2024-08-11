@@ -3,8 +3,8 @@ import type { Row } from "@tanstack/vue-table";
 import { computed } from "vue";
 import { Link, useForm } from "@inertiajs/vue3";
 
-import { planSchema } from "../data/schema";
-import type { Plan } from "../data/schema";
+import { productSchema } from "../data/schema";
+import type { Product } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 
 import { Button } from "@/Components/ui/button";
@@ -24,11 +24,11 @@ import {
 } from "@/Components/ui/dropdown-menu";
 
 interface DataTableRowActionsProps {
-    row: Row<Plan>;
+    row: Row<Product>;
 }
 const props = defineProps<DataTableRowActionsProps>();
 
-const planSchema = computed(() => planSchema.parse(props.row.original));
+const productSchema = computed(() => productSchema.parse(props.row.original));
 </script>
 
 <template>
@@ -48,11 +48,11 @@ const planSchema = computed(() => planSchema.parse(props.row.original));
             <DropdownMenuItem
                 ><Link
                     :href="
-                        route('plan.details', {
+                        route('product.details', {
                             productID: props.row.original.id,
                         })
                     "
-                    >Edit plan</Link
+                    >Edit Product</Link
                 ></DropdownMenuItem
             >
         </DropdownMenuContent>

@@ -18,7 +18,7 @@ import {
 import { ArrowUpDown, ChevronDown, GitCompareArrows } from "lucide-vue-next";
 
 import { h, ref } from "vue";
-import DropdownAction from "./DataTableDropDown.vue";
+import DropdownAction from "./DropdownAction.vue";
 
 import { Button } from "@/Components/ui/button";
 import { Checkbox } from "@/Components/ui/checkbox";
@@ -168,12 +168,14 @@ const columns = [
         enableHiding: false,
         cell: ({ row }) => {
             const price = row.original;
+            const priceDefaultId = props.priceDefault;
 
             return h(
                 "div",
                 { class: "relative" },
                 h(DropdownAction, {
                     price,
+                    priceDefaultId,
                     onExpand: row.toggleExpanded,
                 }),
             );
@@ -230,9 +232,6 @@ const table = useVueTable({
         get pagination() {
             return pagination.value;
         },
-        columnPinning: {
-            left: ["status"],
-        },
     },
 });
 </script>
@@ -242,12 +241,12 @@ const table = useVueTable({
         <div class="flex gap-2 items-center py-4">
             <Input
                 class="max-w-sm"
-                placeholder="Filter by Status..."
+                placeholder="Filter by Description..."
                 :model-value="
-                    table.getColumn('status')?.getFilterValue() as string
+                    table.getColumn('nickname')?.getFilterValue() as string
                 "
                 @update:model-value="
-                    table.getColumn('status')?.setFilterValue($event)
+                    table.getColumn('nickname')?.setFilterValue($event)
                 "
             />
             <DropdownMenu>
@@ -359,8 +358,13 @@ const table = useVueTable({
 
         <div class="flex items-center justify-end space-x-2 py-4">
             <div class="flex-1 text-sm text-muted-foreground">
-                {{ table.getFilteredSelectedRowModel().rows.length }} of
-                {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+                {{ table.getFilteredRowModel().rows.length }} results
+            </div>
+            <div
+                class="flex w-[100px] items-center justify-center text-sm font-medium"
+            >
+                Page {{ table.getState().pagination.pageIndex + 1 }} of
+                {{ table.getPageCount() }}
             </div>
             <div class="space-x-2">
                 <Button

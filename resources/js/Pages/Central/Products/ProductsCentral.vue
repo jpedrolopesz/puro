@@ -3,12 +3,11 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
 import { Head } from "@inertiajs/vue3";
 import { defineProps } from "vue";
 
-import plans from "./data/plans.json";
 import DataTable from "./Components/DataTable.vue";
 import { columns } from "./Components/columns";
 
 const props = defineProps({
-    plans: {
+    products: {
         type: Object,
         required: true,
     },
@@ -16,17 +15,17 @@ const props = defineProps({
 </script>
 
 <template>
-    <Head title="Plans" />
+    <Head title="Products" />
 
     <AuthenticatedCentralLayout>
         <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="flex items-center justify-between space-y-2">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight">Plans</h2>
+                    <h2 class="text-2xl font-bold tracking-tight">Products</h2>
                 </div>
             </div>
 
-            <DataTable :data="props.plans" :columns="columns" />
+            <DataTable :data="props.products" :columns="columns" />
         </main>
     </AuthenticatedCentralLayout>
 </template>

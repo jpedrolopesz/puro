@@ -5,7 +5,7 @@ namespace App\Actions\Central\Stripe;
 use Stripe\Product;
 use Stripe\Price;
 
-class PriceGetAllAction
+class GetProductsAndPricesAction
 {
     /**
      * Executa a formatação dos dados.

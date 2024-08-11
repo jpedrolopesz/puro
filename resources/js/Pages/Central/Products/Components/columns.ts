@@ -3,7 +3,7 @@ import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 
 import { priorities } from "../data/data";
-import type { Plan } from "../data/schema";
+import type { Product } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
 import { Checkbox } from "@/Components/ui/checkbox";
@@ -13,7 +13,7 @@ function formatDate(timestamp) {
   return date.toLocaleDateString(); // Adjust the format as needed
 }
 
-export const columns: ColumnDef<Plan>[] = [
+export const columns: ColumnDef<Product>[] = [
   {
     id: "select",
     header: ({ table }) =>
@@ -38,12 +38,12 @@ export const columns: ColumnDef<Plan>[] = [
   {
     accessorKey: "id",
     header: ({ column }) =>
-      h(DataTableColumnHeader, { column, title: "Plan Id" }),
+      h(DataTableColumnHeader, { column, title: "Product Id" }),
     cell: ({ row }) =>
       h(
         Link,
         {
-          href: `/plan/${row.getValue("id")}`,
+          href: `/product/${row.getValue("id")}`,
           class: "w-24 truncate",
         },
         () => row.getValue("id"),

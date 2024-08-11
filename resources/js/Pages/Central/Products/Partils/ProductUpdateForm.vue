@@ -70,10 +70,10 @@ watch(
 const onSubmit = handleSubmit(async (formValues) => {
     try {
         await router.put(
-            route("plan.update", { productId: props.data[0]?.id }),
+            route("product.update", { productId: props.data.id }),
             formValues,
         );
-        showToast("Plan Updated", "Plan updated successfully.");
+        showToast("Product Updated", "Product updated successfully.");
         resetForm();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
@@ -103,7 +103,7 @@ function showToast(title: string, description: string) {
                     <FormControl>
                         <Input
                             type="text"
-                            placeholder="Enter plan name"
+                            placeholder="Enter product name"
                             v-model="values.name"
                             v-bind="componentField"
                         />
@@ -122,7 +122,7 @@ function showToast(title: string, description: string) {
                     <FormControl>
                         <Input
                             type="text"
-                            placeholder="Enter plan description"
+                            placeholder="Enter product description"
                             v-model="values.description"
                             v-bind="componentField"
                         />
@@ -165,7 +165,7 @@ function showToast(title: string, description: string) {
         </div>
 
         <div>
-            <Button class="mt-10" type="submit">Update Plan</Button>
+            <Button class="mt-10" type="submit">Update Product</Button>
         </div>
     </form>
 </template>

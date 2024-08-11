@@ -64,13 +64,14 @@ const links: LinkProp[] = [
             route().current("payment.details"),
     },
     {
-        title: "Plans",
+        title: "Products",
         label: "6",
         icon: "lucide:package-open",
         variant: "ghost",
-        route: route("plans.index"),
+        route: route("products.index"),
         current:
-            route().current("plans.index") || route().current("plan.details"),
+            route().current("products.index") ||
+            route().current("product.details"),
     },
     {
         title: "Mails",

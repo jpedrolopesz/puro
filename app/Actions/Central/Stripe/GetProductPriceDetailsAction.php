@@ -5,7 +5,7 @@ namespace App\Actions\Central\Stripe;
 use Stripe\Product;
 use Stripe\Price;
 
-class PriceGetDetailsAction
+class GetProductPriceDetailsAction
 {
     public function execute(string $productID): array
     {

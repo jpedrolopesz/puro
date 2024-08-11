@@ -73,7 +73,7 @@ const onSubmit = handleSubmit(async (formValues) => {
     }
 
     try {
-        await router.put(`/plans/${priceId}`, formValues);
+        await router.put(`/products/${priceId}`, formValues);
         showToast("Price Updated", "Price updated successfully.");
         resetForm();
     } catch (error) {

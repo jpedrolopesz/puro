@@ -2,7 +2,7 @@
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import PriceActiveSwitch from "./Partils/Price/PriceActiveSwitch.vue";
 import PriceCreateForm from "./Partils/Price/PriceCreateForm.vue";
-import PlanUpdateForm from "./Partils/PlanUpdateForm.vue";
+import ProductUpdateForm from "./Partils/ProductUpdateForm.vue";
 import DataTable from "./Components/PriceDetails/DataTable.vue";
 
 import { Head, Link, useForm } from "@inertiajs/vue3";
@@ -66,7 +66,7 @@ const props = defineProps({
 
 console.log(props.product);
 
-const default_price_id = ref(
+const defaultPriceId = ref(
     props.product.prices.find(
         (price) => price.id === props.product.default_price,
     )?.id || null,
@@ -74,13 +74,13 @@ const default_price_id = ref(
 </script>
 
 <template>
-    <Head title="Plan Details" />
+    <Head title="Product Details" />
 
     <AuthenticatedCentralLayout>
         <main class="space-y-8 m-4 md:m-8 lg:m-20">
             <div class="mx-auto grid auto-rows-max gap-2">
                 <header class="flex items-center gap-2">
-                    <Link :href="route('plans.index')">
+                    <Link :href="route('products.index')">
                         <Button variant="outline" size="icon" class="h-7 w-7">
                             <ChevronLeft class="h-4 w-4" />
                             <span class="sr-only">Back</span>
@@ -108,18 +108,18 @@ const default_price_id = ref(
                                 class="flex items-center justify-center"
                             >
                                 <Button variant="outline" size="xs"
-                                    >Editar Plan</Button
+                                    >Edit Product</Button
                                 >
                             </SheetTrigger>
                             <SheetContent>
                                 <SheetHeader>
-                                    <SheetTitle>Editar Plan</SheetTitle>
+                                    <SheetTitle>Edit Product</SheetTitle>
                                     <SheetDescription
                                         ><Separator
                                     /></SheetDescription>
                                 </SheetHeader>
 
-                                <PlanUpdateForm :data="props.product" />
+                                <ProductUpdateForm :data="props.product" />
                             </SheetContent>
                         </Sheet>
                     </div>
@@ -143,7 +143,7 @@ const default_price_id = ref(
                         <CardContent>
                             <DataTable
                                 :data="props.product.prices"
-                                :priceDefault="default_price_id"
+                                :priceDefault="defaultPriceId"
                             />
                         </CardContent>
                         <CardFooter class="justify-center border-t p-4">
