@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Column } from "@tanstack/vue-table";
-import type { Billing } from "../data/schema";
+import type { Payments } from "../data/schema";
 
 import {
     EyeNoneIcon,
@@ -20,7 +20,7 @@ import {
 } from "@/Components/ui/dropdown-menu";
 
 interface DataTableColumnHeaderProps {
-    column: Column<Billing, any>;
+    column: Column<Payments, any>;
     title: string;
 }
 

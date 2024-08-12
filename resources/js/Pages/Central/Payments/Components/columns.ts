@@ -1,19 +1,14 @@
 import { h } from "vue";
-import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
-import {
-  subscriptionLevels,
-  subscriptionStatuses,
-  priorities,
-} from "../data/data";
-import type { Billing } from "../data/schema";
+import { subscriptionStatuses } from "../data/data";
+import type { Payments } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
 import { Checkbox } from "@/Components/ui/checkbox";
 import { Badge } from "@/Components/ui/badge";
 import { CreditCard } from "lucide-vue-next";
 
-export const columns: ColumnDef<Billing>[] = [
+export const columns: ColumnDef<Payments>[] = [
   {
     id: "select",
     header: ({ table }) =>

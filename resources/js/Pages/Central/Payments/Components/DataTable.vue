@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import { Link } from "@inertiajs/vue3";
-
 import type {
     ColumnDef,
     ColumnFiltersState,
@@ -19,7 +17,7 @@ import {
 } from "@tanstack/vue-table";
 
 import { ref, onMounted } from "vue";
-import type { Order } from "../data/schema";
+import type { Payments } from "../data/schema";
 import DataTablePagination from "./DataTablePagination.vue";
 import DataTableToolbar from "./DataTableToolbar.vue";
 import { valueUpdater } from "@/lib/utils";
@@ -34,8 +32,8 @@ import {
 } from "@/Components/ui/table";
 
 interface DataTableProps {
-    columns: ColumnDef<Order, any>[];
-    data: Order[];
+    columns: ColumnDef<Payments, any>[];
+    data: Payments[];
 }
 const props = defineProps<DataTableProps>();
 

@@ -2,7 +2,7 @@
 import type { Column } from "@tanstack/vue-table";
 import type { Component } from "vue";
 import { computed } from "vue";
-import type { Billing } from "../data/schema";
+import type { Payments } from "../data/schema";
 import { CheckIcon, PlusCircledIcon } from "@radix-icons/vue";
 
 import { Badge } from "@/Components/ui/badge";
@@ -26,7 +26,7 @@ import { Separator } from "@/Components/ui/separator";
 import { cn } from "@/lib/utils";
 
 interface DataTableFacetedFilter {
-    column?: Column<Billing, any>;
+    column?: Column<Payments, any>;
     title?: string;
     options: {
         paymentStatus: string;

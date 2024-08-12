@@ -50,18 +50,14 @@ class ProcessStripePaymentsJob implements ShouldQueue
         );
 
         try {
-            // Configure a chave secreta do Stripe
             Stripe::setApiKey(config("services.stripe.secret"));
 
-            // Buscar PaymentIntents com paginação
             $response = PaymentIntent::all([
                 "limit" => 50,
                 "starting_after" => $this->startingAfter,
             ]);
 
-            // Processar os PaymentIntents
             foreach ($response->data as $paymentIntent) {
-                // Verifique se o pagamento já existe
                 $existingPayment = Payment::where(
                     "stripe_payment_id",
                     $paymentIntent->id
@@ -72,23 +68,20 @@ class ProcessStripePaymentsJob implements ShouldQueue
                     continue; // Pule para o próximo PaymentIntent
                 }
 
-                // Recupere os detalhes do cliente, se disponível
                 $customerDetails = $paymentIntent->customer
                     ? \Stripe\Customer::retrieve($paymentIntent->customer)
                     : null;
 
-                // Recupere os detalhes do método de pagamento, se disponível
                 $paymentMethodDetails = $paymentIntent->payment_method
                     ? \Stripe\PaymentMethod::retrieve(
                         $paymentIntent->payment_method
                     )
                     : null;
 
-                // Crie um novo pagamento no banco de dados
                 $payment = new Payment([
                     "stripe_payment_id" => $paymentIntent->id,
-                    "user_id" => null, // Defina o usuário associado se necessário
-                    "amount" => $paymentIntent->amount / 100, // Converta de centavos para unidades (se aplicável)
+                    "user_id" => null,
+                    "amount" => $paymentIntent->amount / 100,
                     "currency" => $paymentIntent->currency,
                     "status" => $paymentIntent->status,
                     "description" =>
@@ -111,14 +104,11 @@ class ProcessStripePaymentsJob implements ShouldQueue
                     "capture_method" => $paymentIntent->capture_method,
                 ]);
 
-                // Salve o pagamento no banco de dados
                 $payment->save();
             }
 
-            // Verifique se há mais PaymentIntents para processar
             if ($response->has_more) {
                 $lastPaymentIntent = end($response->data);
-                // Despache um novo job com o próximo ponto de partida
                 ProcessStripePaymentsJob::dispatch($lastPaymentIntent->id);
             }
         } catch (\Exception $e) {

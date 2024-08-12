@@ -1,5 +1,5 @@
 <?php
-namespace App\Actions\Central\Stripe;
+namespace App\Actions\Central\Stripe\Product;
 
 use Stripe\Price;
 use Stripe\Product;

@@ -2,13 +2,9 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Actions\Central\Stripe\Payment\{
-    RetrievePaymentIntentAction,
-    ProcessPaymentsAction
-};
+use App\Actions\Central\Stripe\Payment\{RetrievePaymentIntentAction};
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessStripePaymentsJob;
-use App\Services\Stripe\StripeService;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -18,17 +14,12 @@ use Illuminate\Support\Facades\DB;
 class PaymentCentralController extends Controller
 {
     protected $retrievePaymentIntentAction;
-    protected $processPaymentsAction;
     protected $stripeService;
 
     public function __construct(
-        RetrievePaymentIntentAction $retrievePaymentIntentAction,
-        ProcessPaymentsAction $processPaymentsAction,
-        StripeService $stripeService
+        RetrievePaymentIntentAction $retrievePaymentIntentAction
     ) {
         $this->retrievePaymentIntentAction = $retrievePaymentIntentAction;
-        $this->processPaymentsAction = $processPaymentsAction;
-        $this->stripeService = $stripeService;
     }
 
     public function index()
