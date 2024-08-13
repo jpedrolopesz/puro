@@ -4,23 +4,20 @@ import { Head } from "@inertiajs/vue3";
 
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
 
-import DateRangePicker from "./Components/DateRangePicker.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, ref } from "vue";
-//import data from "./data/data.json";
 
 const props = defineProps({
     monthlyPayments: {
         type: Array,
         required: true,
     },
-    totalRevenue: { type: Number, required: true },
 });
 
 const data = props.monthlyPayments;
 
-console.log(props.totalRevenue);
+console.log(data);
 
 const filteredData = ref(data);
 
@@ -43,10 +40,6 @@ function handleUpdateData(newData) {
                         Here&apos;s a list of your tasks for this month!
                     </p>
                 </div>
-                <DateRangePicker
-                    :data="filteredData"
-                    @updateData="handleUpdateData"
-                />
             </div>
 
             <Tabs default-value="overview" class="space-y-4">

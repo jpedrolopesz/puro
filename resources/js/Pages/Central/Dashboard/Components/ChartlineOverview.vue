@@ -2,19 +2,22 @@
 import { LineChart } from "@/Components/ui/chart-line";
 import { ChartTooltip } from "@/Components/ui/chart";
 
-import { defineProps } from "vue";
+import { defineProps, PropType } from "vue";
+
+interface DataItem {
+    [key: string]: number;
+}
 
 const props = defineProps({
     data: {
-        type: Array,
+        type: Array as PropType<DataItem[]>,
         required: true,
     },
 });
 
-const data = props.data;
-
-const extractYears = (data) => {
-    const yearsSet = new Set();
+// Extrai os anos únicos e ordena
+const extractYears = (data: DataItem[]): string[] => {
+    const yearsSet = new Set<string>();
 
     data.forEach((item) => {
         Object.keys(item)
@@ -22,16 +25,23 @@ const extractYears = (data) => {
             .forEach((year) => yearsSet.add(year));
     });
 
-    return [...yearsSet].sort();
+    return Array.from(yearsSet).sort();
 };
 
-// Função para gerar cores diferentes com base nos anos
-const generateColors = (years) => {
-    const colors = ["#3B82F6", "#EF4444", "#10B981"]; // Cores disponíveis
+// Gera cores para cada ano, com destaque para o ano atual
+const generateColors = (years: string[]): string[] => {
+    const currentYear = new Date().getFullYear().toString();
+    const colors = {
+        current: "black",
+        other: "lightgray",
+    };
 
-    return years.map((year, index) => colors[index % colors.length]);
+    return years.map((year) =>
+        year === currentYear ? colors.current : colors.other,
+    );
 };
 
+const data = props.data;
 const categories = extractYears(data);
 const colors = generateColors(categories);
 </script>
@@ -40,13 +50,12 @@ const colors = generateColors(categories);
     <LineChart
         :data="data"
         index="month"
-        :categories="categories"
         :colors="colors"
+        :categories="categories"
+        :filterOpacity="0"
         :y-formatter="
-            (tick, i) => {
-                return typeof tick === 'number'
-                    ? `$ ${new Intl.NumberFormat('us').format(tick).toString()}`
-                    : '';
+            (tick: number | string) => {
+                return typeof tick === 'number' ? `$${tick.toFixed(2)}` : '';
             }
         "
         :custom-tooltip="ChartTooltip"

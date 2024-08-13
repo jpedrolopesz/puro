@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Central;
 use App\Actions\Central\Stripe\Payment\{RetrievePaymentIntentAction};
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessStripePaymentsJob;
+use App\Jobs\TestJob;
 use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -80,5 +81,10 @@ class PaymentCentralController extends Controller
                 500
             );
         }
+    }
+
+    public function startSync()
+    {
+        dispatch(new TestJob());
     }
 }
