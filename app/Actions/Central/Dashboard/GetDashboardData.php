@@ -40,7 +40,6 @@ class GetDashboardData
             12 => "December",
         ];
 
-        // Identificar todos os anos presentes nos pagamentos
         $years = $payments->pluck("year")->unique()->sort()->values();
 
         // Agrupar por mês e montar a estrutura desejada
@@ -60,7 +59,6 @@ class GetDashboardData
                 $payment->total_amount;
         }
 
-        // Transformar array associativo em array simples
         return array_values($groupedData);
     }
 }

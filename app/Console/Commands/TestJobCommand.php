@@ -2,7 +2,8 @@
 
 namespace App\Console\Commands;
 
-use App\Jobs\TestJob;
+use App\Jobs\CalculateSalesVolume;
+//use App\Jobs\TestJob;
 use Illuminate\Console\Command;
 
 class TestJobCommand extends Command
@@ -17,7 +18,9 @@ class TestJobCommand extends Command
 
     public function handle()
     {
-        TestJob::dispatch();
-        $this->info("TestJob dispatched!");
+        //TestJob::dispatch();
+        CalculateSalesVolume::dispatch();
+
+        $this->info("dispatched!");
     }
 }

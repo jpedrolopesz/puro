@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 
-// Definindo propriedades do componente
 defineProps<{
     title?: string;
     data: {
         name: string;
         color: string;
-        value: number; // Garanta que o valor seja um número
+        value: number;
     }[];
 }>();
 
-// Função para formatar números como moeda
 const formatCurrency = (value: number): string => {
     return new Intl.NumberFormat("en-US", {
         style: "currency",

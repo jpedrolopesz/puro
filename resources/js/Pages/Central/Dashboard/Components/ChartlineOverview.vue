@@ -15,6 +15,8 @@ const props = defineProps({
     },
 });
 
+console.log(props.data);
+
 // Extrai os anos únicos e ordena
 const extractYears = (data: DataItem[]): string[] => {
     const yearsSet = new Set<string>();
