@@ -10,7 +10,6 @@ use App\Models\Payment;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Exception;
-use Illuminate\Support\Facades\DB;
 
 class PaymentCentralController extends Controller
 {
@@ -26,10 +25,6 @@ class PaymentCentralController extends Controller
     public function index()
     {
         try {
-            $jobs = DB::table("jobs")->get();
-
-            //dd($jobs);
-
             $payments = Payment::all();
             return Inertia::render("Central/Payments/PaymentsCentral", [
                 "paymentLists" => $payments,
@@ -85,6 +80,6 @@ class PaymentCentralController extends Controller
 
     public function startSync()
     {
-        dispatch(new TestJob());
+        TestJob::dispatch();
     }
 }

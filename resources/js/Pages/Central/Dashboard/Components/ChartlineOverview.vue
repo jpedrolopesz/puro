@@ -15,9 +15,6 @@ const props = defineProps({
     },
 });
 
-console.log(props.data);
-
-// Extrai os anos únicos e ordena
 const extractYears = (data: DataItem[]): string[] => {
     const yearsSet = new Set<string>();
 
@@ -30,7 +27,6 @@ const extractYears = (data: DataItem[]): string[] => {
     return Array.from(yearsSet).sort();
 };
 
-// Gera cores para cada ano, com destaque para o ano atual
 const generateColors = (years: string[]): string[] => {
     const currentYear = new Date().getFullYear().toString();
     const colors = {

@@ -4,8 +4,8 @@ use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel(
     "sync-payment",
-    function () {
-        return true
+    function ($user) {
+        return true;
     },
     ["guards" => ["web", "admin"]]
 );

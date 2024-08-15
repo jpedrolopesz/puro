@@ -5,7 +5,7 @@ namespace App\Actions\Central\Dashboard;
 use App\Models\Payment;
 use Illuminate\Support\Facades\DB;
 
-class GetDashboardData
+class GetMonthlyPaymentSummary
 {
     public function execute()
     {

@@ -59,12 +59,6 @@ Route::middleware("auth:admin")->group(function () {
     );
 
     Route::post("/start-sync", [PaymentCentralController::class, "startSync"]);
-    Route::get("/broadcasting/auth", function () {
-        // Verifique se o usuário está autenticado no guard admin
-        return Auth::guard("admin")->check()
-            ? response()->json(["auth" => true])
-            : response()->json(["auth" => false], 403);
-    });
 
     Route::get("/payments/{paymentsId}", [
         PaymentCentralController::class,

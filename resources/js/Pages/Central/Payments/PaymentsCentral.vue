@@ -1,9 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head, router } from "@inertiajs/vue3";
-import Echo from "laravel-echo";
-
-import Pusher from "pusher-js"; // Adicione esta linha se ainda não estiver importado
 
 import DataTable from "./Components/DataTable.vue";
 import { columns } from "./Components/columns";
@@ -28,11 +25,14 @@ const startSync = async () => {
     }
 };
 
+console.log("Echo instance:", window.Echo);
+
 onMounted(() => {
     window.Echo.private("sync-payment").listen(
         "SyncPaymentStripeEvent",
-        (event: { progress: number }) => {
-            console.log("Recebido evento:", event);
+        (event) => {
+            console.log("Event received:", event);
+            console.log("Test message:", event.test);
             progress.value = event.progress;
         },
     );

@@ -9,25 +9,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, ref } from "vue";
 
 const props = defineProps({
-    monthlyPayments: {
+    getMonthlyPaymentSummary: {
         type: Array,
         required: true,
     },
-    totalPayments: {
-        type: Array,
+    calculateAnnualPaymentTotals: {
+        type: Object,
         required: true,
     },
 });
-
-const data = props.monthlyPayments;
-
-console.log(props.totalPayments);
-
-const filteredData = ref(data);
-
-function handleUpdateData(newData) {
-    filteredData.value = newData;
-}
 </script>
 
 <template>
@@ -85,7 +75,10 @@ function handleUpdateData(newData) {
                             </CardHeader>
                             <CardContent>
                                 <div class="text-2xl font-bold">
-                                    $ {{ totalPayments.total_amount }}
+                                    $
+                                    {{
+                                        calculateAnnualPaymentTotals.total_amount
+                                    }}
                                 </div>
                                 <p class="text-xs text-muted-foreground">
                                     +20.1% from last month
@@ -194,7 +187,9 @@ function handleUpdateData(newData) {
                             </CardHeader>
 
                             <CardContent class="pl-2">
-                                <ChartlineOverview :data="data" />
+                                <ChartlineOverview
+                                    :data="getMonthlyPaymentSummary"
+                                />
                             </CardContent>
                         </Card>
                     </div>

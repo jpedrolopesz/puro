@@ -1,4 +1,6 @@
 import axios from "axios";
+import "./echo";
+
 window.axios = axios;
 
 axios.defaults.headers.common["X-Requested-With"] = "XMLHttpRequest";

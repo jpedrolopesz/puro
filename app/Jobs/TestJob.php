@@ -23,7 +23,7 @@ class TestJob implements ShouldQueue
     {
         for ($progress = 0; $progress <= 100; $progress += 10) {
             // Simula trabalho
-            sleep(10);
+            sleep(1);
 
             // Dispara o evento com o progresso atual
             event(new SyncPaymentStripeEvent($progress));
