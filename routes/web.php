@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\Central\MessageSent;
 use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
@@ -125,6 +126,11 @@ Route::middleware("auth:admin")->group(function () {
         ProfileCentralController::class,
         "destroy",
     ])->name("profile.destroy");
+
+    Route::post("/send-message", [
+        MailCentralController::class,
+        "sendMessage",
+    ])->name("sendMessage");
 });
 
 require __DIR__ . "/auth.php";

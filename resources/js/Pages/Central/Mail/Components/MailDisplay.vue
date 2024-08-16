@@ -93,8 +93,5 @@ const today = new Date();
                 </form>
             </div>
         </div>
-        <div class="p-8 text-center text-muted-foreground">
-            No message selected
-        </div>
     </div>
 </template>

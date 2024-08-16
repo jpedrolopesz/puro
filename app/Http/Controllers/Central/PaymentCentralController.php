@@ -78,7 +78,7 @@ class PaymentCentralController extends Controller
         }
     }
 
-    public function startSync()
+    public function startSync(Request $request)
     {
         TestJob::dispatch();
     }

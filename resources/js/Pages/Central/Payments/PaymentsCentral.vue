@@ -15,28 +15,26 @@ const props = defineProps({
 
 const progress = ref<number | null>(null);
 
-const startSync = async () => {
-    console.log("Iniciando sincronismo...");
-    try {
-        await router.post("/start-sync");
-        console.log("Sincronismo iniciado com sucesso.");
-    } catch (error) {
-        console.error("Erro ao iniciar sincronismo:", error);
-    }
-};
-
-console.log("Echo instance:", window.Echo);
-
 onMounted(() => {
+    console.log("ök");
     window.Echo.private("sync-payment").listen(
         "SyncPaymentStripeEvent",
         (event) => {
-            console.log("Event received:", event);
-            console.log("Test message:", event.test);
+            console.log("Recebendo dados do evento:", event);
             progress.value = event.progress;
         },
     );
 });
+
+const startSync = async () => {
+    console.log("Iniciando sincronismo...");
+    try {
+        const response = await router.post("/start-sync");
+        console.log("Sincronismo iniciado com sucesso.", response);
+    } catch (error) {
+        console.error("Erro ao iniciar sincronismo:", error);
+    }
+};
 </script>
 
 <template>
