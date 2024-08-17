@@ -28,10 +28,9 @@ class SyncPaymentStripeEvent implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return new PrivateChannel("sync-payment");
+        return [new PrivateChannel("sync-payment")];
     }
 
     public function broadcastWith()
@@ -39,6 +38,6 @@ class SyncPaymentStripeEvent implements ShouldBroadcast
         Log::info("Broadcasting SyncPaymentStripeEvent with data:", [
             "progress" => $this->progress,
         ]);
-        return ["progress" => $this->progress, "test" => "Test message"];
+        return ["progress" => $this->progress];
     }
 }

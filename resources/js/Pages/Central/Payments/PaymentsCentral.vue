@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head, router } from "@inertiajs/vue3";
-
 import DataTable from "./Components/DataTable.vue";
 import { columns } from "./Components/columns";
 import { defineProps, onMounted, ref } from "vue";
 
+// Definição das props recebidas
 const props = defineProps({
     paymentLists: {
         type: Object,
@@ -13,19 +13,22 @@ const props = defineProps({
     },
 });
 
+// Ref para o progresso
 const progress = ref<number | null>(null);
 
 onMounted(() => {
-    console.log("ök");
-    window.Echo.private("sync-payment").listen(
-        "SyncPaymentStripeEvent",
-        (event) => {
-            console.log("Recebendo dados do evento:", event);
-            progress.value = event.progress;
-        },
-    );
+    Echo.private("sync-payment")
+
+        .listen("SyncPaymentStripeEvent", (event) => {
+            console.log("Event received:", event);
+        });
+
+    Echo.join("sync-payment").here((users) => {
+        console.log("Users online:", users);
+    });
 });
 
+// Função para iniciar a sincronização
 const startSync = async () => {
     console.log("Iniciando sincronismo...");
     try {
@@ -44,13 +47,14 @@ const startSync = async () => {
         <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div>
                 <button @click="startSync">Start Sync</button>
+                Aqui
                 <p v-if="progress !== null">Progress: {{ progress }}%</p>
             </div>
             <div class="flex items-center justify-between space-y-2">
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight">Payments</h2>
                     <p class="text-muted-foreground">
-                        Here&apos;s a list of your tasks for this month!
+                        Here's a list of your tasks for this month!
                     </p>
                 </div>
             </div>

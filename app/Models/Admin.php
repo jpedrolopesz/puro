@@ -11,6 +11,8 @@ class Admin extends Authenticatable
 {
     use CentralConnection, Notifiable, HasFactory;
 
+    protected $table = "admins";
+
     protected $fillable = ["name", "password", "email", "role"];
 
     protected $hidden = ["password", "remember_token"];

@@ -1,9 +1,8 @@
 <script lang="ts" setup>
-import { computed } from "vue";
-import addDays from "date-fns/addDays";
-import addHours from "date-fns/addHours";
-import format from "date-fns/format";
-import nextSaturday from "date-fns/nextSaturday";
+import { computed, ref, onMounted } from "vue";
+import { format } from "date-fns";
+import { usePage, router, useForm } from "@inertiajs/vue3";
+
 import type { Mail } from "../data/mails";
 
 import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
@@ -25,13 +24,52 @@ interface MailDisplayProps {
 const props = defineProps<MailDisplayProps>();
 
 const mailFallbackName = computed(() => {
-    return props.mail?.name
-        .split(" ")
-        .map((chunk) => chunk[0])
-        .join("");
+    return (
+        props.mail?.name
+            .split(" ")
+            .map((chunk) => chunk[0])
+            .join("") || "N/A"
+    );
 });
 
 const today = new Date();
+
+// Referência para o texto da resposta
+const replyText = ref<string>("");
+
+const { auth } = usePage().props;
+
+const form = useForm({
+    receiver_id: auth.user.id || "",
+    message: replyText.value,
+});
+
+const mails = ref([]);
+const newMail = ref("");
+
+onMounted(() => {
+    const { auth } = usePage().props;
+    const userId = auth.user.id;
+
+    const channelName = `chat.${userId}`;
+
+    Echo.channel(channelName).listen("MailSentEvent", (event) => {
+        mails.value.push(event.mail);
+    });
+});
+const sendMail = () => {
+    // Atualiza o texto da resposta no formulário
+    form.message = replyText.value;
+
+    form.post(route("mail.send"), {
+        onSuccess: () => {
+            replyText.value = "";
+        },
+        onError: (error) => {
+            console.error("Error sending mail:", error);
+        },
+    });
+};
 </script>
 
 <template>
@@ -71,9 +109,10 @@ const today = new Date();
             </div>
             <Separator />
             <div class="p-4">
-                <form>
+                <form @submit.prevent="sendMail">
                     <div class="grid gap-4">
                         <Textarea
+                            v-model="replyText"
                             class="p-4"
                             :placeholder="`Reply ${mail.name}...`"
                         />
@@ -85,7 +124,7 @@ const today = new Date();
                                 <Switch id="mute" aria-label="Mute thread" />
                                 Mute this thread
                             </Label>
-                            <Button type="button" size="sm" class="ml-auto">
+                            <Button type="submit" size="sm" class="ml-auto">
                                 Send
                             </Button>
                         </div>

@@ -14,10 +14,3 @@ window.Echo = new Echo({
   encrypted: true,
   authEndpoint: "broadcasting/auth",
 });
-
-window.Echo.private("sync-payment").listen(
-  "SyncPaymentStripeEvent",
-  (event) => {
-    console.log("Event received:", event);
-  },
-);

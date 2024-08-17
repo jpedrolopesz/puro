@@ -1,22 +1,18 @@
 <?php
 
-use App\Events\Central\MessageSent;
 use Illuminate\Support\Facades\Broadcast;
+use App\Models\User;
+use App\Models\Admin;
+use Illuminate\Support\Facades\Auth;
 
 Broadcast::channel(
     "sync-payment",
-    function ($user) {
+    function ($admin) {
         return true;
     },
-    ["guards" => ["web", "admin"]]
+    ["guards" => ["admin"]]
 );
 
-Broadcast::channel(
-    "chat",
-    function ($user) {
-        return true; // Permitir acesso ao canal
-    },
-    ["guards" => ["web", "admin"]]
-);
-
-broadcast(new MessageSent(["text" => "Test message"]));
+Broadcast::channel("chat.{userId}", function ($user, $userId) {
+    return Auth::check();
+});

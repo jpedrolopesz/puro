@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\Central\MessageSent;
 use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
@@ -110,6 +109,10 @@ Route::middleware("auth:admin")->group(function () {
     ######## MAIL ########
     Route::get("/mail", [MailCentralController::class, "index"])->name(
         "mails.index"
+    );
+
+    Route::post("/mail/send", [MailCentralController::class, "send"])->name(
+        "mail.send"
     );
 
     ######## PROFILE ########
