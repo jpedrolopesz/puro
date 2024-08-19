@@ -2,30 +2,29 @@
 
 namespace Database\Factories;
 
+use App\Models\{Mail, User, Admin, Message};
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Str;
-use App\Models\Message;
-use App\Models\Mail;
-use App\Models\User;
 
-/**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Message>
- */
 class MessageFactory extends Factory
 {
     protected $model = Message::class;
 
-    /**
-     * Define the model's default state.
-     *
-     * @return array<string, mixed>
-     */
     public function definition(): array
     {
+        $admin = Admin::inRandomOrder()->first();
+        if (!$admin) {
+            $admin = Admin::factory()->create();
+        }
+
+        $sender = $this->faker->randomElement([
+            User::factory()->create(),
+            $admin,
+        ]);
+
         return [
-            "id" => (string) Str::uuid(),
             "mail_id" => Mail::factory(),
-            "sender_id" => User::factory(),
+            "sender_id" => $sender->id,
+            "sender_type" => get_class($sender),
             "text" => $this->faker->paragraph(),
             "date" => $this->faker->dateTime(),
         ];

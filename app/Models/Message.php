@@ -9,12 +9,25 @@ class Message extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["id", "sender_id", "text", "receiver_id", "date"];
+    protected $fillable = [
+        "id",
+        "mail_id",
+        "sender_id",
+        "sender_type",
+        "text",
+        "date",
+    ];
+    protected $primaryKey = "id";
 
     public $timestamps = false;
 
     public function mail()
     {
         return $this->belongsTo(Mail::class);
+    }
+
+    public function sender()
+    {
+        return $this->morphTo();
     }
 }

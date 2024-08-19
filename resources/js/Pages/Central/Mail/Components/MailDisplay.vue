@@ -36,6 +36,8 @@ const mails = ref<Mail[]>([]);
 const newMail = ref<string>("");
 
 const { auth } = usePage().props;
+
+console.log(auth.user);
 const form = useForm({
     id: "",
     sender_id: auth.user.id || "",
@@ -45,6 +47,11 @@ const form = useForm({
     name: "",
     email: "",
     date: today,
+    message: {
+        mail_id: "",
+        text: replyText.value,
+        sender_type: auth.user,
+    },
 });
 
 onMounted(() => {
@@ -65,6 +72,8 @@ const sendMail = () => {
     form.name = selectedUser.value.name;
     form.email = selectedUser.value.email;
     form.date = today;
+    form.message.mail_id = newUuid;
+    form.message.text = replyText.value;
 
     form.post(route("mail.send"), {
         onSuccess: (response) => {
@@ -130,9 +139,30 @@ const handleUserSelected = (user: User) => {
                 </div>
             </div>
             <Separator />
-            <div class="flex-1 whitespace-pre-wrap p-4 text-sm">
-                {{ mail.text }}
+            <div class="flex-1">
+                <ul>
+                    <li
+                        v-for="message in mail.messages"
+                        :key="message.id"
+                        :class="{
+                            'text-right bg-gray-50 p-4 my-4 mr-4 ml-32 rounded-lg ':
+                                message.sender_type === 'App\\Models\\Admin',
+                            'text-left bg-gray-100    p-4 my-4 ml-4 mr-32 rounded-lg':
+                                message.sender_type === 'App\\Models\\User',
+                        }"
+                    >
+                        <div class="flex flex-col">
+                            <span class="whitespace-pre-wrap text-sm">
+                                {{ message.text }}
+                            </span>
+                            <span class="whitespace-pre-wrap text-xs">
+                                {{ format(new Date(message.date), "pp") }}
+                            </span>
+                        </div>
+                    </li>
+                </ul>
             </div>
+
             <Separator />
             <div class="p-4">
                 <form @submit.prevent="sendMail">

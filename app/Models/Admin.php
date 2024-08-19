@@ -16,4 +16,9 @@ class Admin extends Authenticatable
     protected $fillable = ["name", "password", "email", "role"];
 
     protected $hidden = ["password", "remember_token"];
+
+    public function sentMessages()
+    {
+        return $this->morphMany(Message::class, "sender");
+    }
 }

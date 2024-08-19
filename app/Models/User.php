@@ -59,4 +59,9 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Tenant::class, "tenant_id");
     }
+
+    public function sentMessages()
+    {
+        return $this->morphMany(Message::class, "sender");
+    }
 }

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { formatDistanceToNow } from "date-fns";
-import type { Mail } from "../data/mails";
+import type { Mail } from "../data/types";
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";

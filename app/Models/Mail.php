@@ -21,8 +21,8 @@ class Mail extends Model
         "receiver_id",
         "name",
         "email",
-        "subject",
         "text",
+        "subject",
         "date",
     ];
 

@@ -33,7 +33,7 @@ class MailFactory extends Factory
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,
             "subject" => $this->faker->sentence,
-            "text" => $this->faker->paragraph,
+            "text" => $this->faker->paragraph(),
             "read" => $this->faker->boolean,
             "labels" => json_encode($this->faker->words(3)),
             "date" => now(),

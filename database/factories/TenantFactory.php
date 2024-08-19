@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Models\User;
+use Illuminate\Support\Str;
+
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -18,13 +20,17 @@ class TenantFactory extends Factory
 
     public function definition(): array
     {
+        $uuid = (string) Str::uuid();
+
+        // Gerar nome do banco de dados
+        $tenantDbName = "tenant_" . $uuid;
         return [
             "email" => $this->faker->email,
             "name" => $this->faker->name,
             "data" => null,
             "tenancy_name" => $this->faker->company,
             "status" => "active",
-            "tenancy_db_name" => $this->faker->word,
+            "tenancy_db_name" => $tenantDbName,
             "tenancy_about" => $this->faker->sentence,
             "creator_id" => User::factory(),
         ];

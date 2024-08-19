@@ -16,6 +16,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+console.log(props.mails);
 </script>
 
 <template>
