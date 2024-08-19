@@ -10,12 +10,7 @@ class TenantsCentralController extends Controller
 {
     public function index()
     {
-        $tenantsData = Tenant::with([
-            "creator",
-            "activityLogs",
-            "resourceUsage",
-            "supportTickets",
-        ])->get();
+        $tenantsData = Tenant::with(["creator"])->get();
 
         return Inertia::render("Central/Tenants/TenantsCentral", [
             "tenantsLists" => $tenantsData,
@@ -24,13 +19,7 @@ class TenantsCentralController extends Controller
 
     public function details(Tenant $tenantId, $id)
     {
-        $tenantId = Tenant::with([
-            "creator",
-            "activityLogs",
-            "resourceUsage",
-            "supportTickets",
-            "domain",
-        ])->find($id);
+        $tenantId = Tenant::with(["creator", "domain"])->find($id);
 
         return Inertia::render("Central/Tenants/TenantViewDetails", [
             "tenantDetails" => $tenantId,

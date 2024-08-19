@@ -5,9 +5,6 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Models\ActivityLog;
-use App\Models\ResourceUsage;
-use App\Models\SupportTicket;
 use App\Models\Domain;
 use App\Models\Admin;
 use Illuminate\Support\Facades\DB;
@@ -61,48 +58,8 @@ class TenantSeeder extends Seeder
             ->latest("created_at")
             ->first();
 
-        $activityLogs = [
-            [
-                "tenancy_id" => $tenancy->id,
-                "activity" => "Status changed to in progress",
-                "date" => "2024-06-24 12:00:00",
-            ],
-            [
-                "tenancy_id" => $tenancy->id,
-                "activity" => "Tenant created",
-                "date" => "2024-06-23 12:00:00",
-            ],
-        ];
-
-        foreach ($activityLogs as $log) {
-            ActivityLog::create($log);
-        }
-
-        // Adicionar resource usage
-        ResourceUsage::create([
-            "tenancy_id" => $tenancy->id,
-            "storage" => "50GB",
-            "users" => 100,
-        ]);
-
-        // Adicionar support tickets
-        $supportTickets = [
-            [
-                "tenancy_id" => $tenancy->id,
-                "subject" => "Issue with logging in",
-                "status" => "open",
-                "created_at" => "2024-06-24 15:00:00",
-            ],
-        ];
-
-        foreach ($supportTickets as $ticket) {
-            SupportTicket::create($ticket);
-        }
-
-        // Adicionar domínio
         Domain::factory(1)->create(["tenant_id" => $tenancy->id]);
 
-        // Criar usuários para o tenant
         createUser(
             $tenancy,
             $tenancy->name,

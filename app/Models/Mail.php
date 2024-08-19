@@ -9,6 +9,10 @@ class Mail extends Model
 {
     use HasFactory;
 
+    public $incrementing = false;
+    protected $keyType = "string";
+    protected $primaryKey = "id";
+
     protected $fillable = [
         "sender_id",
         "receiver_id",
@@ -16,14 +20,14 @@ class Mail extends Model
         "email",
         "subject",
         "text",
-        "read",
-        "labels",
     ];
 
     protected $casts = [
+        "labels" => "array",
         "read" => "boolean",
-        "labels" => "array", // Converte o JSON para um array quando acessado
     ];
+
+    public $timestamps = false;
 
     public function sender()
     {

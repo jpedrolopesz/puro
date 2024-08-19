@@ -3,7 +3,6 @@ import { Search } from "lucide-vue-next";
 
 import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
-import type { Mail } from "../data/mails";
 import MailList from "./MailList.vue";
 import MailDisplay from "./MailDisplay.vue";
 import { Separator } from "@/Components/ui/separator";
@@ -16,19 +15,59 @@ import {
     ResizablePanelGroup,
 } from "@/Components/ui/resizable";
 
+interface User {
+    id: number;
+    name: string;
+    email: string;
+    email_verified_at?: string;
+    tenant_id?: number | null;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Tenant {
+    id: number;
+    name: string;
+    email: string;
+    creator_id: number;
+    status: string;
+    tenancy_name: string;
+    tenancy_db_name: string;
+    tenancy_about: string;
+    created_at: string;
+    updated_at: string;
+    users: User[];
+    creator: User;
+    data?: any;
+}
+
+interface TenantsWithUsersProps {
+    tenantsWithUsers: Tenant[];
+}
+
+interface Mail {
+    id: string;
+    name: string;
+    email: string;
+    subject: string;
+    text: string;
+    date: string;
+    read: boolean;
+    receiver_id: number;
+    sender_id: number;
+    labels: string[];
+}
+
 interface MailProps {
-    accounts: {
-        label: string;
-        email: string;
-        icon: string;
-    }[];
     mails: Mail[];
     defaultLayout?: number[];
     defaultCollapsed?: boolean;
     navCollapsedSize: number;
 }
 
-const props = withDefaults(defineProps<MailProps>(), {
+interface CombinedProps extends TenantsWithUsersProps, MailProps {}
+
+const props = withDefaults(defineProps<CombinedProps>(), {
     defaultCollapsed: false,
     defaultLayout: () => [30, 40],
 });
@@ -63,7 +102,7 @@ const unreadMailList = computed(() =>
 );
 
 const selectedMailData = computed(() =>
-    props.mails.find((item) => item.id === selectedMail.value),
+    props.mails.find((item) => item.id === selectedMail.value || null),
 );
 
 function onCollapse() {
@@ -72,6 +111,10 @@ function onCollapse() {
 
 function onExpand() {
     isCollapsed.value = false;
+}
+
+function createNewMail() {
+    selectedMail.value = null;
 }
 </script>
 
@@ -122,6 +165,14 @@ function onExpand() {
                             </div>
                         </form>
                     </div>
+                    <div class="p-4">
+                        <button
+                            @click="createNewMail"
+                            class="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
+                        >
+                            Novo E-mail
+                        </button>
+                    </div>
                     <TabsContent value="all" class="m-0">
                         <MailList
                             v-model:selected-mail="selectedMail"
@@ -141,7 +192,10 @@ function onExpand() {
                 id="resize-panel-2"
                 :default-size="defaultLayout[2]"
             >
-                <MailDisplay :mail="selectedMailData" />
+                <MailDisplay
+                    :mail="selectedMailData || null"
+                    :tenantsWithUsers="tenantsWithUsers"
+                />
             </ResizablePanel>
         </ResizablePanelGroup>
         <Separator />

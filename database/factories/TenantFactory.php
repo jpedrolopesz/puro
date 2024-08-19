@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -20,9 +21,15 @@ class TenantFactory extends Factory
     public function definition(): array
     {
         return [
-            "email" => "jplopeszamonelo@hotmail.com",
-            "name" => "Joao Zamonelo",
+            "email" => $this->faker->email,
+            "name" => $this->faker->name,
             "data" => null,
+            "tenancy_name" => $this->faker->company,
+            //"email" => $this->faker->unique()->safeEmail,
+            "status" => "active",
+            "tenancy_db_name" => $this->faker->word,
+            "tenancy_about" => $this->faker->sentence,
+            "creator_id" => User::factory(), // Cria um usuário e usa seu ID
         ];
     }
 }

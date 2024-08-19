@@ -27,31 +27,6 @@ class CreateTenantsTable extends Migration
             $table->timestamps();
             $table->json("data")->nullable();
         });
-
-        Schema::create("activity_logs", function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("tenancy_id")->constrained("tenants");
-            $table->string("activity");
-            $table->timestamp("date");
-            $table->timestamps();
-        });
-
-        Schema::create("resource_usages", function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("tenancy_id")->constrained("tenants");
-            $table->string("storage");
-            $table->integer("users");
-            $table->timestamps();
-        });
-
-        Schema::create("support_tickets", function (Blueprint $table) {
-            $table->id();
-            $table->foreignId("tenancy_id")->constrained("tenants");
-            $table->string("subject");
-            $table->string("status");
-
-            $table->timestamps();
-        });
     }
 
     /**
@@ -61,9 +36,6 @@ class CreateTenantsTable extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists("support_tickets");
-        Schema::dropIfExists("resource_usages");
-        Schema::dropIfExists("activity_logs");
         Schema::dropIfExists("tenants");
     }
 }

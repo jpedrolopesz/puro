@@ -3,7 +3,7 @@
 namespace Database\Factories;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\Auth;
+use App\Models\User;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Mail>
@@ -17,15 +17,26 @@ class MailFactory extends Factory
      */
     public function definition(): array
     {
+        $sender = User::inRandomOrder()->first();
+        $receiver = User::inRandomOrder()->first();
+
+        if (!$sender || !$receiver) {
+            throw new \Exception(
+                "Não há usuários suficientes na base de dados."
+            );
+        }
+
         return [
-            "sender_id" => Auth::user(), // Seleciona um usuário existente aleatoriamente
-            "receiver_id" => Auth::user(), // Seleciona um usuário existente aleatoriamente
+            "id" => \Illuminate\Support\Str::uuid()->toString(),
+            "sender_id" => $sender->id,
+            "receiver_id" => $receiver->id,
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,
             "subject" => $this->faker->sentence,
             "text" => $this->faker->paragraph,
             "read" => $this->faker->boolean,
-            "labels" => $this->faker->words(3, true),
+            "labels" => json_encode($this->faker->words(3)),
+            "date" => now(),
         ];
     }
 }

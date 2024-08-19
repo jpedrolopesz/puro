@@ -3,6 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\UserRole;
+use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,15 +26,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $tenantId = Tenant::inRandomOrder()->first()?->id; // Usa um tenant existente aleatório
+
         return [
-            "name" => fake()->name(),
-            // "email" => fake()->unique()->safeEmail(),
-            "email" => "jplopeszamonelo@hotmail.com",
+            "name" => $this->faker->name(),
+            "email" => $this->faker->unique()->safeEmail(),
             "email_verified_at" => now(),
             "password" => (static::$password ??= Hash::make("password")),
             "role" => UserRole::User,
-            "tenant_id" => null, // Adicione este campo se estiver ausente
-
+            "tenant_id" => $tenantId, // Define tenant_id usando um ID de tenant existente
             "remember_token" => Str::random(10),
         ];
     }
@@ -47,5 +49,15 @@ class UserFactory extends Factory
                 "email_verified_at" => null,
             ]
         );
+    }
+
+    /**
+     * Configure the factory to accept a specific tenant_id.
+     */
+    public function withTenant(Tenant $tenant): static
+    {
+        return $this->state([
+            "tenant_id" => $tenant->id,
+        ]);
     }
 }

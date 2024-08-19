@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create("mails", function (Blueprint $table) {
-            $table->id(); // Chave primária auto-incremental
+            $table->uuid("id")->primary();
             $table
                 ->foreignId("sender_id")
                 ->constrained("users")
@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->text("text");
             $table->boolean("read")->default(false);
             $table->json("labels");
-            $table->timestamps();
+            $table->timestamp("date")->nullable();
         });
     }
 

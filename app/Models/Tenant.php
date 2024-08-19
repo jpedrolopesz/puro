@@ -24,6 +24,7 @@ class Tenant extends BaseTenant implements TenantWithDatabase
             "tenancy_db_name",
             "tenancy_about",
             "creator_id",
+            "user_count",
         ];
     }
 
@@ -41,18 +42,8 @@ class Tenant extends BaseTenant implements TenantWithDatabase
         return $this->belongsTo(User::class, "creator_id");
     }
 
-    public function activityLogs()
+    public function users()
     {
-        return $this->hasMany(ActivityLog::class, "tenancy_id");
-    }
-
-    public function resourceUsage()
-    {
-        return $this->hasOne(ResourceUsage::class, "tenancy_id");
-    }
-
-    public function supportTickets()
-    {
-        return $this->hasMany(SupportTicket::class, "tenancy_id");
+        return $this->hasMany(User::class, "tenant_id");
     }
 }

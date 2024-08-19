@@ -18,9 +18,21 @@ class DomainFactory extends Factory
     public function definition(): array
     {
         return [
-            //"domain" => fake()->unique()->domainWord(),
-            "domain" => "demo",
-            "tenant_id" => Tenant::factory(),
+            "domain" => $this->faker->unique()->domainWord(),
+            "tenant_id" => null,
         ];
+    }
+
+    /**
+     * Define o tenant para o domínio.
+     *
+     * @param \App\Models\Tenant $tenant
+     * @return \Illuminate\Database\Eloquent\Factories\Factory
+     */
+    public function forTenant(Tenant $tenant): static
+    {
+        return $this->state([
+            "tenant_id" => $tenant->id,
+        ]);
     }
 }
