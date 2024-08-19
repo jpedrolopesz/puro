@@ -38,6 +38,7 @@
     "radix-vue": "^1.6.2",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "uuid": "^10.0.0",
     "v-calendar": "^3.1.2",
     "vee-validate": "^4.13.2",
     "vue-tsc": "^2.0.29",

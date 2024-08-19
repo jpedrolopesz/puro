@@ -3,9 +3,12 @@ import { Search } from "lucide-vue-next";
 
 import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
+import { MailPlus } from "lucide-vue-next";
+
 import MailList from "./MailList.vue";
 import MailDisplay from "./MailDisplay.vue";
 import { Separator } from "@/Components/ui/separator";
+import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { TooltipProvider } from "@/Components/ui/tooltip";
@@ -116,6 +119,10 @@ function onExpand() {
 function createNewMail() {
     selectedMail.value = null;
 }
+
+function handleMailSent(mailId: string) {
+    selectedMail.value = mailId;
+}
 </script>
 
 <template>
@@ -150,9 +157,9 @@ function createNewMail() {
                     </div>
                     <Separator class="my-1" />
                     <div
-                        class="bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
+                        class="grid grid-cols-5 gap-2 bg-background/95 p-4 backdrop-blur supports-[backdrop-filter]:bg-background/60"
                     >
-                        <form>
+                        <form class="col-span-4">
                             <div class="relative">
                                 <Search
                                     class="absolute left-2 top-2.5 size-4 text-muted-foreground"
@@ -164,15 +171,13 @@ function createNewMail() {
                                 />
                             </div>
                         </form>
+                        <div>
+                            <Button class="w-full" @click="createNewMail">
+                                <MailPlus />
+                            </Button>
+                        </div>
                     </div>
-                    <div class="p-4">
-                        <button
-                            @click="createNewMail"
-                            class="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
-                        >
-                            Novo E-mail
-                        </button>
-                    </div>
+                    <div class="p-4"></div>
                     <TabsContent value="all" class="m-0">
                         <MailList
                             v-model:selected-mail="selectedMail"
@@ -195,6 +200,7 @@ function createNewMail() {
                 <MailDisplay
                     :mail="selectedMailData || null"
                     :tenantsWithUsers="tenantsWithUsers"
+                    @mail-sent="handleMailSent"
                 />
             </ResizablePanel>
         </ResizablePanelGroup>

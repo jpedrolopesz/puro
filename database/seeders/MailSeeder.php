@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Mail;
+use App\Models\Message;
 use Illuminate\Database\Seeder;
 
 class MailSeeder extends Seeder
@@ -12,6 +13,12 @@ class MailSeeder extends Seeder
      */
     public function run(): void
     {
-        Mail::factory(10)->create();
+        $mails = Mail::factory(10)->create();
+
+        $mails->each(function ($mail) {
+            Message::factory(3)->create([
+                "mail_id" => $mail->id,
+            ]);
+        });
     }
 }

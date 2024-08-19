@@ -10,14 +10,15 @@ use App\Models\Mail;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
+
 use Inertia\Inertia;
 
 class MailCentralController extends Controller
 {
     public function index()
     {
-        $mails = Mail::all();
+        $mails = Mail::with("messages")->get();
+        dd($mails);
 
         foreach ($mails as $mail) {
             $mail->labels = is_array($mail->labels)
@@ -27,9 +28,11 @@ class MailCentralController extends Controller
             $mail->id = (string) $mail->id;
         }
 
-        $tenants = Tenant::with("creator")->get();
+        $tenants = Tenant::with("creator", "users")->get();
+
         $tenantsWithUsers = $tenants->map(function ($tenant) {
             $users = User::where("tenant_id", $tenant->id)->get();
+
             $tenant->users = $users;
             $tenant->creator = $tenant->creator;
 
@@ -56,20 +59,22 @@ class MailCentralController extends Controller
 
     public function send(Request $request)
     {
-        // Criação do novo e-mail
+        //dd($request->all());
         $mail = Mail::create([
-            "sender_id" => Auth::id(),
+            "id" => $request->input("id"),
+            "sender_id" => $request->input("sender_id"),
             "receiver_id" => $request->input("receiver_id"),
             "name" => $request->input("name"),
             "email" => $request->input("email"),
             "subject" => $request->input("subject"),
             "text" => $request->input("text"),
-            "read" => $request->input("read"),
-            "labels" => json_encode($request->input("labels")),
+            "read" => $request->input("read", false),
+            "labels" => json_encode($request->input("labels", [])),
+            "date" => $request->input("date"),
         ]);
 
-        broadcast(new MailSentEvent($mail))->toOthers();
+        //broadcast(new MailSentEvent($mail))->toOthers();
 
-        return response()->json($mail);
+        return;
     }
 }

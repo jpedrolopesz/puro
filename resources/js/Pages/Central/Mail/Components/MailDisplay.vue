@@ -1,8 +1,10 @@
 <script lang="ts" setup>
-import UsersListCombobox from "./UsersListCombobox.vue";
+import UserSelectPopover from "./UserSelectPopover.vue";
 
-import { computed, ref, onMounted } from "vue";
+import { defineEmits, computed, ref, onMounted } from "vue";
 import { format } from "date-fns";
+import { v4 as uuidv4 } from "uuid";
+
 import { usePage, router, useForm } from "@inertiajs/vue3";
 
 import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
@@ -22,47 +24,53 @@ const props = defineProps<{
     tenantsWithUsers: Tenant[];
 }>();
 
-const mailFallbackName = computed(() => {
-    return (
-        props.mail?.name
-            .split(" ")
-            .map((chunk) => chunk[0])
-            .join("") || "N/A"
-    );
-});
+const emit = defineEmits<{
+    (event: "mail-sent", mailId: string): void;
+}>();
 
 const today = new Date();
-
-// Referência para o texto da resposta
 const replyText = ref<string>("");
+const subject = ref<string>("");
+const selectedUser = ref<User | null>(null);
+const mails = ref<Mail[]>([]);
+const newMail = ref<string>("");
 
 const { auth } = usePage().props;
-
 const form = useForm({
-    receiver_id: auth.user.id || "",
-    message: replyText.value,
+    id: "",
+    sender_id: auth.user.id || "",
+    text: replyText.value,
+    subject: subject.value,
+    receiver_id: selectedUser,
+    name: "",
+    email: "",
+    date: today,
 });
 
-const mails = ref([]);
-const newMail = ref("");
-
 onMounted(() => {
-    const { auth } = usePage().props;
     const userId = auth.user.id;
-
     const channelName = `chat.${userId}`;
 
     Echo.channel(channelName).listen("MailSentEvent", (event) => {
         mails.value.push(event.mail);
     });
 });
+
 const sendMail = () => {
-    // Atualiza o texto da resposta no formulário
-    form.message = replyText.value;
+    const newUuid = uuidv4();
+    form.id = newUuid;
+    form.text = replyText.value;
+    form.subject = subject.value;
+    form.receiver_id = selectedUser.value.id;
+    form.name = selectedUser.value.name;
+    form.email = selectedUser.value.email;
+    form.date = today;
 
     form.post(route("mail.send"), {
-        onSuccess: () => {
+        onSuccess: (response) => {
+            preserveScroll: true;
             replyText.value = "";
+            emit("mail-sent", newUuid);
         },
         onError: (error) => {
             console.error("Error sending mail:", error);
@@ -70,18 +78,24 @@ const sendMail = () => {
     });
 };
 
-const selectedUser = ref<User | null>(null);
-
-const getInitials = (name: string): string => {
-    return name
-        .split(" ") // Divide o nome completo em palavras
-        .map((word) => word.charAt(0).toUpperCase()) // Pega a primeira letra de cada palavra e coloca em maiúscula
-        .join(""); // Junta as letras em uma string
-};
-
-const initials = computed(() => {
-    return selectedUser.value ? getInitials(selectedUser.value.name) : "";
+const mailFallbackName = computed(() => {
+    return (
+        props.mail?.name
+            ?.split(" ")
+            .map((chunk) => chunk[0])
+            .join("") || "N/A"
+    );
 });
+
+const getInitials = (name: string): string =>
+    name
+        .split(" ")
+        .map((word) => word.charAt(0).toUpperCase())
+        .join("");
+
+const initials = computed(() =>
+    selectedUser.value ? getInitials(selectedUser.value.name) : "",
+);
 
 const handleUserSelected = (user: User) => {
     selectedUser.value = user;
@@ -95,14 +109,10 @@ const handleUserSelected = (user: User) => {
             <div class="flex items-start p-4">
                 <div class="flex items-start gap-4 text-sm">
                     <Avatar>
-                        <AvatarFallback>
-                            {{ mailFallbackName }}
-                        </AvatarFallback>
+                        <AvatarFallback>{{ mailFallbackName }}</AvatarFallback>
                     </Avatar>
                     <div class="grid gap-1">
-                        <div class="font-semibold">
-                            {{ mail.name }}
-                        </div>
+                        <div class="font-semibold">{{ mail.name }}</div>
                         <div class="line-clamp-1 text-xs">
                             {{ mail.subject }}
                         </div>
@@ -153,29 +163,41 @@ const handleUserSelected = (user: User) => {
             <div class="flex items-start p-4">
                 <div class="flex items-start gap-4 text-sm">
                     <Avatar>
-                        <AvatarFallback> {{ initials }}</AvatarFallback>
+                        <AvatarFallback>{{ initials }}</AvatarFallback>
                     </Avatar>
                     <div class="grid gap-1">
                         <div class="font-semibold">
                             {{ selectedUser?.name }}
                         </div>
+
                         <div class="line-clamp-1 text-xs">
-                            {{ mail?.subject ? mail.subject : "Subject:" }}
-                        </div>
-                        <div class="line-clamp-1 text-xs">
-                            <span class="font-medium">Reply-To:</span>
+                            <span v-if="selectedUser?.email" class="font-medium"
+                                >Reply-To:</span
+                            >
                             {{ selectedUser?.email }}
                         </div>
                     </div>
                 </div>
+
                 <div class="ml-auto text-xs text-muted-foreground">
-                    <UsersListCombobox
+                    <UserSelectPopover
                         :tenantsWithUsers="tenantsWithUsers"
                         @user-selected="handleUserSelected"
                     />
                 </div>
             </div>
             <Separator />
+            <div class="flex items-center mx-5">
+                <span class="items-center text-xs">Subject: </span>
+
+                <input
+                    v-model="subject"
+                    type="text"
+                    class="w-full line-clamp-1 text-xs border-transparent focus:border-transparent focus:ring-0 focus:outline-none"
+                />
+            </div>
+            <Separator />
+
             <div class="flex-1 whitespace-pre-wrap p-4 text-sm">
                 {{ mail?.text }}
             </div>

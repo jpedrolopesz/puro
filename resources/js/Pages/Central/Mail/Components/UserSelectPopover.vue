@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { Check, ChevronsUpDown } from "lucide-vue-next";
+import { Check, UserSearch } from "lucide-vue-next";
 import { ref, computed, defineEmits } from "vue";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
@@ -62,20 +62,18 @@ const handleSelectUser = (user: User) => {
                 variant="outline"
                 role="combobox"
                 :aria-expanded="open"
-                class="w-[200px] justify-between"
+                class="w-auto justify-center"
             >
-                {{
-                    value
-                        ? allUsers.find((user) => user.name === value)?.name
-                        : "Select user..."
-                }}
-
-                <ChevronsUpDown class="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                <UserSearch class="h-4 w-4 shrink-0" />
             </Button>
         </PopoverTrigger>
-        <PopoverContent class="w-[200px] p-0">
+        <PopoverContent class="w-full p-0">
             <Command v-model="value">
-                <CommandInput placeholder="Search user..." />
+                <CommandInput
+                    class="m-1 border border-gray-300 focus:outline-none focus:border-gray-500 focus:border-gray-500 focus:ring-0"
+                    placeholder="Search user..."
+                />
+
                 <CommandEmpty>No user found.</CommandEmpty>
                 <CommandList>
                     <CommandGroup>

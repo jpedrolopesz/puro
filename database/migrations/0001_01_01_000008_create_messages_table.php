@@ -10,16 +10,21 @@ return new class extends Migration {
      */
     public function up(): void
     {
-        Schema::create("mails", function (Blueprint $table) {
+        Schema::create("messages", function (Blueprint $table) {
             $table->uuid("id")->primary();
+            $table->uuid("mail_id");
+            $table
+                ->foreign("mail_id")
+                ->references("id")
+                ->on("mails")
+                ->onDelete("cascade");
             $table->unsignedBigInteger("sender_id");
-            $table->unsignedBigInteger("receiver_id");
-            $table->string("name");
-            $table->string("email");
-            $table->string("subject");
+            $table
+                ->foreign("sender_id")
+                ->references("id")
+                ->on("users")
+                ->onDelete("cascade");
             $table->text("text");
-            $table->boolean("read")->default(false);
-            $table->json("labels")->nullable();
             $table->timestamp("date")->nullable();
         });
     }
@@ -29,6 +34,6 @@ return new class extends Migration {
      */
     public function down(): void
     {
-        Schema::dropIfExists("mails");
+        Schema::dropIfExists("messages");
     }
 };
