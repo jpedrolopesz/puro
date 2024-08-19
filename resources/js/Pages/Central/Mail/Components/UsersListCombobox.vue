@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { Check, ChevronsUpDown } from "lucide-vue-next";
-import { ref, computed } from "vue";
+import { ref, computed, defineEmits } from "vue";
 import { cn } from "@/lib/utils";
 import { Button } from "@/Components/ui/button";
+import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
+
 import {
     Command,
     CommandEmpty,
@@ -21,6 +23,10 @@ const props = defineProps<{
     tenantsWithUsers: Tenant[];
 }>();
 
+const emit = defineEmits<{
+    (e: "user-selected", user: User): void;
+}>();
+
 const open = ref(false);
 const value = ref("");
 
@@ -28,7 +34,25 @@ const value = ref("");
 const allUsers = computed(() => {
     return props.tenantsWithUsers.flatMap((tenant) => tenant.users);
 });
-console.log(allUsers.value);
+
+const mailFallbackNames = computed(() => {
+    const map = {};
+    allUsers.value.forEach((user) => {
+        map[user.id] =
+            user?.name
+                .split(" ")
+                .map((chunk) => chunk[0])
+                .join("") || "N/A";
+    });
+    return map;
+});
+
+// Função para tratar a seleção de um usuário
+const handleSelectUser = (user: User) => {
+    value.value = user.name;
+    emit("user-selected", user);
+    open.value = false;
+};
 </script>
 
 <template>
@@ -42,7 +66,7 @@ console.log(allUsers.value);
             >
                 {{
                     value
-                        ? allUsers.find((user) => user.id === value)?.name
+                        ? allUsers.find((user) => user.name === value)?.name
                         : "Select user..."
                 }}
 
@@ -58,20 +82,35 @@ console.log(allUsers.value);
                         <CommandItem
                             v-for="user in allUsers"
                             :key="user.id"
-                            :value="user.id"
-                            @select="open = false"
+                            :value="user.name"
+                            @select="handleSelectUser(user)"
                         >
-                            <Check
-                                :class="
-                                    cn(
-                                        'mr-2 h-4 w-4',
-                                        value === user.id
-                                            ? 'opacity-100'
-                                            : 'opacity-0',
-                                    )
-                                "
-                            />
-                            {{ user.name }}
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <Avatar>
+                                        <AvatarFallback>
+                                            {{
+                                                mailFallbackNames[user.id] ||
+                                                "N/A"
+                                            }}
+                                        </AvatarFallback>
+                                    </Avatar>
+
+                                    {{ user.name }}
+                                </div>
+                                <div>
+                                    <Check
+                                        :class="
+                                            cn(
+                                                'mr-2 h-4 w-4',
+                                                value === user.id
+                                                    ? 'opacity-100'
+                                                    : 'opacity-0',
+                                            )
+                                        "
+                                    />
+                                </div>
+                            </div>
                         </CommandItem>
                     </CommandGroup>
                 </CommandList>

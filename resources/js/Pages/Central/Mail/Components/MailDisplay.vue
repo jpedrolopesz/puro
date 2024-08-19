@@ -22,8 +22,6 @@ const props = defineProps<{
     tenantsWithUsers: Tenant[];
 }>();
 
-console.log(props.mail);
-
 const mailFallbackName = computed(() => {
     return (
         props.mail?.name
@@ -70,6 +68,23 @@ const sendMail = () => {
             console.error("Error sending mail:", error);
         },
     });
+};
+
+const selectedUser = ref<User | null>(null);
+
+const getInitials = (name: string): string => {
+    return name
+        .split(" ") // Divide o nome completo em palavras
+        .map((word) => word.charAt(0).toUpperCase()) // Pega a primeira letra de cada palavra e coloca em maiúscula
+        .join(""); // Junta as letras em uma string
+};
+
+const initials = computed(() => {
+    return selectedUser.value ? getInitials(selectedUser.value.name) : "";
+});
+
+const handleUserSelected = (user: User) => {
+    selectedUser.value = user;
 };
 </script>
 
@@ -138,25 +153,26 @@ const sendMail = () => {
             <div class="flex items-start p-4">
                 <div class="flex items-start gap-4 text-sm">
                     <Avatar>
-                        <AvatarFallback>
-                            {{ mailFallbackName }}
-                        </AvatarFallback>
+                        <AvatarFallback> {{ initials }}</AvatarFallback>
                     </Avatar>
                     <div class="grid gap-1">
                         <div class="font-semibold">
-                            {{ mail?.name }}
+                            {{ selectedUser?.name }}
                         </div>
                         <div class="line-clamp-1 text-xs">
                             {{ mail?.subject ? mail.subject : "Subject:" }}
                         </div>
                         <div class="line-clamp-1 text-xs">
                             <span class="font-medium">Reply-To:</span>
-                            {{ mail?.email }}
+                            {{ selectedUser?.email }}
                         </div>
                     </div>
                 </div>
                 <div class="ml-auto text-xs text-muted-foreground">
-                    <UsersListCombobox :tenantsWithUsers="tenantsWithUsers" />
+                    <UsersListCombobox
+                        :tenantsWithUsers="tenantsWithUsers"
+                        @user-selected="handleUserSelected"
+                    />
                 </div>
             </div>
             <Separator />
