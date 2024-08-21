@@ -134,6 +134,8 @@ Route::middleware("auth:admin")->group(function () {
         MailCentralController::class,
         "sendMessage",
     ])->name("sendMessage");
+
+    ##########################
 });
 
 require __DIR__ . "/auth.php";
