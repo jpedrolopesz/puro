@@ -18,7 +18,9 @@ class Mail extends Model
     protected $fillable = [
         "id",
         "sender_id",
+        "sender_type",
         "receiver_id",
+        "receiver_type",
         "name",
         "email",
         "text",
@@ -35,12 +37,12 @@ class Mail extends Model
 
     public function sender()
     {
-        return $this->belongsTo(User::class, "sender_id");
+        return $this->morphTo();
     }
 
     public function receiver()
     {
-        return $this->belongsTo(User::class, "receiver_id");
+        return $this->morphTo();
     }
 
     public function messages()

@@ -12,15 +12,21 @@ return new class extends Migration {
     {
         Schema::create("mails", function (Blueprint $table) {
             $table->uuid("id")->primary();
-            $table->unsignedBigInteger("sender_id");
-            $table->unsignedBigInteger("receiver_id");
             $table->string("name");
             $table->string("email");
+            $table->unsignedBigInteger("sender_id");
+            $table->string("sender_type");
+            $table->unsignedBigInteger("receiver_id");
+            $table->string("receiver_type");
             $table->string("subject");
             $table->text("text");
             $table->boolean("read")->default(false);
             $table->json("labels")->nullable();
+
             $table->timestamp("date")->nullable();
+
+            $table->index(["sender_id", "sender_type"]);
+            $table->index(["receiver_id", "receiver_type"]);
         });
     }
 

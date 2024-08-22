@@ -2,8 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\{Admin, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
-use App\Models\User;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Mail>
@@ -17,19 +18,16 @@ class MailFactory extends Factory
      */
     public function definition(): array
     {
-        $sender = User::inRandomOrder()->first();
-        $receiver = User::inRandomOrder()->first();
-
-        if (!$sender || !$receiver) {
-            throw new \Exception(
-                "Não há usuários suficientes na base de dados."
-            );
-        }
+        $senderType = $this->faker->randomElement([User::class, Admin::class]);
+        $receiverType =
+            $senderType === User::class ? Admin::class : User::class;
 
         return [
-            "id" => \Illuminate\Support\Str::uuid()->toString(),
-            "sender_id" => $sender->id,
-            "receiver_id" => $receiver->id,
+            "id" => Str::uuid()->toString(),
+            "sender_id" => $senderType::factory(),
+            "sender_type" => $senderType,
+            "receiver_id" => $receiverType::factory(),
+            "receiver_type" => $receiverType,
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,
             "subject" => $this->faker->sentence,

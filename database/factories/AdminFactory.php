@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\Central\AdminRole;
+use App\Models\Admin;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -25,8 +26,11 @@ class AdminFactory extends Factory
     public function definition(): array
     {
         return [
+            "identifier" => $this->generateIdentifier(),
             "name" => "Joao Zamonelo",
-            "email" => "zamonelo@hotmail.com",
+            "email" => $this->faker->unique()->safeEmail, // Garante e-mail único por padrão
+
+            //"email" => "zamonelo@hotmail.com",
             "email_verified_at" => now(),
             "password" => (static::$password ??= Hash::make("password")),
             "role" => AdminRole::SuperAdmin,
@@ -44,5 +48,11 @@ class AdminFactory extends Factory
                 "email_verified_at" => null,
             ]
         );
+    }
+
+    protected function generateIdentifier()
+    {
+        $lastAdminId = Admin::max("id") ?? 0;
+        return "ADM-" . str_pad($lastAdminId + 1, 5, "0", STR_PAD_LEFT);
     }
 }

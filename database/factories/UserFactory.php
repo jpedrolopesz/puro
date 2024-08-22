@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\UserRole;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -28,6 +29,7 @@ class UserFactory extends Factory
         $tenantId = Tenant::inRandomOrder()->first()?->id;
 
         return [
+            "identifier" => $this->generateIdentifier(),
             "name" => $this->faker->name(),
             "email" => $this->faker->unique()->safeEmail(),
             "email_verified_at" => now(),
@@ -48,6 +50,12 @@ class UserFactory extends Factory
                 "email_verified_at" => null,
             ]
         );
+    }
+
+    protected function generateIdentifier()
+    {
+        $lastUserId = User::max("id") ?? 0;
+        return "USR-" . str_pad($lastUserId + 1, 5, "0", STR_PAD_LEFT);
     }
 
     /**

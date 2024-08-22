@@ -14,6 +14,8 @@ class Message extends Model
         "mail_id",
         "sender_id",
         "sender_type",
+        "receiver_id",
+        "receiver_type",
         "text",
         "date",
     ];
@@ -23,10 +25,15 @@ class Message extends Model
 
     public function mail()
     {
-        return $this->belongsTo(Mail::class);
+        return $this->belongsTo(Mail::class, "mail_id");
     }
 
     public function sender()
+    {
+        return $this->morphTo();
+    }
+
+    public function receiver()
     {
         return $this->morphTo();
     }

@@ -13,15 +13,20 @@ return new class extends Migration {
         Schema::create("messages", function (Blueprint $table) {
             $table->id()->primary();
             $table->uuid("mail_id");
+            $table->unsignedBigInteger("sender_id");
+            $table->string("sender_type");
+            $table->unsignedBigInteger("receiver_id");
+            $table->string("receiver_type");
             $table->text("text");
-            $table->morphs("sender");
+            $table->timestamp("date")->nullable();
+
             $table
                 ->foreign("mail_id")
                 ->references("id")
                 ->on("mails")
                 ->onDelete("cascade");
-
-            $table->timestamp("date")->nullable();
+            $table->index(["sender_id", "sender_type"]);
+            $table->index(["receiver_id", "receiver_type"]);
         });
     }
 

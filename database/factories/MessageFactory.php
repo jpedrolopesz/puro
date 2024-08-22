@@ -11,21 +11,15 @@ class MessageFactory extends Factory
 
     public function definition(): array
     {
-        $admin = Admin::inRandomOrder()->first();
-        if (!$admin) {
-            $admin = Admin::factory()->create();
-        }
-
-        $sender = $this->faker->randomElement([
-            User::factory()->create(),
-            $admin,
-        ]);
+        $mail = Mail::first();
 
         return [
             "mail_id" => Mail::factory(),
-            "sender_id" => $sender->id,
-            "sender_type" => get_class($sender),
-            "text" => $this->faker->paragraph(),
+            "sender_id" => $mail->sender_id,
+            "sender_type" => $mail->sender_type,
+            "receiver_id" => $mail->receiver_id,
+            "receiver_type" => $mail->receiver_type,
+            "text" => $this->faker->sentence(),
             "date" => $this->faker->dateTime(),
         ];
     }

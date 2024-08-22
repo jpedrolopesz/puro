@@ -17,8 +17,16 @@ class Admin extends Authenticatable
 
     protected $hidden = ["password", "remember_token"];
 
-    public function sentMessages()
+    protected static function booted(): void
     {
-        return $this->morphMany(Message::class, "sender");
+        static::creating(function ($model) {
+            $model->identifier =
+                "ADM-" . str_pad(self::max("id") + 1, 5, "0", STR_PAD_LEFT);
+        });
+    }
+
+    public function receivedMessages()
+    {
+        return $this->hasMany(Message::class, "admin_id");
     }
 }

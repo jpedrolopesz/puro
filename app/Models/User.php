@@ -53,6 +53,11 @@ class User extends Authenticatable
                 }
             })
         );
+
+        static::creating(function ($model) {
+            $model->identifier =
+                "USR-" . str_pad(self::max("id") + 1, 5, "0", STR_PAD_LEFT);
+        });
     }
 
     public function tenant()
@@ -62,6 +67,6 @@ class User extends Authenticatable
 
     public function sentMessages()
     {
-        return $this->morphMany(Message::class, "sender");
+        return $this->hasMany(Message::class, "user_id");
     }
 }

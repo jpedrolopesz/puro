@@ -12,6 +12,12 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        Admin::factory()->create();
+        // Verifica se o Admin com o e-mail fixo já existe
+        if (!Admin::where("email", "zamonelo@hotmail.com")->exists()) {
+            // Cria apenas um Admin com o e-mail fixo
+            Admin::factory()->create([
+                "email" => "zamonelo@hotmail.com",
+            ]);
+        }
     }
 }
