@@ -18,18 +18,25 @@ class MailFactory extends Factory
      */
     public function definition(): array
     {
+        $userIds = User::pluck("id")->toArray();
+        $adminIds = Admin::pluck("id")->toArray();
         $senderType = $this->faker->randomElement([User::class, Admin::class]);
         $receiverType =
             $senderType === User::class ? Admin::class : User::class;
 
-        $sender = $senderType::factory()->create();
-        $receiver = $receiverType::factory()->create();
+        // Garante que o ID é do tipo correspondente
+        $senderId = $senderType::find(
+            $this->faker->randomElement($senderType::pluck("id")->toArray())
+        )->id;
+        $receiverId = $receiverType::find(
+            $this->faker->randomElement($receiverType::pluck("id")->toArray())
+        )->id;
 
         return [
             "id" => Str::uuid()->toString(),
-            "sender_id" => $sender->id,
+            "sender_id" => $senderId,
             "sender_type" => $senderType,
-            "receiver_id" => $receiver->id,
+            "receiver_id" => $receiverId,
             "receiver_type" => $receiverType,
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,

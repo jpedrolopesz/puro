@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\{Mail, User, Admin, Message};
+use App\Models\{Mail, Message};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MessageFactory extends Factory
@@ -14,7 +14,7 @@ class MessageFactory extends Factory
         $mail = Mail::first();
 
         return [
-            "mail_id" => Mail::factory(),
+            "mail_id" => $mail->id,
             "sender_id" => $mail->sender_id,
             "sender_type" => $mail->sender_type,
             "receiver_id" => $mail->receiver_id,
