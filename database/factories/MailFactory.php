@@ -22,11 +22,14 @@ class MailFactory extends Factory
         $receiverType =
             $senderType === User::class ? Admin::class : User::class;
 
+        $sender = $senderType::factory()->create();
+        $receiver = $receiverType::factory()->create();
+
         return [
             "id" => Str::uuid()->toString(),
-            "sender_id" => $senderType::factory(),
+            "sender_id" => $sender->id,
             "sender_type" => $senderType,
-            "receiver_id" => $receiverType::factory(),
+            "receiver_id" => $receiver->id,
             "receiver_type" => $receiverType,
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,
