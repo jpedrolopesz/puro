@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\{Admin, User};
+use App\Models\Message;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -46,5 +47,10 @@ class MailFactory extends Factory
             "labels" => json_encode($this->faker->words(3)),
             "date" => now(),
         ];
+    }
+
+    public function withMessages(int $count = 1): self
+    {
+        return $this->has(Message::factory()->count($count), "messages");
     }
 }

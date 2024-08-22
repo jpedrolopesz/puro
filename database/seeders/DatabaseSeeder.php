@@ -1,6 +1,5 @@
 
 <?php
-use Database\Seeders\MessageSender;
 use Illuminate\Database\Seeder;
 use Database\Seeders\AdminSeeder;
 use Database\Seeders\UsersSeeder;
@@ -13,7 +12,6 @@ class DatabaseSeeder extends Seeder
         $this->call(AdminSeeder::class);
         $this->call(UsersSeeder::class);
         $this->call(MailSeeder::class);
-        $this->call(MessageSender::class);
 
         //$this->call(TenantsSeeder::class);
         // $this->call(TenantSeeder::class);

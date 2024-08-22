@@ -11,10 +11,10 @@ class MessageFactory extends Factory
 
     public function definition(): array
     {
-        $mail = Mail::first();
+        $mail = Mail::inRandomOrder()->first();
 
         return [
-            "mail_id" => $mail->id,
+            "mail_id" => $mail ? $mail->id : null,
             "sender_id" => $mail->sender_id,
             "sender_type" => $mail->sender_type,
             "receiver_id" => $mail->receiver_id,
