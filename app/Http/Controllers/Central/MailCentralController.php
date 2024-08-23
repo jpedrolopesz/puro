@@ -6,6 +6,7 @@ use App\Events\Central\MailSentEvent;
 
 use App\Events\Central\MessageSent;
 use App\Http\Controllers\Controller;
+use App\Models\Admin;
 use App\Models\Mail;
 use App\Models\Message;
 use App\Models\Tenant;
@@ -66,10 +67,18 @@ class MailCentralController extends Controller
 
     public function send(Request $request)
     {
+        $senderId = $request->input("sender_id");
+        $receiverId = $request->input("receiver_id");
+
+        $sender = User::find($senderId) ?? Admin::find($senderId);
+        $receiver = User::find($receiverId) ?? Admin::find($receiverId);
+
         $mail = Mail::create([
             "id" => $request->input("id"),
-            "sender_id" => $request->input("sender_id"),
-            "receiver_id" => $request->input("receiver_id"),
+            "sender_id" => $senderId,
+            "sender_type" => get_class($sender),
+            "receiver_id" => $receiverId,
+            "receiver_type" => get_class($receiver),
             "name" => $request->input("name"),
             "email" => $request->input("email"),
             "subject" => $request->input("subject"),
@@ -79,13 +88,7 @@ class MailCentralController extends Controller
             "date" => $request->input("date"),
         ]);
 
-        Message::create([
-            "mail_id" => $mail->id,
-            "text" => $request->input("text"),
-            "sender_type" => $request->input("sender_type"),
-        ]);
-
-        //broadcast(new MailSentEvent($mail))->toOthers();
+        broadcast(new MailSentEvent($mail))->toOthers();
 
         return;
     }

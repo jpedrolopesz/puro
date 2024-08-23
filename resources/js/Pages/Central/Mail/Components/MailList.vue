@@ -28,6 +28,15 @@ const sortedItems = computed(() =>
             (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
         ),
 );
+
+function handleItemClick(item: Mail) {
+    if (!item.read) {
+        // Mark item as read
+        item.read = true;
+        // Optionally, send an update request to the server if needed
+    }
+    selectedMail.value = item.id;
+}
 </script>
 
 <template>
@@ -43,7 +52,7 @@ const sortedItems = computed(() =>
                             selectedMail === item.id && 'bg-muted',
                         )
                     "
-                    @click="selectedMail = item.id"
+                    @click="handleItemClick(item)"
                 >
                     <div class="flex w-full flex-col gap-1">
                         <div class="flex items-center">

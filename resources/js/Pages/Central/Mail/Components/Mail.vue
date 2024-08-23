@@ -76,7 +76,7 @@ const props = withDefaults(defineProps<CombinedProps>(), {
 });
 
 const isCollapsed = ref(props.defaultCollapsed);
-const selectedMail = ref<string | undefined>(props.mails[0].id);
+const selectedMail = ref<string | undefined>(undefined);
 const searchValue = ref("");
 const debouncedSearch = refDebounced(searchValue, 250);
 

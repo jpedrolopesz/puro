@@ -7,6 +7,8 @@ use Illuminate\Broadcasting\Channel;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Broadcasting\PrivateChannel;
 
 class MailSentEvent
 {
@@ -27,7 +29,13 @@ class MailSentEvent
 
     public function broadcastOn()
     {
-        $userId = $this->mail->receiver_id;
-        return new Channel("chat.$userId");
+        return [new Channel("chat.{$this->mail->receiver_id}")];
+    }
+
+    public function broadcastWith()
+    {
+        return [
+            "mail" => $this->mail,
+        ];
     }
 }

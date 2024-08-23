@@ -1,23 +1,16 @@
 <script lang="ts" setup>
-import UserSelectPopover from "./UserSelectPopover.vue";
-
-import { defineEmits, computed, ref, onMounted } from "vue";
+import { defineEmits, computed, ref, onMounted, onUnmounted } from "vue";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-
 import { usePage, router, useForm } from "@inertiajs/vue3";
 
+import UserSelectPopover from "./UserSelectPopover.vue";
 import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import { Switch } from "@/Components/ui/switch";
 import { Textarea } from "@/Components/ui/textarea";
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipTrigger,
-} from "@/Components/ui/tooltip";
 
 const props = defineProps<{
     mail: Mail | null;
@@ -33,57 +26,54 @@ const replyText = ref<string>("");
 const subject = ref<string>("");
 const selectedUser = ref<User | null>(null);
 const mails = ref<Mail[]>([]);
-const newMail = ref<string>("");
-
 const { auth } = usePage().props;
 
-console.log(auth.user);
-const form = useForm({
-    id: "",
-    sender_id: auth.user.id || "",
-    text: replyText.value,
-    subject: subject.value,
-    receiver_id: selectedUser,
-    name: "",
-    email: "",
-    date: today,
-    message: {
-        mail_id: "",
-        text: replyText.value,
-        sender_type: auth.user,
-    },
-});
-
-onMounted(() => {
+// Função para inicializar o canal e escutar eventos
+const initializeChannel = () => {
     const userId = auth.user.id;
     const channelName = `chat.${userId}`;
 
+    console.log(`Subscribing to channel: ${channelName}`); // Log para verificar a assinatura
+
     Echo.channel(channelName).listen("MailSentEvent", (event) => {
+        console.log("Mail received:", event.mail); // Log para testar a recepção
         mails.value.push(event.mail);
     });
+};
+
+onMounted(() => {
+    console.log("Initializing channel..."); // Log para testar a inicialização
+    initializeChannel();
+});
+
+onUnmounted(() => {
+    console.log("Leaving channel..."); // Log para testar ao sair do canal
+    Echo.leaveChannel(`chat.${auth.user.id}`);
 });
 
 const sendMail = () => {
+    const { id = "", name = "", email = "" } = selectedUser.value || "";
     const newUuid = uuidv4();
-    form.id = newUuid;
-    form.text = replyText.value;
-    form.subject = subject.value;
-    form.receiver_id = selectedUser.value.id;
-    form.name = selectedUser.value.name;
-    form.email = selectedUser.value.email;
-    form.date = today;
-    form.message.mail_id = newUuid;
-    form.message.text = replyText.value;
+
+    const form = useForm({
+        id: newUuid,
+        sender_id: auth.user.id || "",
+        text: replyText.value,
+        subject: subject.value,
+        receiver_id: id,
+        name,
+        email,
+        date: today,
+        message: { mail_id: newUuid, text: replyText.value },
+    });
 
     form.post(route("mail.send"), {
-        onSuccess: (response) => {
-            preserveScroll: true;
+        onSuccess: () => {
             replyText.value = "";
             emit("mail-sent", newUuid);
         },
-        onError: (error) => {
-            console.error("Error sending mail:", error);
-        },
+        onError: (error) => console.error("Error sending mail:", error),
+        preserveScroll: true,
     });
 };
 
@@ -138,6 +128,7 @@ const handleUserSelected = (user: User) => {
                     {{ format(new Date(mail.date), "PPpp") }}
                 </div>
             </div>
+
             <Separator />
             <div class="flex-1">
                 <ul>
@@ -146,9 +137,9 @@ const handleUserSelected = (user: User) => {
                         :key="message.id"
                         :class="{
                             'text-right bg-gray-50 p-4 my-4 mr-4 ml-32 rounded-lg ':
-                                message.sender_type === 'App\\Models\\Admin',
+                                message.sender_id === auth.user?.id,
                             'text-left bg-gray-100    p-4 my-4 ml-4 mr-32 rounded-lg':
-                                message.sender_type === 'App\\Models\\User',
+                                message.receiver_id === auth.user?.id,
                         }"
                     >
                         <div class="flex flex-col">
