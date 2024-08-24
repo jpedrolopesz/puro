@@ -39,6 +39,14 @@ const links: LinkProp[] = [
         route: route("tenant.dashboard"),
         current: route().current("tenant.dashboard"),
     },
+    {
+        title: "Mail",
+        label: "",
+        icon: "lucide:inbox",
+        variant: "ghost",
+        route: route("tenant.mail"),
+        current: route().current("tenant.mail"),
+    },
 ];
 
 const links2: LinkProp[] = [

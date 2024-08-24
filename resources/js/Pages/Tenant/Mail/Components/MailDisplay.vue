@@ -4,7 +4,6 @@ import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
 import { usePage, router, useForm } from "@inertiajs/vue3";
 
-import UserSelectPopover from "./UserSelectPopover.vue";
 import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
 import { Button } from "@/Components/ui/button";
 import { Label } from "@/Components/ui/label";
@@ -14,7 +13,6 @@ import { Textarea } from "@/Components/ui/textarea";
 
 const props = defineProps<{
     mail: Mail | null;
-    tenantsWithUsers: Tenant[];
 }>();
 
 const emit = defineEmits<{
@@ -32,10 +30,6 @@ const isUserTypingTimer = ref(null);
 const isUserOnline = ref(false);
 
 const { auth } = usePage().props;
-
-const allUsers = computed(() => {
-    return props.tenantsWithUsers.flatMap((tenant) => tenant.users);
-});
 
 const initializeChannel = () => {
     Echo.private(`chat.${auth.user.id}`).whisper("typing", {
@@ -131,7 +125,6 @@ const handleUserSelected = (user: User) => {
 
 <template>
     <div class="flex h-lvh flex-col">
-        <Separator />
         <div v-if="mail" class="flex flex-1 flex-col">
             <div class="flex items-start p-4">
                 <div class="flex items-start gap-4 text-sm">
@@ -226,13 +219,6 @@ const handleUserSelected = (user: User) => {
                             {{ selectedUser?.email }}
                         </div>
                     </div>
-                </div>
-
-                <div class="ml-auto text-xs text-muted-foreground">
-                    <UserSelectPopover
-                        :tenantsWithUsers="tenantsWithUsers"
-                        @user-selected="handleUserSelected"
-                    />
                 </div>
             </div>
             <Separator />

@@ -22,7 +22,6 @@ class TenantFactory extends Factory
     {
         $uuid = (string) Str::uuid();
 
-        // Gerar nome do banco de dados
         $tenantDbName = "tenant_" . $uuid;
         return [
             "email" => $this->faker->email,

@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
 use App\Http\Controllers\Subscription\StripeCheckoutController;
+use App\Http\Controllers\Tenant\MailMessageController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
@@ -50,6 +51,10 @@ Route::group(
                 DashboardTenantController::class,
                 "index",
             ])->name("dashboard");
+
+            Route::get("/mail", [MailMessageController::class, "index"])->name(
+                "mail"
+            );
 
             Route::post("/subscription", [
                 StripeCheckoutController::class,

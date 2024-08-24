@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Events\Central;
+namespace App\Events;
 
 use App\Models\Mail;
 use Illuminate\Broadcasting\Channel;
@@ -14,11 +14,8 @@ class MailSentEvent
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public $mail;
-
-    public function __construct(Mail $mail)
+    public function __construct(public Mail $mail)
     {
-        $this->mail = $mail;
     }
 
     /**
@@ -27,15 +24,8 @@ class MailSentEvent
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
 
-    public function broadcastOn()
+    public function broadcastOn(): array
     {
-        return [new Channel("chat.{$this->mail->receiver_id}")];
-    }
-
-    public function broadcastWith()
-    {
-        return [
-            "mail" => $this->mail,
-        ];
+        return new PrivateChannel("chat." . $this->mail->receiver_id);
     }
 }

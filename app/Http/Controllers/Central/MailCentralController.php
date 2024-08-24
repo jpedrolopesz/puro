@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Events\Central\MailSentEvent;
+use App\Events\MailSentEvent;
 
 use App\Events\Central\MessageSent;
 use App\Http\Controllers\Controller;
