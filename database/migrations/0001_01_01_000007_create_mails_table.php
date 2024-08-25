@@ -19,7 +19,6 @@ return new class extends Migration {
             $table->unsignedBigInteger("receiver_id");
             $table->string("receiver_type");
             $table->string("subject");
-            $table->text("text");
             $table->boolean("read")->default(false);
             $table->json("labels")->nullable();
 

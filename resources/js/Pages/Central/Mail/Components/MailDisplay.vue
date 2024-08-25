@@ -15,6 +15,7 @@ import { Textarea } from "@/Components/ui/textarea";
 const props = defineProps<{
     mail: Mail | null;
     tenantsWithUsers: Tenant[];
+    selectedMail: String;
 }>();
 
 const emit = defineEmits<{
@@ -79,26 +80,39 @@ onUnmounted(() => {
     }
 });
 
-const sendMail = () => {
-    const { id = "", name = "", email = "" } = selectedUser.value || "";
+const sendMail = (isNewMail = true) => {
+    // Garantir que selectedUser.value não é nulo
+    if (!selectedUser.value) {
+        console.error("No selected user found.");
+        return;
+    }
+
+    const { id, name, email } = props.selectedMail; // tenho que passar todos os elementos, esta passando apenas o id
     const newUuid = uuidv4();
 
+    const mailId = isNewMail ? newUuid : currentMailId;
+
     const form = useForm({
-        id: newUuid,
+        id: mailId,
         sender_id: auth.user.id || "",
-        text: replyText.value,
-        subject: subject.value,
-        receiver_id: id,
-        name,
-        email,
+        subject: isNewMail ? subject.value : "",
+        receiver_id: isNewMail ? id : "",
+        name: isNewMail ? name : "",
+        email: isNewMail ? email : "",
         date: today,
-        message: { mail_id: newUuid, text: replyText.value },
+        messages: [
+            {
+                mail_id: mailId,
+                text: replyText.value,
+                date: today,
+            },
+        ],
     });
 
     form.post(route("mail.send"), {
         onSuccess: () => {
             replyText.value = "";
-            emit("mail-sent", newUuid);
+            emit("mail-sent", mailId);
         },
         onError: (error) => console.error("Error sending mail:", error),
         preserveScroll: true,

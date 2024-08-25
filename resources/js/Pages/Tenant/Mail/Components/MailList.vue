@@ -29,6 +29,8 @@ const sortedItems = computed(() =>
         ),
 );
 
+console.log(props.items);
+
 function handleItemClick(item: Mail) {
     if (!item.read) {
         // Mark item as read
@@ -58,7 +60,7 @@ function handleItemClick(item: Mail) {
                         <div class="flex items-center">
                             <div class="flex items-center gap-2">
                                 <div class="font-semibold">
-                                    {{ item.name }}
+                                    {{ item.sender.name }}
                                 </div>
                                 <span
                                     v-if="!item.read"

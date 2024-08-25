@@ -25,7 +25,6 @@ class MailFactory extends Factory
         $receiverType =
             $senderType === User::class ? Admin::class : User::class;
 
-        // Garante que o ID é do tipo correspondente
         $senderId = $senderType::find(
             $this->faker->randomElement($senderType::pluck("id")->toArray())
         )->id;
@@ -42,7 +41,6 @@ class MailFactory extends Factory
             "name" => $this->faker->name,
             "email" => $this->faker->safeEmail,
             "subject" => $this->faker->sentence,
-            "text" => $this->faker->paragraph(),
             "read" => $this->faker->boolean,
             "labels" => json_encode($this->faker->words(3)),
             "date" => now(),

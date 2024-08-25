@@ -3,7 +3,6 @@ export interface Mail {
   name: string;
   email: string;
   subject: string;
-  text: string;
   date: string;
   read: boolean;
   receiver_id: number;

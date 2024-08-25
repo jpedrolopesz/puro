@@ -132,12 +132,12 @@ const handleUserSelected = (user: User) => {
                         <AvatarFallback>{{ mailFallbackName }}</AvatarFallback>
                     </Avatar>
                     <div class="grid gap-1">
-                        <div class="font-semibold">{{ mail.name }}</div>
+                        <div class="font-semibold">{{ mail.sender.name }}</div>
                         <div class="line-clamp-1 text-xs">
                             {{ mail.subject }}
                         </div>
                         <div class="line-clamp-1 text-xs">
-                            <span class="font-medium">Reply-To:</span>
+                            <span class="font-medium">To:</span>
                             {{ mail.email }}
                         </div>
                     </div>

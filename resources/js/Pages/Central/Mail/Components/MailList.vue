@@ -88,7 +88,7 @@ function handleItemClick(item: Mail) {
                         </div>
                     </div>
                     <div class="line-clamp-2 text-xs text-muted-foreground">
-                        {{ item.text.substring(0, 300) }}
+                        {{ item.messages[0].text.substring(0, 300) }}
                     </div>
                     <div class="flex items-center gap-2">
                         <Badge

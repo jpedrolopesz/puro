@@ -53,7 +53,7 @@ interface Mail {
     name: string;
     email: string;
     subject: string;
-    text: string;
+
     date: string;
     read: boolean;
     receiver_id: number;
@@ -91,8 +91,8 @@ const filteredMailList = computed(() => {
                 item.name.includes(debouncedSearch.value) ||
                 item.email.includes(debouncedSearch.value) ||
                 item.name.includes(debouncedSearch.value) ||
-                item.subject.includes(debouncedSearch.value) ||
-                item.text.includes(debouncedSearch.value)
+                item.subject.includes(debouncedSearch.value)
+                //item.text.includes(debouncedSearch.value)
             );
         });
     }
@@ -198,6 +198,7 @@ function handleMailSent(mailId: string) {
                 :default-size="defaultLayout[2]"
             >
                 <MailDisplay
+                    v-model:selected-mail="selectedMail"
                     :mail="selectedMailData || null"
                     :tenantsWithUsers="tenantsWithUsers"
                     @mail-sent="handleMailSent"

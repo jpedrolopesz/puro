@@ -4,36 +4,43 @@ namespace App\Http\Controllers\Central;
 
 use App\Events\MailSentEvent;
 
+use App\Actions\Global\GetMailsForAuthenticatedUser;
 use App\Events\Central\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
 use App\Models\Mail;
-use App\Models\Message;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Http\Request;
 
+use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 
 class MailCentralController extends Controller
 {
+    protected $getMailsForAuthenticatedUser;
+
+    public function __construct(
+        GetMailsForAuthenticatedUser $getMailsForAuthenticatedUser
+    ) {
+        $this->getMailsForAuthenticatedUser = $getMailsForAuthenticatedUser;
+    }
     public function index()
     {
-        $mails = Mail::with(["messages", "sender", "receiver"])->get();
+        $authUser = Auth::guard("admin")->user();
+        $mailsWithMessages = $this->getMailsForAuthenticatedUser->execute(
+            $authUser
+        );
 
-        $mailsWithMessages = $mails->map(function ($mail) {
-            $messages = Message::where("mail_id", $mail->id)->get();
-            // $users = User::where("id", $mail->sender_id)->get();
+        $tenants = Tenant::with("creator", "users")->get();
 
-            $mail->messages = $messages;
-            // $mail->users = $users;
-            $mail->labels = is_array($mail->labels)
-                ? $mail->labels
-                : json_decode($mail->labels, true);
+        $tenantsWithUsers = $tenants->map(function ($tenant) {
+            $users = User::where("tenant_id", $tenant->id)->get();
 
-            $mail->id = (string) $mail->id;
+            $tenant->users = $users;
+            $tenant->creator = $tenant->creator;
 
-            return $mail;
+            return $tenant;
         });
 
         $tenants = Tenant::with("creator", "users")->get();
@@ -67,29 +74,56 @@ class MailCentralController extends Controller
 
     public function send(Request $request)
     {
+        dd($request->all());
+        // Recupera os dados da requisição
         $senderId = $request->input("sender_id");
         $receiverId = $request->input("receiver_id");
+        $mailId = $request->input("id");
+        $isNewMail = !$mailId; // Verifica se é um novo e-mail
 
-        $sender = User::find($senderId) ?? Admin::find($senderId);
+        $sender = Auth::guard("admin")->check()
+            ? Admin::find($senderId)
+            : User::find($senderId);
         $receiver = User::find($receiverId) ?? Admin::find($receiverId);
 
-        $mail = Mail::create([
-            "id" => $request->input("id"),
-            "sender_id" => $senderId,
-            "sender_type" => get_class($sender),
-            "receiver_id" => $receiverId,
-            "receiver_type" => get_class($receiver),
-            "name" => $request->input("name"),
-            "email" => $request->input("email"),
-            "subject" => $request->input("subject"),
-            "text" => $request->input("text"),
-            "read" => $request->input("read", false),
-            "labels" => json_encode($request->input("labels", [])),
-            "date" => $request->input("date"),
-        ]);
+        if ($isNewMail) {
+            // Cria um novo e-mail
+            $mail = Mail::create([
+                "id" => $request->input("id"),
+                "sender_id" => $senderId,
+                "sender_type" => get_class($sender),
+                "receiver_id" => $receiverId,
+                "receiver_type" => get_class($receiver),
+                "name" => $request->input("name"),
+                "email" => $request->input("email"),
+                "subject" => $request->input("subject"),
+                "read" => $request->input("read", false),
+                "labels" => json_encode($request->input("labels", [])),
+                "date" => $request->input("date"),
+            ]);
+        } else {
+            // Recupera o e-mail existente
+            $mail = Mail::findOrFail($mailId);
+        }
 
+        // Adiciona as mensagens ao e-mail
+        if ($request->has("messages")) {
+            foreach ($request->input("messages") as $messageData) {
+                $mail->messages()->create([
+                    "mail_id" => $mail->id,
+                    "sender_id" => $senderId,
+                    "sender_type" => get_class($sender),
+                    "receiver_id" => $receiverId,
+                    "receiver_type" => get_class($receiver),
+                    "text" => $messageData["text"],
+                    "date" => $messageData["date"],
+                ]);
+            }
+        }
+
+        // Dispara um evento de mensagem enviada
         broadcast(new MailSentEvent($mail))->toOthers();
 
-        return;
+        return response()->json(["status" => "success"]);
     }
 }

@@ -11,7 +11,7 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create("messages", function (Blueprint $table) {
-            $table->id()->primary();
+            $table->uuid("id")->primary();
             $table->uuid("mail_id");
             $table->unsignedBigInteger("sender_id");
             $table->string("sender_type");
