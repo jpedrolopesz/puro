@@ -130,7 +130,7 @@ function onExpand() {
                                 class="w-full"
                                 @click="createNewConversation"
                             >
-                                <MailPlus />
+                                <MailPlus class="h-4 w-4 shrink-0" />
                             </Button>
                         </div>
                     </div>
@@ -157,7 +157,7 @@ function onExpand() {
                 <ConversationDisplay
                     v-model:selected-conversation="selectedConversation"
                     :conversation="selectedConversationData || null"
-                    :tenantsWithUsers="tenantsWithUsers"
+                    :conversationParticipants="conversationParticipants"
                     @message-sent="handleMessageSent"
                 />
             </ResizablePanel>

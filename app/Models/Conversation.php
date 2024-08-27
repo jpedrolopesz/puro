@@ -9,16 +9,52 @@ class Conversation extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["admin_id", "user_id"];
+    protected $primaryKey = "id";
+    protected $keyType = "string";
+    public $incrementing = false;
+    protected $connection = "mysql";
 
-    public function admin()
+    protected $fillable = [
+        "id",
+        "initiator_id",
+        "initiator_type",
+        "recipient_id",
+        "recipient_type",
+        "subject",
+    ];
+
+    public function getTypeFromIdentifier()
     {
-        return $this->belongsTo(Admin::class);
+        $identifier = $this->identifier;
+
+        $prefix = substr($identifier, 0, 3);
+
+        $types = [
+            "USR" => "user",
+            "ADM" => "admin",
+        ];
+
+        return $types[$prefix] ?? null;
     }
 
-    public function user()
+    public function initiator()
     {
-        return $this->belongsTo(User::class);
+        return $this->morphTo();
+    }
+
+    public function recipient()
+    {
+        return $this->morphTo();
+    }
+
+    public function conversation()
+    {
+        return $this->belongsTo(Conversation::class);
+    }
+
+    public function sender()
+    {
+        return $this->morphTo();
     }
 
     public function messages()

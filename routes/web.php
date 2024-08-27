@@ -4,7 +4,7 @@ use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
     DashboardCentralController,
-    MailCentralController,
+    ConversationCentralController,
     ProductsCentralController,
     PaymentCentralController,
     StripeWebhookController
@@ -106,15 +106,6 @@ Route::middleware("auth:admin")->group(function () {
         "updateDefaultPrice",
     ])->name("product.update.default");
 
-    ######## MAIL ########
-    Route::get("/mail", [MailCentralController::class, "index"])->name(
-        "mails.index"
-    );
-
-    Route::post("/mail/send", [MailCentralController::class, "send"])->name(
-        "mail.send"
-    );
-
     ######## PROFILE ########
     Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"
@@ -130,12 +121,21 @@ Route::middleware("auth:admin")->group(function () {
         "destroy",
     ])->name("profile.destroy");
 
-    Route::post("/send-message", [
-        MailCentralController::class,
-        "sendMessage",
-    ])->name("sendMessage");
+    ######## CONVERSATION ########
+    Route::get("/conversation", [
+        ConversationCentralController::class,
+        "index",
+    ])->name("conversation.index");
 
-    ##########################
+    Route::post("/conversation/message/send", [
+        ConversationCentralController::class,
+        "sendMessage",
+    ])->name("admin.message.send");
+
+    Route::post("/conversation/create", [
+        ConversationCentralController::class,
+        "createCoversation",
+    ])->name("admin.conversation.create");
 });
 
 require __DIR__ . "/auth.php";

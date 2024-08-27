@@ -31,7 +31,6 @@ interface Tenant {
   updated_at: string;
   users: User[];
   creator: User;
-  data?: any;
 }
 
 interface Participant {
@@ -45,9 +44,9 @@ interface Conversation {
   id: string;
   admin_id: number;
   user_id: number;
-  labels: Record<string, any>; // labels como objeto
+  labels: Record<string, any>;
   read: boolean;
-  subject?: string; // Tornar opcional se necessário
+  subject?: string;
   participant: Participant;
   created_at: string;
   updated_at: string;
@@ -63,13 +62,13 @@ interface Message {
   sender_type: "admin" | "user";
   content: string;
   read: boolean;
-  date: string; // Adicionar o campo 'date'
-  data?: any;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface ChatProps {
   conversations: Conversation[];
-  tenantsWithUsers: Tenant[];
+  conversationParticipants: Record<string, Tenant | Admin>;
   defaultLayout?: number[];
   defaultCollapsed?: boolean;
   navCollapsedSize: number;

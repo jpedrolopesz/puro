@@ -11,21 +11,19 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create("messages", function (Blueprint $table) {
-            $table->uuid("id")->primary();
-            $table->unsignedBigInteger("conversation_id");
+            $table->id();
+            $table->uuid("conversation_id");
             $table->unsignedBigInteger("sender_id");
             $table->string("sender_type");
             $table->text("content");
             $table->boolean("read")->default(false);
-
-            $table->timestamp("date")->nullable();
+            $table->timestamps();
 
             $table
                 ->foreign("conversation_id")
                 ->references("id")
                 ->on("conversations")
                 ->onDelete("cascade");
-            $table->index(["sender_id", "sender_type"]);
         });
     }
 

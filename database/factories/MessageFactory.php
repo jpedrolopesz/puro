@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Models\{Conversation, Message, Admin, User};
+use App\Models\{Conversation, Message};
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class MessageFactory extends Factory
@@ -11,19 +11,19 @@ class MessageFactory extends Factory
 
     public function definition(): array
     {
-        $admin = Admin::first();
-        $users = User::first();
+        $conversation = Conversation::inRandomOrder()->first();
 
-        $sender = $this->faker->randomElement([$admin, $users]);
+        $sender = $this->faker->randomElement([
+            $conversation->initiator,
+            $conversation->recipient,
+        ]);
 
         return [
-            "conversation_id" => Conversation::all(),
-            "sender_id" => $sender,
+            "conversation_id" => $conversation->id,
+            "sender_id" => $sender->id,
             "sender_type" => get_class($sender),
             "content" => $this->faker->paragraph,
             "read" => $this->faker->boolean,
-
-            "date" => now(),
         ];
     }
 }

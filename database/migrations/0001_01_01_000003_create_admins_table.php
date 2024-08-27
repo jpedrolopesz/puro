@@ -40,6 +40,7 @@ return new class extends Migration {
     public function down(): void
     {
         Schema::dropIfExists("admins");
+
         Schema::dropIfExists("admin_password_reset_tokens");
     }
 };

@@ -74,12 +74,12 @@ const links: LinkProp[] = [
             route().current("product.details"),
     },
     {
-        title: "Mails",
+        title: "Conversation",
         label: "6",
         icon: "lucide:mails",
         variant: "ghost",
-        route: route("mails.index"),
-        current: route().current("mails.index"),
+        route: route("conversation.index"),
+        current: route().current("conversation.index"),
     },
 ];
 

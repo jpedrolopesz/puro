@@ -11,17 +11,17 @@ import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
 import { Switch } from "@/Components/ui/switch";
 import { Textarea } from "@/Components/ui/textarea";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 
 const props = defineProps<{
     conversation: Conversation;
-    tenantsWithUsers: Tenant[];
+    conversationParticipants: Tenant[] | Record<string, Tenant>; // Aceita ambos
 }>();
 
 const emit = defineEmits<{
     (event: "message-sent", conversationId: string): void;
 }>();
 
-// States e computeds
 const replyText = ref<string>("");
 const subject = ref<string>("");
 const selectedUser = ref<User | null>(null);
@@ -64,30 +64,63 @@ onUnmounted(() => {
     }
 });
 
-// Função de envio de mensagem
-const sendMessage = () => {
-    if (!props.conversation) return;
+const createConversation = () => {
+    const uuid = uuidv4();
 
     const form = useForm({
-        conversation_id: props.conversation.id,
-        content: replyText.value,
-        sender_id: auth.user.id,
-        sender_type: "App\\Models\\Admin", // ou "App\\Models\\User"
+        id: uuid,
+        initiator_id: auth.user?.id,
+        recipient_id: selectedUser.value?.id,
+        recipient_type: selectedUser?.value.identifier,
+        subject: subject.value,
+        content: replyText.value.trim(),
+        labels: [],
     });
 
-    form.post(route("message.send"), {
-        onSuccess: () => {
-            replyText.value = "";
-            emit("message-sent", props.conversation.id);
+    form.post(
+        route(
+            `${auth.user?.tenant_id ? "tenant" : "admin"}.conversation.create`,
+        ),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                subject.value = "";
+                replyText.value = "";
+
+                emit("message-sent", uuid);
+            },
+            onError: (error) => {
+                console.error("Error sending message:", error);
+            },
         },
-        onError: (error) => console.error("Error sending message:", error),
-        preserveScroll: true,
+    );
+};
+
+const sendMessage = () => {
+    const form = useForm({
+        conversation_id: props.conversation.id,
+        content: replyText.value.trim(),
+        read: "false",
     });
+
+    form.post(
+        route(`${auth.user?.tenant_id ? "tenant" : "admin"}.message.send`),
+        {
+            preserveScroll: true,
+            onSuccess: () => {
+                replyText.value = "";
+                emit("message-sent", props.conversation.id);
+            },
+            onError: (error) => {
+                console.error("Error sending message:", error);
+            },
+        },
+    );
 };
 </script>
 
 <template>
-    <div class="flex h-lvh flex-col">
+    <div class="flex h-screen flex-col">
         <Separator />
         <div v-if="conversation" class="flex flex-1 flex-col">
             <div class="flex items-start p-4">
@@ -116,29 +149,36 @@ const sendMessage = () => {
             </div>
 
             <Separator />
-            <div class="flex-1">
+            <ScrollArea
+                class="flex-1 overflow-y-auto"
+                :class="
+                    auth.user?.tenant_id
+                        ? 'max-h-[calc(100vh-300px)]'
+                        : 'max-h-[calc(100vh-250px)]'
+                "
+            >
                 <ul>
                     <li
                         v-for="message in conversation.messages"
                         :key="message.id"
                         :class="{
-                            'text-right bg-gray-50 p-4 my-4 mr-4 ml-32 rounded-lg':
-                                message.sender_id === auth.user.id,
-                            'text-left bg-gray-100 p-4 my-4 ml-4 mr-32 rounded-lg':
-                                message.sender_id !== auth.user.id,
+                            'text-right bg-gray-50 p-4 my-4 mr-4 ml-20 rounded-lg':
+                                message.sender_id == auth.user.id,
+                            'text-left bg-gray-100 p-4 my-4 ml-4 mr-20 rounded-lg':
+                                message.sender_id != auth.user.id,
                         }"
                     >
                         <div class="flex flex-col">
                             <span class="whitespace-pre-wrap text-sm">
-                                {{ message.content }}
+                                {{ message?.content }}
                             </span>
-                            <span class="whitespace-pre-wrap text-xs">
-                                {{ format(new Date(message.date), "pp") }}
+                            <span class="whitespace-pre-wrap text-xs truncate">
+                                {{ format(new Date(message.created_at), "pp") }}
                             </span>
                         </div>
                     </li>
                 </ul>
-            </div>
+            </ScrollArea>
 
             <Separator />
             <div class="p-4">
@@ -188,7 +228,7 @@ const sendMessage = () => {
 
                 <div class="ml-auto text-xs text-muted-foreground">
                     <UserSelectPopover
-                        :tenantsWithUsers="tenantsWithUsers"
+                        :conversationParticipants="conversationParticipants"
                         @user-selected="handleUserSelected"
                     />
                 </div>
@@ -205,10 +245,13 @@ const sendMessage = () => {
             </div>
             <Separator />
 
-            <div class="flex-1 whitespace-pre-wrap p-4 text-sm"></div>
+            <div
+                class="flex-1"
+                :class="auth.user?.tenant_id ? 'max-h-[calc(100vh-320px)]' : ''"
+            ></div>
             <Separator />
             <div class="p-4">
-                <form @submit.prevent="sendMessage">
+                <form @submit.prevent="createConversation">
                     <div class="grid gap-4">
                         <Textarea
                             v-model="replyText"
@@ -224,7 +267,7 @@ const sendMessage = () => {
                                 Mute this thread
                             </Label>
                             <Button type="submit" size="sm" class="ml-auto">
-                                Send
+                                Start a conversation
                             </Button>
                         </div>
                     </div>

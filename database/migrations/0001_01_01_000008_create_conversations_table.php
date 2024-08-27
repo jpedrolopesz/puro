@@ -11,25 +11,14 @@ return new class extends Migration {
     public function up(): void
     {
         Schema::create("conversations", function (Blueprint $table) {
-            $table->id();
-            $table->unsignedBigInteger("admin_id");
-            $table->unsignedBigInteger("user_id");
+            $table->uuid("id")->primary();
+            $table->unsignedBigInteger("initiator_id");
+            $table->string("initiator_type");
+            $table->unsignedBigInteger("recipient_id");
+            $table->string("recipient_type");
             $table->string("subject");
             $table->json("labels")->nullable();
-
             $table->timestamps();
-
-            $table
-                ->foreign("admin_id")
-                ->references("id")
-                ->on("admins")
-                ->onDelete("cascade");
-            $table
-                ->foreign("user_id")
-                ->references("id")
-                ->on("users")
-                ->onDelete("cascade");
-            $table->unique(["admin_id", "user_id"]);
         });
     }
 

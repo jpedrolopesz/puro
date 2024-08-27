@@ -11,7 +11,7 @@ class Admin extends Authenticatable
 {
     use CentralConnection, Notifiable, HasFactory;
 
-    protected $table = "admins";
+    protected $primaryKey = "id";
 
     protected $fillable = ["name", "password", "email", "role"];
 
@@ -25,13 +25,18 @@ class Admin extends Authenticatable
         });
     }
 
-    public function receivedMessages()
+    public function initiatedConversations()
     {
-        return $this->morphMany(Message::class, "receiver");
+        return $this->morphMany(Conversation::class, "initiator");
     }
 
-    public function sentMails()
+    public function receivedConversations()
     {
-        return $this->morphMany(Mail::class, "sender");
+        return $this->morphMany(Conversation::class, "recipient");
+    }
+
+    public function messages()
+    {
+        return $this->morphMany(Message::class, "sender");
     }
 }

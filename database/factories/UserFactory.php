@@ -57,14 +57,4 @@ class UserFactory extends Factory
         $lastUserId = User::max("id") ?? 0;
         return "USR-" . str_pad($lastUserId + 1, 5, "0", STR_PAD_LEFT);
     }
-
-    /**
-     * Configure the factory to accept a specific tenant_id.
-     */
-    public function withTenant(Tenant $tenant): static
-    {
-        return $this->state([
-            "tenant_id" => $tenant->id,
-        ]);
-    }
 }

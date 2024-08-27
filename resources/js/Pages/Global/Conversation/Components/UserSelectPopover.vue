@@ -20,20 +20,24 @@ import {
 } from "@/Components/ui/popover";
 
 const props = defineProps<{
-    tenantsWithUsers: Tenant[];
+    conversationParticipants: Record<string, Tenant | Admin>;
 }>();
 
 const emit = defineEmits<{
-    (e: "user-selected", user: User): void;
+    (e: "user-selected", user: User | Admin): void;
 }>();
 
 const open = ref(false);
 const value = ref("");
 
-// Função para obter todos os usuários de todos os tenants
 const allUsers = computed(() => {
-    return props.tenantsWithUsers.flatMap((tenant) => tenant.users);
+    const tenantUsers = props.conversationParticipants.tenants.flatMap(
+        (tenant) => tenant.users,
+    );
+    return [...tenantUsers, ...props.conversationParticipants.admins];
 });
+
+console.log(allUsers.value);
 
 const mailFallbackNames = computed(() => {
     const map = {};
@@ -70,7 +74,7 @@ const handleSelectUser = (user: User) => {
         <PopoverContent class="w-full p-0">
             <Command v-model="value">
                 <CommandInput
-                    class="m-1 border border-gray-300 focus:outline-none focus:border-gray-500 focus:border-gray-500 focus:ring-0"
+                    class="m-1 border border-gray-300 focus:outline-none focus:border-gray-500 focus:ring-0"
                     placeholder="Search user..."
                 />
 

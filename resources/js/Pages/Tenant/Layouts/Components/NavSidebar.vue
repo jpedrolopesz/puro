@@ -40,12 +40,12 @@ const links: LinkProp[] = [
         current: route().current("tenant.dashboard"),
     },
     {
-        title: "Mail",
+        title: "Conversation",
         label: "",
         icon: "lucide:inbox",
         variant: "ghost",
-        route: route("tenant.mail"),
-        current: route().current("tenant.mail"),
+        route: route("tenant.conversation"),
+        current: route().current("tenant.conversation"),
     },
 ];
 

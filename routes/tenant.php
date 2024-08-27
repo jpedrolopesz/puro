@@ -3,8 +3,9 @@
 declare(strict_types=1);
 
 use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Central\ConversationCentralController;
 use App\Http\Controllers\Subscription\StripeCheckoutController;
-use App\Http\Controllers\Tenant\MailMessageController;
+use App\Http\Controllers\Tenant\ConversationTenantController;
 use Illuminate\Support\Facades\Route;
 use Stancl\Tenancy\Middleware\PreventAccessFromCentralDomains;
 use Stancl\Tenancy\Middleware\InitializeTenancyBySubdomain;
@@ -52,9 +53,20 @@ Route::group(
                 "index",
             ])->name("dashboard");
 
-            Route::get("/mail", [MailMessageController::class, "index"])->name(
-                "mail"
-            );
+            Route::get("/conversation", [
+                ConversationTenantController::class,
+                "index",
+            ])->name("conversation");
+
+            Route::post("/conversation/message/send", [
+                ConversationCentralController::class,
+                "sendMessage",
+            ])->name("message.send");
+
+            Route::post("/conversation/create", [
+                ConversationCentralController::class,
+                "createCoversation",
+            ])->name("conversation.create");
 
             Route::post("/subscription", [
                 StripeCheckoutController::class,

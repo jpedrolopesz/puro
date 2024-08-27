@@ -10,42 +10,59 @@ class FetchUserConversations
     {
         $conversationsQuery = Conversation::query();
 
-        // Verifica se o usuário autenticado é um Admin ou um User
-        if ($authUser instanceof Admin) {
-            $conversationsQuery->where("admin_id", $authUser->id);
-        } elseif ($authUser instanceof User) {
-            $conversationsQuery->where("user_id", $authUser->id);
-        } else {
-            // Se não for nem Admin nem User, retorna uma coleção vazia
-            return collect();
-        }
+        // Filtra as conversas com base no usuário autenticado
+        $conversationsQuery->where(function ($query) use ($authUser) {
+            $query
+                ->where(function ($q) use ($authUser) {
+                    $q->where("initiator_id", $authUser->id)->where(
+                        "initiator_type",
+                        get_class($authUser)
+                    );
+                })
+                ->orWhere(function ($q) use ($authUser) {
+                    $q->where("recipient_id", $authUser->id)->where(
+                        "recipient_type",
+                        get_class($authUser)
+                    );
+                });
+        });
 
-        // Carrega as mensagens e os participantes da conversa
-        $conversations = $conversationsQuery
-            ->with(["messages", "admin", "user"])
-            ->get();
+        $conversations = $conversationsQuery->with(["messages"])->get();
 
-        // Formata os resultados
         $formattedConversations = $conversations->map(function (
             $conversation
         ) use ($authUser) {
             $otherParticipant =
-                $authUser instanceof Admin
-                    ? $conversation->user
-                    : $conversation->admin;
+                $conversation->initiator_id == $authUser->id
+                    ? [
+                        "id" => $conversation->recipient_id,
+                        "type" => $conversation->recipient_type,
+                    ]
+                    : [
+                        "id" => $conversation->initiator_id,
+                        "type" => $conversation->initiator_type,
+                    ];
+
+            $otherParticipantModel = $otherParticipant["type"]::find(
+                $otherParticipant["id"]
+            );
 
             return [
                 "id" => (string) $conversation->id,
-                "user_id" => $conversation->user_id,
-                "admin_id" => $conversation->admin_id,
+                "initiator_id" => $conversation->initiator_id,
+                "initiator_type" => $conversation->initiator_type,
+                "recipient_id" => $conversation->recipient_id,
+                "recipient_type" => $conversation->recipient_type,
                 "labels" => (object) $conversation->labels,
                 "subject" => $conversation->subject,
                 "participant" => [
-                    "id" => $otherParticipant->id,
-                    "name" => $otherParticipant->name,
-                    "email" => $otherParticipant->email,
+                    "id" => $otherParticipantModel->id,
+                    "name" => $otherParticipantModel->name,
+                    "email" => $otherParticipantModel->email,
                     "type" =>
-                        $otherParticipant instanceof Admin ? "admin" : "user",
+                        $otherParticipant["type"] === Admin::class
+                            ? "admin"
+                            : "user",
                 ],
                 "messages" => $conversation->messages->map(function ($message) {
                     return [
@@ -54,7 +71,7 @@ class FetchUserConversations
                         "sender_id" => (string) $message->sender_id,
                         "sender_type" => $message->sender_type,
                         "read" => (bool) $message->read,
-                        "date" => $message->date,
+                        "created_at" => $message->created_at,
                     ];
                 }),
                 "created_at" => $conversation->created_at,

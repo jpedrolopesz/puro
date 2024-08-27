@@ -65,13 +65,18 @@ class User extends Authenticatable
         return $this->belongsTo(Tenant::class, "tenant_id");
     }
 
-    public function sentMessages()
+    public function initiatedConversations()
     {
-        return $this->morphMany(Message::class, "sender");
+        return $this->morphMany(Conversation::class, "initiator");
     }
 
-    public function receivedMails()
+    public function receivedConversations()
     {
-        return $this->morphMany(Mail::class, "receiver");
+        return $this->morphMany(Conversation::class, "recipient");
+    }
+
+    public function messages()
+    {
+        return $this->morphMany(Message::class, "sender");
     }
 }

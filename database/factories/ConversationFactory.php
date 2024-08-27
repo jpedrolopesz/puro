@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Models\{Admin, Conversation, User};
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Str;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Conversation>
@@ -19,13 +20,23 @@ class ConversationFactory extends Factory
      */
     public function definition(): array
     {
-        $admin = Admin::first();
+        $initiator = $this->faker->randomElement([
+            Admin::factory()->create(),
+            //  User::factory()->create(),
+        ]);
+        $recipient = $this->faker->randomElement([
+            //  Admin::factory()->create(),
+            User::factory()->create(),
+        ]);
 
         return [
-            "admin_id" => $admin->id,
-            "user_id" => User::factory(),
-            "labels" => json_encode($this->faker->words(3)),
+            "id" => Str::uuid()->toString(),
+            "initiator_id" => $initiator->id,
+            "initiator_type" => get_class($initiator),
+            "recipient_id" => $recipient->id,
+            "recipient_type" => get_class($recipient),
             "subject" => $this->faker->sentence,
+            "labels" => json_encode($this->faker->words(3)),
         ];
     }
 }
