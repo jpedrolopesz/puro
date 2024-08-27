@@ -1,17 +1,22 @@
 <script lang="ts" setup>
 import { formatDistanceToNow } from "date-fns";
-import type { Mail } from "../data/types";
+import { usePage } from "@inertiajs/vue3";
+
 import { ScrollArea } from "@/Components/ui/scroll-area";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/Components/ui/badge";
 import { computed } from "vue";
 
-interface MailListProps {
-    items: Mail[];
+interface ConversationListProps {
+    items: Conversation[];
 }
 
-const props = defineProps<MailListProps>();
-const selectedMail = defineModel<string>("selectedMail", { required: false });
+const props = defineProps<ConversationListProps>();
+
+const selectedConversation = defineModel<string>("selectedConversation", {
+    required: false,
+});
+const { auth } = usePage().props;
 
 function getBadgeVariantFromLabel(label: string) {
     if (["work"].includes(label.toLowerCase())) return "default";
@@ -25,17 +30,24 @@ const sortedItems = computed(() =>
     props.items
         .slice()
         .sort(
-            (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime(),
+            (a, b) =>
+                new Date(b.updated_at).getTime() -
+                new Date(a.updated_at).getTime(),
         ),
 );
 
-function handleItemClick(item: Mail) {
-    if (!item.read) {
-        // Mark item as read
-        item.read = true;
-        // Optionally, send an update request to the server if needed
-    }
-    selectedMail.value = item.id;
+function hasUnreadMessages(item: Conversation): boolean {
+    item.messages.forEach((message) => {
+        if (message.sender_id !== auth.user.id) {
+            message.read = false;
+        }
+    });
+
+    selectedConversation.value = item.id;
+}
+
+function getLastMessage(conversation: Conversation) {
+    return conversation.messages[conversation.messages.length - 1];
 }
 </script>
 
@@ -49,17 +61,18 @@ function handleItemClick(item: Mail) {
                     :class="
                         cn(
                             'flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all hover:bg-accent',
-                            selectedMail === item.id && 'bg-muted',
+                            selectedConversation === item.id && 'bg-muted',
                         )
                     "
-                    @click="handleItemClick(item)"
+                    @click="hasUnreadMessages(item)"
                 >
                     <div class="flex w-full flex-col gap-1">
                         <div class="flex items-center">
                             <div class="flex items-center gap-2">
                                 <div class="font-semibold">
-                                    {{ item.name }}
+                                    {{ item.participant.name }}
                                 </div>
+
                                 <span
                                     v-if="!item.read"
                                     class="flex h-2 w-2 rounded-full bg-blue-600"
@@ -69,26 +82,33 @@ function handleItemClick(item: Mail) {
                                 :class="
                                     cn(
                                         'ml-auto text-xs',
-                                        selectedMail === item.id
+                                        selectedConversation === item.id
                                             ? 'text-foreground'
                                             : 'text-muted-foreground',
                                     )
                                 "
                             >
                                 {{
-                                    formatDistanceToNow(new Date(item.date), {
-                                        addSuffix: true,
-                                    })
+                                    formatDistanceToNow(
+                                        new Date(item.updated_at),
+                                        {
+                                            addSuffix: true,
+                                        },
+                                    )
                                 }}
                             </div>
                         </div>
 
                         <div class="text-xs font-medium">
-                            {{ item.subject }}
+                            {{
+                                item.subject.length > 60
+                                    ? item.subject.substring(0, 60) + "..."
+                                    : item.subject
+                            }}
                         </div>
                     </div>
                     <div class="line-clamp-2 text-xs text-muted-foreground">
-                        {{ item.messages[0].text.substring(0, 300) }}
+                        {{ getLastMessage(item).content.substring(0, 300) }}
                     </div>
                     <div class="flex items-center gap-2">
                         <Badge

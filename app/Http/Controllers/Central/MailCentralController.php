@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Central;
 
 use App\Events\MailSentEvent;
 
-use App\Actions\Global\GetMailsForAuthenticatedUser;
+use App\Actions\Global\FetchUserConversations;
 use App\Events\Central\MessageSent;
 use App\Http\Controllers\Controller;
 use App\Models\Admin;
@@ -18,20 +18,20 @@ use Inertia\Inertia;
 
 class MailCentralController extends Controller
 {
-    protected $getMailsForAuthenticatedUser;
+    protected $fetchUserConversations;
 
-    public function __construct(
-        GetMailsForAuthenticatedUser $getMailsForAuthenticatedUser
-    ) {
-        $this->getMailsForAuthenticatedUser = $getMailsForAuthenticatedUser;
+    public function __construct(FetchUserConversations $fetchUserConversations)
+    {
+        $this->fetchUserConversations = $fetchUserConversations;
     }
     public function index()
     {
         $authUser = Auth::guard("admin")->user();
-        $mailsWithMessages = $this->getMailsForAuthenticatedUser->execute(
+        $conversationWithMessages = $this->fetchUserConversations->execute(
             $authUser
         );
 
+        //dd($conversationWithMessages);
         $tenants = Tenant::with("creator", "users")->get();
 
         $tenantsWithUsers = $tenants->map(function ($tenant) {
@@ -55,7 +55,7 @@ class MailCentralController extends Controller
         });
 
         return Inertia::render("Central/Mail/MailsCentral", [
-            "mails" => $mailsWithMessages,
+            "conversations" => $conversationWithMessages,
             "tenantsWithUsers" => $tenantsWithUsers,
         ]);
     }

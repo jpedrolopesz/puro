@@ -1,9 +1,12 @@
 
 <?php
 use Illuminate\Database\Seeder;
-use Database\Seeders\AdminSeeder;
-use Database\Seeders\UsersSeeder;
-use Database\Seeders\MailSeeder;
+use Database\Seeders\{
+    UsersSeeder,
+    AdminSeeder,
+    ConversationSeeder,
+    MessageSeeder
+};
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,10 +14,12 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(AdminSeeder::class);
         $this->call(UsersSeeder::class);
-        $this->call(MailSeeder::class);
+        $this->call(ConversationSeeder::class);
+        $this->call(MessageSeeder::class);
 
+        //$this->call(MailSeeder::class);
         //$this->call(TenantsSeeder::class);
-        // $this->call(TenantSeeder::class);
+        //$this->call(TenantSeeder::class);
     }
 }
 

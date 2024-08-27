@@ -11,19 +11,16 @@ class Message extends Model
 {
     use HasFactory;
 
+    protected $connection = "mysql";
+    protected $keyType = "string";
+    protected $primaryKey = "id";
+
     protected $fillable = [
-        "id",
-        "mail_id",
+        "conversation_id",
         "sender_id",
         "sender_type",
-        "receiver_id",
-        "receiver_type",
-        "text",
-        "date",
+        "content",
     ];
-    protected $primaryKey = "id";
-    protected $keyType = "string";
-    protected $connection = "mysql";
 
     public $timestamps = false;
 
@@ -53,17 +50,13 @@ class Message extends Model
             }
         });
     }
-    public function mail()
+
+    public function conversation()
     {
-        return $this->belongsTo(Mail::class, "mail_id");
+        return $this->belongsTo(Conversation::class);
     }
 
     public function sender()
-    {
-        return $this->morphTo();
-    }
-
-    public function receiver()
     {
         return $this->morphTo();
     }

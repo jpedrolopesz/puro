@@ -1,12 +1,14 @@
 <script lang="ts" setup>
 import { Search } from "lucide-vue-next";
+import type { ChatProps, Conversation, Tenant, Message } from "../data/types";
 
 import { computed, ref } from "vue";
 import { refDebounced } from "@vueuse/core";
 import { MailPlus } from "lucide-vue-next";
+import { usePage } from "@inertiajs/vue3";
 
-import MailList from "./MailList.vue";
-import MailDisplay from "./MailDisplay.vue";
+import ConversationList from "./ConversationList.vue";
+import ConversationDisplay from "./ConversationDisplay.vue";
 import { Separator } from "@/Components/ui/separator";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
@@ -18,95 +20,55 @@ import {
     ResizablePanelGroup,
 } from "@/Components/ui/resizable";
 
-interface User {
-    id: number;
-    name: string;
-    email: string;
-    email_verified_at?: string;
-    tenant_id?: number | null;
-    created_at: string;
-    updated_at: string;
-}
-
-interface Tenant {
-    id: number;
-    name: string;
-    email: string;
-    creator_id: number;
-    status: string;
-    tenancy_name: string;
-    tenancy_db_name: string;
-    tenancy_about: string;
-    created_at: string;
-    updated_at: string;
-    users: User[];
-    creator: User;
-    data?: any;
-}
-
-interface TenantsWithUsersProps {
-    tenantsWithUsers: Tenant[];
-}
-
-interface Mail {
-    id: string;
-    name: string;
-    email: string;
-    subject: string;
-
-    date: string;
-    read: boolean;
-    receiver_id: number;
-    sender_id: number;
-    labels: string[];
-}
-
-interface MailProps {
-    mails: Mail[];
-    defaultLayout?: number[];
-    defaultCollapsed?: boolean;
-    navCollapsedSize: number;
-}
-
-interface CombinedProps extends TenantsWithUsersProps, MailProps {}
-
-const props = withDefaults(defineProps<CombinedProps>(), {
+const props = withDefaults(defineProps<ChatProps>(), {
     defaultCollapsed: false,
     defaultLayout: () => [30, 40],
 });
 
+const { auth } = usePage().props;
 const isCollapsed = ref(props.defaultCollapsed);
-const selectedMail = ref<string | undefined>(undefined);
+const selectedConversation = ref<string | undefined>(undefined);
 const searchValue = ref("");
 const debouncedSearch = refDebounced(searchValue, 250);
 
-const filteredMailList = computed(() => {
-    let output: Mail[] = [];
+const filteredConversationList = computed(() => {
+    let output: Conversation[] = [];
     const searchValue = debouncedSearch.value?.trim();
     if (!searchValue) {
-        output = props.mails;
+        output = props.conversations;
     } else {
-        output = props.mails.filter((item) => {
+        output = props.conversations.filter((item) => {
             return (
-                item.name.includes(debouncedSearch.value) ||
-                item.email.includes(debouncedSearch.value) ||
-                item.name.includes(debouncedSearch.value) ||
+                item.participant.name.includes(debouncedSearch.value) ||
+                item.participant.email.includes(debouncedSearch.value) ||
                 item.subject.includes(debouncedSearch.value)
-                //item.text.includes(debouncedSearch.value)
             );
         });
     }
-
     return output;
 });
 
-const unreadMailList = computed(() =>
-    filteredMailList.value.filter((item) => !item.read),
+const unreadConversationList = computed(() =>
+    filteredConversationList.value.filter((conversation) =>
+        conversation.messages.some(
+            (message) => !message.read && message.sender_id !== auth.user.id,
+        ),
+    ),
 );
 
-const selectedMailData = computed(() =>
-    props.mails.find((item) => item.id === selectedMail.value || null),
+const selectedConversationData = computed(() =>
+    props.conversations.find(
+        (conversation) => conversation.id === selectedConversation.value,
+    ),
 );
+
+function createNewConversation() {
+    selectedConversation.value = undefined;
+}
+
+function handleMessageSent(conversationId: string) {
+    selectedConversation.value = conversationId;
+}
 
 function onCollapse() {
     isCollapsed.value = true;
@@ -114,14 +76,6 @@ function onCollapse() {
 
 function onExpand() {
     isCollapsed.value = false;
-}
-
-function createNewMail() {
-    selectedMail.value = null;
-}
-
-function handleMailSent(mailId: string) {
-    selectedMail.value = mailId;
 }
 </script>
 
@@ -172,22 +126,25 @@ function handleMailSent(mailId: string) {
                             </div>
                         </form>
                         <div>
-                            <Button class="w-full" @click="createNewMail">
+                            <Button
+                                class="w-full"
+                                @click="createNewConversation"
+                            >
                                 <MailPlus />
                             </Button>
                         </div>
                     </div>
                     <div class="p-4"></div>
                     <TabsContent value="all" class="m-0">
-                        <MailList
-                            v-model:selected-mail="selectedMail"
-                            :items="filteredMailList"
+                        <ConversationList
+                            v-model:selected-conversation="selectedConversation"
+                            :items="filteredConversationList"
                         />
                     </TabsContent>
                     <TabsContent value="unread" class="m-0">
-                        <MailList
-                            v-model:selected-mail="selectedMail"
-                            :items="unreadMailList"
+                        <ConversationList
+                            v-model:selected-conversation="selectedConversation"
+                            :items="unreadConversationList"
                         />
                     </TabsContent>
                 </Tabs>
@@ -197,11 +154,11 @@ function handleMailSent(mailId: string) {
                 id="resize-panel-2"
                 :default-size="defaultLayout[2]"
             >
-                <MailDisplay
-                    v-model:selected-mail="selectedMail"
-                    :mail="selectedMailData || null"
+                <ConversationDisplay
+                    v-model:selected-conversation="selectedConversation"
+                    :conversation="selectedConversationData || null"
                     :tenantsWithUsers="tenantsWithUsers"
-                    @mail-sent="handleMailSent"
+                    @message-sent="handleMessageSent"
                 />
             </ResizablePanel>
         </ResizablePanelGroup>

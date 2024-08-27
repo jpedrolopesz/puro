@@ -1,30 +1,28 @@
 <script lang="ts" setup>
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-
-import Mail from "./Components/Mail.vue";
+import Chat from "./Components/Chat.vue";
 import { defineProps } from "vue";
-
 import { Head } from "@inertiajs/vue3";
 
 const props = defineProps({
-    mails: {
-        type: Object,
+    conversations: {
+        type: Array,
         required: true,
     },
     tenantsWithUsers: {
-        type: Object,
+        type: Array,
         required: true,
     },
 });
 
-console.log(props.mails);
+console.log(props.conversations);
 </script>
 
 <template>
-    <Head title="Mails" />
+    <Head title="Chat" />
     <AuthenticatedCentralLayout>
-        <Mail
-            :mails="props.mails"
+        <Chat
+            :conversations="props.conversations"
             :tenantsWithUsers="props.tenantsWithUsers"
             :nav-collapsed-size="4"
         />
