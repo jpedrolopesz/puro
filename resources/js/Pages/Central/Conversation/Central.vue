@@ -6,8 +6,6 @@ const { conversations, conversationParticipants } = defineProps<{
     conversations: Array<any>;
     conversationParticipants: Record<string, Tenant | Admin>;
 }>();
-
-console.log(conversations);
 </script>
 
 <template>

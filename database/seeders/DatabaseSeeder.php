@@ -1,12 +1,7 @@
 
 <?php
 use Illuminate\Database\Seeder;
-use Database\Seeders\{
-    UsersSeeder,
-    AdminSeeder,
-    ConversationSeeder,
-    MessageSeeder
-};
+use Database\Seeders\{UsersSeeder, AdminSeeder, ConversationSeeder};
 
 class DatabaseSeeder extends Seeder
 {
@@ -15,7 +10,6 @@ class DatabaseSeeder extends Seeder
         //$this->call(AdminSeeder::class);
         $this->call(UsersSeeder::class);
         $this->call(ConversationSeeder::class);
-        //$this->call(MessageSeeder::class);
 
         //$this->call(MailSeeder::class);
         //$this->call(TenantsSeeder::class);

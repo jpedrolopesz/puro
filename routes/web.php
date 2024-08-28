@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\NewMessageEvent;
 use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
@@ -9,7 +10,9 @@ use App\Http\Controllers\Central\{
     PaymentCentralController,
     StripeWebhookController
 };
+use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -136,6 +139,21 @@ Route::middleware("auth:admin")->group(function () {
         ConversationCentralController::class,
         "createCoversation",
     ])->name("admin.conversation.create");
+
+    Broadcast::routes();
+
+    Route::get("/test-broadcast/{conversationId}", function ($conversationId) {
+        $message = Message::create([
+            "conversation_id" => $conversationId,
+            "sender_id" => auth()->id(),
+            "sender_type" => get_class(auth()->user()),
+            "content" => "Test message from broadcast",
+        ]);
+
+        broadcast(new NewMessageEvent($message));
+
+        return "Broadcast event sent. Check your console.";
+    });
 });
 
 require __DIR__ . "/auth.php";

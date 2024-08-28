@@ -37,8 +37,6 @@ const allUsers = computed(() => {
     return [...tenantUsers, ...props.conversationParticipants.admins];
 });
 
-console.log(allUsers.value);
-
 const mailFallbackNames = computed(() => {
     const map = {};
     allUsers.value.forEach((user) => {

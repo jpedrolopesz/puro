@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Actions\Global\FetchUserConversations;
+use App\Events\NewMessageEvent;
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\{Message, Tenant, User, Admin};
@@ -52,8 +53,6 @@ class ConversationCentralController extends Controller
 
     public function createCoversation(Request $request)
     {
-        //dd($request->all());
-
         $request->validate([
             "recipient_type" => ["required", 'regex:/^(USR|ADM)-\d{5}$/'],
         ]);
@@ -104,6 +103,8 @@ class ConversationCentralController extends Controller
             "content" => $request->input("content"),
             "read" => $request->input("read"),
         ]);
+
+        event(new NewMessageEvent($message));
 
         return;
     }
