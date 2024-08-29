@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Conversation;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 
 Broadcast::channel(
@@ -12,17 +13,16 @@ Broadcast::channel(
 );
 
 Broadcast::channel(
-    "chat.{userId}",
-    function ($user, $id) {
-        return (int) $user->id === (int) $id;
+    "user.{userId}",
+    function ($user, $userId) {
+        return (int) $user->id === (int) $userId;
     },
     ["guards" => ["web", "admin"]]
 );
 
-Broadcast::channel(
-    "conversation.{conversationId}",
-    function ($user, $conversationId) {
-        return $user->conversations->contains($conversationId);
-    },
-    ["guards" => ["web", "admin"]]
-);
+Broadcast::channel("conversation.{conversationId}", function (
+    $user,
+    $conversationId
+) {
+    return $user->conversations()->where("id", $conversationId)->exists();
+});

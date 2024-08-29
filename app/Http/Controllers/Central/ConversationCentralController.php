@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Central;
 
 use App\Actions\Global\FetchUserConversations;
-use App\Events\NewMessageEvent;
+use App\Events\{NewMessageEvent, NewConversationEvent};
 use App\Http\Controllers\Controller;
 use App\Models\Conversation;
 use App\Models\{Message, Tenant, User, Admin};
@@ -85,6 +85,9 @@ class ConversationCentralController extends Controller
             "content" => $request->input("content"),
         ]);
 
+        $test = broadcast(new NewConversationEvent($conversation))->toOthers();
+
+        // dd($test);
         return;
     }
 
@@ -94,8 +97,6 @@ class ConversationCentralController extends Controller
 
         $sender = $request->user();
 
-        //dd($sender->all());
-
         $message = Message::create([
             "conversation_id" => $request->input("conversation_id"),
             "sender_id" => $sender->id,
@@ -104,7 +105,9 @@ class ConversationCentralController extends Controller
             "read" => $request->input("read"),
         ]);
 
-        event(new NewMessageEvent($message));
+        broadcast(new NewMessageEvent($message))->toOthers();
+
+        //dd($test);
 
         return;
     }

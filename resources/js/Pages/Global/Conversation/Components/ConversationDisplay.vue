@@ -42,8 +42,10 @@ const handleUserSelected = (user: User) => {
 };
 
 const createConversation = () => {
+    const newConversationId = uuidv4();
+
     const form = useForm({
-        id: uuidv4(),
+        id: newConversationId,
         initiator_id: auth.user?.id,
         recipient_id: selectedUser.value?.id,
         recipient_type: selectedUser.value?.identifier,
@@ -62,6 +64,9 @@ const createConversation = () => {
                 subject.value = "";
                 replyText.value = "";
                 emit("message-sent", form.id as string);
+                setupWebSocket(newConversationId);
+
+                console.log(newConversationId);
             },
             onError: (error) => console.error("Error sending message:", error),
         },
@@ -83,7 +88,11 @@ const sendMessage = () => {
             preserveScroll: true,
             onSuccess: () => {
                 replyText.value = "";
-                emit("message-sent", props.conversation!.id);
+                emit("message-sent", form.conversation_id);
+
+                setupWebSocket(form.conversation_id);
+
+                console.log(form.conversation_id);
             },
             onError: (error) => console.error("Error sending message:", error),
         },
@@ -97,6 +106,33 @@ const handleSubmit = () => {
         createConversation();
     }
 };
+
+const setupWebSocket = (conversationId: string) => {
+    if (Echo.connector.channels[`conversation.${conversationId}`]) {
+        // Echo.leaveChannel(`conversation.${conversationId}`);
+        //
+        console.log("ök");
+    }
+
+    Echo.channel(`conversation.${conversationId}`).listen(
+        ".new.message",
+        (event: { message: Message }) => {
+            console.log(event);
+            messages.value.push(event.message);
+        },
+    );
+};
+
+watch(
+    () => props.conversation?.id,
+    (conversationId) => {
+        if (conversationId) {
+            setupWebSocket(conversationId);
+            console.log("oi?", conversationId);
+        }
+    },
+    { immediate: true },
+);
 </script>
 
 <template>
