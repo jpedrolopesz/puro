@@ -11,6 +11,7 @@ use App\Models\{Message, Tenant, User, Admin};
 use Illuminate\Http\Request;
 
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class ConversationCentralController extends Controller
@@ -85,16 +86,13 @@ class ConversationCentralController extends Controller
             "content" => $request->input("content"),
         ]);
 
-        $test = broadcast(new NewConversationEvent($conversation))->toOthers();
+        //broadcast(new NewMessageEvent($message))->toOthers();
 
-        // dd($test);
         return;
     }
 
     public function sendMessage(Request $request)
     {
-        // dd($request->all());
-
         $sender = $request->user();
 
         $message = Message::create([
@@ -106,8 +104,6 @@ class ConversationCentralController extends Controller
         ]);
 
         broadcast(new NewMessageEvent($message))->toOthers();
-
-        //dd($test);
 
         return;
     }

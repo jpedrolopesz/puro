@@ -25,6 +25,7 @@ const emit = defineEmits<{
 const replyText = ref("");
 const subject = ref("");
 const selectedUser = ref<User | null>(null);
+//const messages = ref<Message[]>([]);
 
 const { auth } = usePage().props;
 const initials = computed(() =>
@@ -73,7 +74,7 @@ const createConversation = () => {
     );
 };
 
-const sendMessage = () => {
+const sendMessage = async () => {
     if (!props.conversation) return;
 
     const form = useForm({
@@ -82,7 +83,7 @@ const sendMessage = () => {
         read: "false",
     });
 
-    form.post(
+    await form.post(
         route(`${auth.user?.tenant_id ? "tenant" : "admin"}.message.send`),
         {
             preserveScroll: true,
@@ -91,8 +92,6 @@ const sendMessage = () => {
                 emit("message-sent", form.conversation_id);
 
                 setupWebSocket(form.conversation_id);
-
-                console.log(form.conversation_id);
             },
             onError: (error) => console.error("Error sending message:", error),
         },
@@ -106,19 +105,19 @@ const handleSubmit = () => {
         createConversation();
     }
 };
+const localMessages = computed(() => props.conversation?.messages || []);
 
 const setupWebSocket = (conversationId: string) => {
     if (Echo.connector.channels[`conversation.${conversationId}`]) {
-        // Echo.leaveChannel(`conversation.${conversationId}`);
-        //
-        console.log("ök");
+        Echo.leaveChannel(`conversation.${conversationId}`);
     }
 
     Echo.channel(`conversation.${conversationId}`).listen(
-        ".new.message",
+        ".new-message",
+
         (event: { message: Message }) => {
-            console.log(event);
-            messages.value.push(event.message);
+            localMessages.value.push(event.message);
+            console.log(event.message);
         },
     );
 };
@@ -128,7 +127,6 @@ watch(
     (conversationId) => {
         if (conversationId) {
             setupWebSocket(conversationId);
-            console.log("oi?", conversationId);
         }
     },
     { immediate: true },
@@ -195,7 +193,7 @@ watch(
                 >
                     <ul>
                         <li
-                            v-for="message in conversation.messages"
+                            v-for="message in localMessages"
                             :key="message.id"
                             :class="[
                                 'p-4 my-4 rounded-lg',

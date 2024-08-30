@@ -20,9 +20,6 @@ Broadcast::channel(
     ["guards" => ["web", "admin"]]
 );
 
-Broadcast::channel("conversation.{conversationId}", function (
-    $user,
-    $conversationId
-) {
-    return $user->conversations()->where("id", $conversationId)->exists();
+Broadcast::channel("conversation.{id}", function ($user, $id) {
+    return true; // Substitua isso pela sua lógica de autorização
 });
