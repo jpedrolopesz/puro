@@ -90,26 +90,24 @@ const sendMessage = async () => {
             onSuccess: () => {
                 replyText.value = "";
                 emit("message-sent", form.conversation_id);
-
-                setupWebSocket(form.conversation_id);
             },
             onError: (error) => console.error("Error sending message:", error),
         },
     );
 };
 
-const handleSubmit = () => {
-    if (props.conversation?.id) {
-        sendMessage();
-    } else {
-        createConversation();
-    }
-};
-const localMessages = computed(() => props.conversation?.messages || []);
+const localMessages = ref<Message[]>([]);
 
 const setupWebSocket = (conversationId: string) => {
-    if (Echo.connector.channels[`conversation.${conversationId}`]) {
-        Echo.leaveChannel(`conversation.${conversationId}`);
+    const channelName = `conversation.${conversationId}`;
+
+    const existingChannel = Echo.connector.channels[channelName];
+
+    if (existingChannel) {
+        console.log(
+            `Já está inscrito no canal: ${channelName}. Cancelando inscrição anterior...`,
+        );
+        Echo.leaveChannel(channelName);
     }
 
     Echo.channel(`conversation.${conversationId}`).listen(
@@ -120,6 +118,14 @@ const setupWebSocket = (conversationId: string) => {
             console.log(event.message);
         },
     );
+};
+
+const handleSubmit = () => {
+    if (props.conversation?.id) {
+        sendMessage();
+    } else {
+        createConversation();
+    }
 };
 
 watch(
@@ -191,6 +197,35 @@ watch(
                             : 'max-h-[calc(100vh-250px)]'
                     "
                 >
+                    <ul>
+                        <li
+                            v-for="message in conversation.messages"
+                            :key="message.id"
+                            :class="[
+                                'p-4 my-4 rounded-lg',
+                                message.sender_id == auth.user.id
+                                    ? 'text-right bg-gray-50 mr-4 ml-20'
+                                    : 'text-left bg-gray-100 ml-4 mr-20',
+                            ]"
+                        >
+                            <div class="flex flex-col">
+                                <span class="whitespace-pre-wrap text-sm">
+                                    {{ message?.content }}xoxota
+                                </span>
+                                <span
+                                    class="whitespace-pre-wrap text-xs truncate"
+                                >
+                                    {{
+                                        format(
+                                            new Date(message.created_at),
+                                            "pp",
+                                        )
+                                    }}
+                                </span>
+                            </div>
+                        </li>
+                    </ul>
+
                     <ul>
                         <li
                             v-for="message in localMessages"
