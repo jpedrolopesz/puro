@@ -82,7 +82,7 @@ const sendMessage = async () => {
         content: replyText.value.trim(),
         read: "false",
     });
-    //фывф
+    //ada
     await form.post(
         route(`${auth.user?.tenant_id ? "tenant" : "admin"}.message.send`),
         {
