@@ -33,6 +33,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+console.log(props.tenantDetails);
 </script>
 
 <template>

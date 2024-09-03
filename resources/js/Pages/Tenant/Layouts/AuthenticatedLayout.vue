@@ -7,8 +7,10 @@ import NavSidebar from "./Components/NavSidebar.vue";
     <NavSidebar>
         <div class="flex-col md:flex">
             <NavHeard />
-            <div class="flex-1 space-y-4 h-lvh">
-                <slot />
+            <div>
+                <ScrollArea class="h-screen">
+                    <slot />
+                </ScrollArea>
             </div>
         </div>
     </NavSidebar>

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+
 import { Head } from "@inertiajs/vue3";
 
 import DataTable from "./Components/DataTable.vue";

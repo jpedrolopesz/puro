@@ -99,7 +99,7 @@ const onSubmit = handleSubmit((values) => {
                 <FormControl>
                     <Input
                         type="text"
-                        :placeholder="$page.props.auth.admin.name"
+                        :placeholder="$page.props.auth.user.name"
                         v-bind="componentField"
                     />
                 </FormControl>
@@ -117,7 +117,7 @@ const onSubmit = handleSubmit((values) => {
                 <FormControl>
                     <Input
                         type="text"
-                        :placeholder="$page.props.auth.admin.email"
+                        :placeholder="$page.props.auth.user.email"
                         v-bind="componentField"
                     />
                 </FormControl>
