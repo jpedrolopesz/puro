@@ -1,6 +1,5 @@
 <?php
 
-use App\Events\NewMessageEvent;
 use App\Http\Controllers\Central\{
     ProfileCentralController,
     TenantsCentralController,
@@ -8,9 +7,9 @@ use App\Http\Controllers\Central\{
     ConversationCentralController,
     ProductsCentralController,
     PaymentCentralController,
-    StripeWebhookController
+    StripeWebhookController,
+    ProductsBuilderCentralController
 };
-use App\Models\Message;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -109,6 +108,12 @@ Route::middleware("auth:admin")->group(function () {
         "updateDefaultPrice",
     ])->name("product.update.default");
 
+    ######## PRODUCT BUILDER ########
+    Route::get("/products/builder", [
+        ProductsBuilderCentralController::class,
+        "index",
+    ])->name("products.builder.index");
+
     ######## PROFILE ########
     Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"
@@ -141,19 +146,6 @@ Route::middleware("auth:admin")->group(function () {
     ])->name("admin.conversation.create");
 
     Broadcast::routes();
-
-    Route::get("/test-broadcast/{conversationId}", function ($conversationId) {
-        $message = Message::create([
-            "conversation_id" => $conversationId,
-            "sender_id" => auth()->id(),
-            "sender_type" => get_class(auth()->user()),
-            "content" => "Test message from broadcast",
-        ]);
-
-        broadcast(new NewMessageEvent($message));
-
-        return "Broadcast event sent. Check your console.";
-    });
 });
 
 require __DIR__ . "/auth.php";

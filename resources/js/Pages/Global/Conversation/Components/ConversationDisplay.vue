@@ -2,7 +2,7 @@
 import { defineEmits, computed, ref, onMounted, onUnmounted, watch } from "vue";
 import { format } from "date-fns";
 import { v4 as uuidv4 } from "uuid";
-import { usePage, useForm } from "@inertiajs/vue3";
+import { usePage, useForm, router } from "@inertiajs/vue3";
 
 import UserSelectPopover from "./UserSelectPopover.vue";
 import { Avatar, AvatarFallback } from "@/Components/ui/avatar";
@@ -25,13 +25,10 @@ const emit = defineEmits<{
 const replyText = ref("");
 const subject = ref("");
 const selectedUser = ref<User | null>(null);
-//const messages = ref<Message[]>([]);
-
 const { auth } = usePage().props;
 const initials = computed(() =>
     selectedUser.value ? getInitials(selectedUser.value.name) : "",
 );
-
 const getInitials = (name: string): string =>
     name
         .split(" ")
@@ -74,41 +71,37 @@ const createConversation = () => {
     );
 };
 
-const sendMessage = async () => {
+const localMessages = ref<Message[]>([]);
+
+const allMessages = computed(() => {
+    // if (!props.conversation) return [];
+    return [...props.conversation.messages, ...localMessages.value];
+});
+
+const sendMessage = () => {
     if (!props.conversation) return;
 
-    const form = useForm({
-        conversation_id: props.conversation.id,
-        content: replyText.value.trim(),
-        read: "false",
-    });
-    //ada
-    await form.post(
+    router.post(
         route(`${auth.user?.tenant_id ? "tenant" : "admin"}.message.send`),
+        {
+            conversation_id: props.conversation.id,
+            content: replyText.value.trim(),
+        },
         {
             preserveScroll: true,
             onSuccess: () => {
                 replyText.value = "";
-                emit("message-sent", form.conversation_id);
+                emit("message-sent", props.conversation.id);
             },
-            onError: (error) => console.error("Error sending message:", error),
         },
     );
 };
 
-const localMessages = ref<Message[]>([]);
-
 const setupWebSocket = (conversationId: string) => {
     const channelName = `conversation.${conversationId}`;
 
-    const existingChannel = Echo.connector.channels[channelName];
-
-    if (existingChannel) {
-        console.log(
-            `Já está inscrito no canal: ${channelName}. Cancelando inscrição anterior...`,
-        );
-        Echo.leaveChannel(channelName);
-    }
+    Echo.leaveChannel(channelName);
+    Echo.channel(channelName);
 
     Echo.channel(`conversation.${conversationId}`).listen(
         ".new-message",
@@ -120,14 +113,6 @@ const setupWebSocket = (conversationId: string) => {
     );
 };
 
-const handleSubmit = () => {
-    if (props.conversation?.id) {
-        sendMessage();
-    } else {
-        createConversation();
-    }
-};
-
 watch(
     () => props.conversation?.id,
     (conversationId) => {
@@ -137,6 +122,14 @@ watch(
     },
     { immediate: true },
 );
+
+const handleSubmit = () => {
+    if (props.conversation?.id) {
+        sendMessage();
+    } else {
+        createConversation();
+    }
+};
 </script>
 
 <template>
@@ -199,36 +192,7 @@ watch(
                 >
                     <ul>
                         <li
-                            v-for="message in conversation.messages"
-                            :key="message.id"
-                            :class="[
-                                'p-4 my-4 rounded-lg',
-                                message.sender_id == auth.user.id
-                                    ? 'text-right bg-gray-50 mr-4 ml-20'
-                                    : 'text-left bg-gray-100 ml-4 mr-20',
-                            ]"
-                        >
-                            <div class="flex flex-col">
-                                <span class="whitespace-pre-wrap text-sm">
-                                    {{ message?.content }}xoxota
-                                </span>
-                                <span
-                                    class="whitespace-pre-wrap text-xs truncate"
-                                >
-                                    {{
-                                        format(
-                                            new Date(message.created_at),
-                                            "pp",
-                                        )
-                                    }}
-                                </span>
-                            </div>
-                        </li>
-                    </ul>
-
-                    <ul>
-                        <li
-                            v-for="message in localMessages"
+                            v-for="message in allMessages"
                             :key="message.id"
                             :class="[
                                 'p-4 my-4 rounded-lg',
@@ -280,7 +244,7 @@ watch(
                     <div class="grid gap-4">
                         <Textarea
                             v-model="replyText"
-                            class="p-4"
+                            class="p-4 h-32 resize-none"
                             :placeholder="
                                 conversation
                                     ? `Reply to ${conversation.participant?.name}...`

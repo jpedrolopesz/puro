@@ -4,7 +4,6 @@ import { computed } from "vue";
 import type { Order } from "../data/schema";
 import { MixerHorizontalIcon, PlusIcon } from "@radix-icons/vue";
 import ProductCreateForm from "../Partils/ProductCreateForm.vue";
-
 import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
@@ -15,7 +14,6 @@ import {
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 import { Separator } from "@/Components/ui/separator";
-
 import {
     Sheet,
     SheetContent,
@@ -24,6 +22,7 @@ import {
     SheetTitle,
     SheetTrigger,
 } from "@/Components/ui/sheet";
+import { Link } from "@inertiajs/vue3";
 
 interface DataTableViewOptionsProps {
     table: Table<Task>;
@@ -86,4 +85,11 @@ const columns = computed(() =>
             </DropdownMenuCheckboxItem>
         </DropdownMenuContent>
     </DropdownMenu>
+
+    <Link :href="route('products.builder.index')">
+        <Button variant="outline" size="sm" class="ml-2 hidden h-8 lg:flex">
+            <MixerHorizontalIcon class="mr-2 h-4 w-4" />
+            Builder
+        </Button>
+    </Link>
 </template>
