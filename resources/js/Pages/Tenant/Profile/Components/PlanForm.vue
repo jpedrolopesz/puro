@@ -111,7 +111,7 @@ const currentPlan = ref({
 </script>
 
 <template>
-    <div class="mt-5 md:col-span-2 md:mt-0 f">
+    <div class="mt-5 md:col-span-2 md:mt-0">
         <div class="flex items-center space-x-2">
             <Label for="airplane-mode">Monthly</Label>
 
