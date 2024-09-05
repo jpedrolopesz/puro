@@ -22,6 +22,7 @@ class ProductsBuilderCentralController extends Controller
     {
         $formattedData = $this->getProductsAndPricesAction->execute();
 
+        //dd($formattedData);
         return Inertia::render("Central/Products/Builder/ProductsBuilder", [
             "products" => $formattedData,
         ]);
