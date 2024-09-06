@@ -114,6 +114,11 @@ Route::middleware("auth:admin")->group(function () {
         "index",
     ])->name("products.builder.index");
 
+    Route::post("/products/update-order", [
+        ProductsBuilderCentralController::class,
+        "updateOrder",
+    ])->name("products.updateOrder");
+
     ######## PROFILE ########
     Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
         "profile.edit"

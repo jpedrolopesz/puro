@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import type { Product, Price } from "./data/type";
+import { useForm } from "@inertiajs/vue3";
+
 import { ref, computed, watch } from "vue";
 import draggable from "vuedraggable";
 import { Switch } from "@/Components/ui/switch";
@@ -37,6 +39,27 @@ const columnIcons = {
     4: Columns4,
 };
 
+const form = useForm({
+    products: [],
+});
+
+const saveOrder = () => {
+    form.products = [
+        ...selectedProducts.value.monthly,
+        ...selectedProducts.value.yearly,
+    ].map((product, index) => ({
+        id: product.id,
+        order: index + 1,
+    }));
+
+    form.post(route("products.updateOrder"), {
+        preserveState: true,
+        preserveScroll: true,
+        onSuccess: () => {
+            console.log("Ordem dos produtos salva com sucesso");
+        },
+    });
+};
 const selectedProducts = ref<{
     monthly: (Product & { selectedPrice: Price | null })[];
     yearly: (Product & { selectedPrice: Price | null })[];
@@ -105,11 +128,6 @@ const removeProduct = (
     updateProducts(type);
 };
 
-const saveOrder = () => {
-    console.log("Ordem dos produtos mensais:", selectedProducts.value.monthly);
-    console.log("Ordem dos produtos anuais:", selectedProducts.value.yearly);
-};
-
 const formatPrice = (price: Price): string => {
     return new Intl.NumberFormat("pt-BR", {
         style: "currency",
@@ -168,7 +186,13 @@ const selectPrice = (
                         </TabsTrigger>
                     </TabsList>
                 </Tabs>
-                <Button size="sm" @click="saveOrder">Save</Button>
+                <Button
+                    size="sm"
+                    @click="saveOrder"
+                    :disabled="form.processing"
+                >
+                    {{ form.processing ? "Salvando..." : "Salvar Ordem" }}
+                </Button>
             </div>
         </div>
         <Separator />
