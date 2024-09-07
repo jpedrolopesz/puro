@@ -29,6 +29,7 @@ class ProductsBuilderCentralController extends Controller
         $this->retrieveOrderedProductsAction = $retrieveOrderedProductsAction;
     }
 
+    //TESTAST
     public function index()
     {
         $products = $this->retrieveOrderedProductsAction->execute();
