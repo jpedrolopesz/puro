@@ -134,7 +134,7 @@ Route::middleware("auth:admin")->group(function () {
         "destroy",
     ])->name("profile.destroy");
 
-    ######## CONVERSATION ########
+    ######## CONVERSATIONd ########
     Route::get("/conversation", [
         ConversationCentralController::class,
         "index",
