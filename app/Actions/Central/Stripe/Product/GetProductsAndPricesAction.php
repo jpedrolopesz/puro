@@ -34,14 +34,20 @@ class GetProductsAndPricesAction
     private function formatData(array $products, array $prices): array
     {
         $formatted = [];
-
         $pricesByProduct = [];
+        $productsById = [];
+
+        // Organize products by ID for easy lookup
+        foreach ($products as $product) {
+            $productsById[$product["id"]] = $product;
+        }
+
+        // Process all prices, even those without a matching product
         foreach ($prices as $price) {
             $productId = $price["product"];
             if (!isset($pricesByProduct[$productId])) {
                 $pricesByProduct[$productId] = [];
             }
-
             $pricesByProduct[$productId][] = [
                 "id" => $price["id"],
                 "currency" => $price["currency"],
@@ -57,18 +63,19 @@ class GetProductsAndPricesAction
             ];
         }
 
-        foreach ($products as $product) {
-            $productId = $product["id"];
+        // Format products with their prices
+        foreach ($pricesByProduct as $productId => $productPrices) {
+            $product = $productsById[$productId] ?? null;
             $formatted[] = [
-                "id" => $product["id"],
-                "name" => $product["name"],
+                "id" => $productId,
+                "name" => $product["name"] ?? "Unknown Product",
                 "description" => $product["description"] ?? null,
-                "active" => $product["active"],
-                "created" => $product["created"],
+                "active" => $product["active"] ?? false,
+                "created" => $product["created"] ?? null,
                 "updated" => $product["updated"] ?? null,
                 "statement_descriptor" =>
                     $product["statement_descriptor"] ?? null,
-                "prices" => $pricesByProduct[$productId] ?? [],
+                "prices" => $productPrices,
             ];
         }
 

@@ -29,26 +29,22 @@ class ProductsBuilderCentralController extends Controller
         $this->retrieveOrderedProductsAction = $retrieveOrderedProductsAction;
     }
 
-    //TESTAST
     public function index()
     {
         $products = $this->retrieveOrderedProductsAction->execute();
-        dd($products);
+        //  dd($products);
         $data = $this->getProductsAndPricesAction->execute();
+        //dd($data);
         return Inertia::render("Central/Products/Builder/ProductsBuilder", [
-            "products" => $data,
+            "products" => $products,
         ]);
     }
 
     public function updateOrder(Request $request)
     {
-        $request->validate([
-            "products" => "required|array",
-            "products.*.id" => "required|string",
-            "products.*.order" => "required|integer",
-        ]);
-        $this->updateProductOrderAction->execute($request->products);
+        //dd($request->all());
 
+        $result = $this->updateProductOrderAction->execute($request->products);
         return;
     }
 }
