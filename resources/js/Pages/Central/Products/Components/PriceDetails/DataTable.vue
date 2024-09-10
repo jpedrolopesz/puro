@@ -21,7 +21,6 @@ import { h, ref } from "vue";
 import DropdownAction from "./DropdownAction.vue";
 
 import { Button } from "@/Components/ui/button";
-import { Checkbox } from "@/Components/ui/checkbox";
 import { Badge } from "@/Components/ui/badge";
 
 import {
@@ -50,7 +49,7 @@ export interface Price {
     currency: string;
     nickname: string;
     recurring: {
-        interval: "day" | "week" | "month" | "year";
+        interval: "month" | "year";
         interval_count: number;
     };
     trial_period_days: number | null;

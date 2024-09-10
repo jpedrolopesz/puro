@@ -1,28 +1,16 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-import PriceActiveSwitch from "./Partils/Price/PriceActiveSwitch.vue";
 import PriceCreateForm from "./Partils/Price/PriceCreateForm.vue";
 import ProductUpdateForm from "./Partils/ProductUpdateForm.vue";
 import DataTable from "./Components/PriceDetails/DataTable.vue";
 
-import { Head, Link, useForm } from "@inertiajs/vue3";
+import { Head, Link } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
+
 import { ChevronLeft, PlusCircle } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
-import { Input } from "@/Components/ui/input";
-import { Textarea } from "@/Components/ui/textarea";
-import { Label } from "@/Components/ui/label";
 import { Separator } from "@/Components/ui/separator";
-import { ScrollArea } from "@/Components/ui/scroll-area";
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/Components/ui/dropdown-menu";
 import {
     Card,
     CardContent,
@@ -32,26 +20,9 @@ import {
     CardFooter,
 } from "@/Components/ui/card";
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/Components/ui/select";
-import {
     Sheet,
-    SheetClose,
     SheetContent,
     SheetDescription,
-    SheetFooter,
     SheetHeader,
     SheetTitle,
     SheetTrigger,
@@ -63,8 +34,6 @@ const props = defineProps({
         required: true,
     },
 });
-
-console.log(props.product);
 
 const defaultPriceId = ref(
     props.product.prices.find(

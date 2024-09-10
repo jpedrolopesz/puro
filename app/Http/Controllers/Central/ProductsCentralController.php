@@ -3,166 +3,125 @@
 namespace App\Http\Controllers\Central;
 
 use App\Actions\Central\Stripe\Product\{
-    GetProductsAndPricesAction,
     GetProductPriceDetailsAction,
     CreateProductAction,
-    CreatePriceAction,
-    UpdateProductAction,
-    UpdatePriceAction,
-    UpdateDefaultPriceAction,
-    DeleteProductAction
+    UpdateStripeProductAction,
+    UpdateStripeProductArchivedAction,
+    RetrieveOrderedProductsAction
 };
+
+use App\Actions\Central\Stripe\Product\Price\{
+    CreateStripePriceAction,
+    UpdateStripePriceArchivedAction,
+    UpdateStripePriceDefaultAction
+};
+use App\Http\Requests\Central\Stripe\Product\Price\{
+    PriceUpdateRequest,
+    PriceCreateRequest
+};
+use App\Http\Requests\Central\Stripe\Product\{
+    ProductCreateRequest,
+    ProductUpdateRequest
+};
+use App\Http\Requests\Central\Stripe\Product\Price\UpdatePriceArchivedRequest;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Inertia\Inertia;
+
+use Inertia\{Inertia, Response};
 use Stripe\Stripe;
 
 class ProductsCentralController extends Controller
 {
-    protected $getProductsAndPricesAction;
-    protected $getProductPriceDetailsAction;
-    protected $createProductAction;
-    protected $createPriceAction;
-    protected $updateProductAction;
-    protected $updatePriceAction;
-    protected $updateDefaultPriceAction;
-    protected $deleteProductAction;
-
     public function __construct(
-        GetProductsAndPricesAction $getProductsAndPricesAction,
-        GetProductPriceDetailsAction $getProductPriceDetailsAction,
-        CreateProductAction $createProductAction,
-        CreatePriceAction $createPriceAction,
-        UpdateProductAction $updateProductAction,
-        UpdatePriceAction $updatePriceAction,
-        UpdateDefaultPriceAction $updateDefaultPriceAction,
-        DeleteProductAction $deleteProductAction
+        private readonly GetProductPriceDetailsAction $getProductPriceDetailsAction,
+        private readonly CreateProductAction $createProductAction,
+        private readonly CreateStripePriceAction $createStripePriceAction,
+        private readonly UpdateStripeProductAction $updateStripeProductAction,
+        private readonly UpdateStripePriceArchivedAction $updateStripePriceAction,
+        private readonly UpdateStripePriceDefaultAction $updateStripePriceDefaultAction,
+        private readonly UpdateStripeProductArchivedAction $updateStripeProductArchivedAction,
+        private readonly RetrieveOrderedProductsAction $retrieveOrderedProductsAction
     ) {
         Stripe::setApiKey(config("services.stripe.secret"));
-        $this->getProductsAndPricesAction = $getProductsAndPricesAction;
-        $this->getProductPriceDetailsAction = $getProductPriceDetailsAction;
-        $this->createProductAction = $createProductAction;
-        $this->createPriceAction = $createPriceAction;
-        $this->updateProductAction = $updateProductAction;
-        $this->updatePriceAction = $updatePriceAction;
-        $this->updateDefaultPriceAction = $updateDefaultPriceAction;
-        $this->deleteProductAction = $deleteProductAction;
     }
 
-    public function index()
+    public function index(): Response
     {
-        try {
-            $formattedData = $this->getProductsAndPricesAction->execute();
-            return Inertia::render("Central/Products/ProductsCentral", [
-                "products" => $formattedData,
-            ]);
-        } catch (\Exception $e) {
-            return back()->withErrors(["error" => $e->getMessage()]);
-        }
+        $data = $this->retrieveOrderedProductsAction->execute();
+        return Inertia::render("Central/Products/ProductsCentral", [
+            "products" => $data,
+        ]);
     }
 
-    public function details($productID)
+    public function details(string $productID): Response
     {
-        try {
-            $formattedData = $this->getProductPriceDetailsAction->execute(
-                $productID
+        $data = $this->getProductPriceDetailsAction->execute($productID);
+        return Inertia::render("Central/Products/ProductViewDetails", [
+            "product" => $data,
+        ]);
+    }
+
+    public function create(ProductCreateRequest $request): RedirectResponse
+    {
+        $product = $this->createProductAction->execute($request->validated());
+
+        return back();
+    }
+
+    public function addPriceToProduct(
+        PriceCreateRequest $request
+    ): RedirectResponse {
+        $price = $this->createStripePriceAction->execute($request->validated());
+        return back();
+    }
+
+    public function update(
+        ProductUpdateRequest $request,
+        string $productId
+    ): RedirectResponse {
+        $product = $this->updateStripeProductAction->execute(
+            $productId,
+            $request->validated()
+        );
+        if ($request->has("price_id")) {
+            $this->updateStripePriceAction->execute(
+                $request->input("price_id"),
+                ["active" => $request->input("active")]
             );
-            return Inertia::render("Central/Products/ProductViewDetails", [
-                "product" => $formattedData,
-            ]);
-        } catch (\Exception $e) {
-            return back()->withErrors(["error" => $e->getMessage()]);
         }
+        return back();
     }
 
-    public function create(Request $request)
-    {
-        try {
-            $product = $this->createProductAction->execute([
-                "name" => $request->input("name"),
-                "description" => $request->input("description"),
-            ]);
+    public function updatePriceArchived(
+        UpdatePriceArchivedRequest $request,
+        string $priceId
+    ): RedirectResponse {
+        $isActive = $request->getActiveStatus();
 
-            if ($request->has("price")) {
-                $this->createPriceAction->execute([
-                    "price" => $request->input("price"),
-                    "currency" => $request->input("currency"),
-                    "product_id" => $product->id,
-                    "recurring" => $request->input("recurring"),
-                    "nickname" => $request->input("nickname"),
-                ]);
-            }
-        } catch (\Exception $e) {
-            return back()->withErrors(["error" => $e->getMessage()]);
-        }
+        $this->updateStripePriceAction->execute($priceId, [
+            "active" => $isActive,
+        ]);
+        return back();
     }
 
-    public function addPriceToProduct(Request $request)
-    {
-        try {
-            $this->createPriceAction->execute([
-                "price" => $request->input("price"),
-                "currency" => $request->input("currency"),
-                "product_id" => $request->input("product_id"),
-                "recurring" => $request->input("recurring"),
-                "nickname" => $request->input("nickname"),
-            ]);
-        } catch (\Exception $e) {
-            return response()->json(["error" => $e->getMessage()], 500);
-        }
+    public function updatePriceDefault(
+        string $priceId,
+        PriceUpdateRequest $request
+    ): RedirectResponse {
+        $price = $this->updateStripePriceDefaultAction->execute(
+            $priceId,
+            $request->input("priceDefault")
+        );
+        return back();
     }
 
-    public function update(Request $request, $productId)
+    public function updateProductArchived(string $productId): RedirectResponse
     {
-        try {
-            $this->updateProductAction->execute($productId, [
-                "name" => $request->input("name"),
-                "description" => $request->input("description"),
-                "active" => $request->input("active"),
-            ]);
+        $deleted = $this->updateStripeProductArchivedAction->execute(
+            $productId
+        );
 
-            if ($request->has("price_id")) {
-                $this->updatePriceAction->execute($request->input("price_id"), [
-                    "active" => $request->input("active"),
-                ]);
-            }
-        } catch (\Exception $e) {
-            return back()->withErrors(["error" => $e->getMessage()]);
-        }
-    }
-
-    public function updatePrice(Request $request, $priceId)
-    {
-        try {
-            $this->updatePriceAction->execute($priceId, [
-                "active" => $request->input("active"),
-            ]);
-            return response()->json(["success" => true]);
-        } catch (\Exception $e) {
-            return response()->json(["error" => $e->getMessage()], 400);
-        }
-    }
-
-    public function updateDefaultPrice(Request $request, $priceId)
-    {
-        try {
-            $this->updateDefaultPriceAction->execute(
-                $priceId,
-                $request->input("priceDefault")
-            );
-            return response()->json(["success" => true]);
-        } catch (\Exception $e) {
-            return response()->json(["error" => $e->getMessage()], 400);
-        }
-    }
-
-    public function destroy($productID): RedirectResponse
-    {
-        try {
-            $this->deleteProductAction->execute($productID);
-        } catch (\Exception $e) {
-            return back()->withErrors(["error" => $e->getMessage()]);
-        }
+        return back();
     }
 }

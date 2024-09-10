@@ -12,6 +12,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+console.log(props.products);
 </script>
 
 <template>

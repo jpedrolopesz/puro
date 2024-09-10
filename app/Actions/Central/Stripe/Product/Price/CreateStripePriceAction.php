@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Actions\Central\Stripe\Product;
+namespace App\Actions\Central\Stripe\Product\Price;
 
 use Stripe\Price;
 use Exception;
 
-class CreatePriceAction
+class CreateStripePriceAction
 {
     public function execute(array $data): Price
     {

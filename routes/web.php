@@ -15,6 +15,7 @@ use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
+// Public routes
 Route::get("/", function () {
     if (Auth::guard("admin")->check()) {
         $user = Auth::guard("admin")->user();
@@ -32,21 +33,20 @@ Route::get("/", function () {
     ]);
 });
 
-// Rota para o webhook do Stripe
 Route::post("/stripe/webhook", [
     StripeWebhookController::class,
     "handleWebhook",
 ]);
 
-// Rotas protegidas por middleware de autenticação
+// Protected routes
 Route::middleware("auth:admin")->group(function () {
-    ######## DASHBOARD ########
+    // Dashboard
     Route::get("/dashboard", [
         DashboardCentralController::class,
         "index",
     ])->name("admin.dashboard");
 
-    ######## TENANTS ########
+    // Tenants
     Route::get("/tenants", [TenantsCentralController::class, "index"])->name(
         "tenants.index"
     );
@@ -55,100 +55,109 @@ Route::middleware("auth:admin")->group(function () {
         "details",
     ])->name("tenant.details");
 
-    ######## PAYMENTS ########
-    Route::get("/payments", [PaymentCentralController::class, "index"])->name(
-        "payments.index"
-    );
+    // Payments
+    Route::prefix("payments")->group(function () {
+        Route::get("/", [PaymentCentralController::class, "index"])->name(
+            "payments.index"
+        );
+        Route::get("/{paymentsId}", [
+            PaymentCentralController::class,
+            "details",
+        ])->name("payments.details");
+        Route::post("/process", [
+            PaymentCentralController::class,
+            "processPayments",
+        ])->name("processPayments");
+        Route::get("/sync", [
+            PaymentCentralController::class,
+            "syncPayments",
+        ])->name("sync.payments");
+        Route::post("/start-sync", [
+            PaymentCentralController::class,
+            "startSync",
+        ]);
+    });
 
-    Route::post("/start-sync", [PaymentCentralController::class, "startSync"]);
+    // Products
+    Route::prefix("products")->group(function () {
+        Route::get("/", [ProductsCentralController::class, "index"])->name(
+            "products.index"
+        );
+        Route::get("/{productID}", [
+            ProductsCentralController::class,
+            "details",
+        ])->name("product.details");
+        Route::put("/{productId}", [
+            ProductsCentralController::class,
+            "update",
+        ])->name("product.update");
 
-    Route::get("/payments/{paymentsId}", [
-        PaymentCentralController::class,
-        "details",
-    ])->name("payments.details");
-    Route::post("/process-payments", [
-        PaymentCentralController::class,
-        "processPayments",
-    ])->name("processPayments");
-    Route::get("/sync-payments", [
-        PaymentCentralController::class,
-        "syncPayments",
-    ])->name("sync.payments");
+        Route::patch("/{productId}/archive", [
+            ProductsCentralController::class,
+            "updateProductArchived",
+        ])->name("product.archive");
 
-    ######## PRODUCTS ########
-    Route::get("/products", [ProductsCentralController::class, "index"])->name(
-        "products.index"
-    );
-    Route::get("/product/{productID}", [
-        ProductsCentralController::class,
-        "details",
-    ])->name("product.details");
-    Route::put("/products/{productId}", [
-        ProductsCentralController::class,
-        "update",
-    ])->name("product.update");
-    Route::put("/price/{priceId}", [
-        ProductsCentralController::class,
-        "updatePrice",
-    ])->name("price.update");
-    Route::put("/products/{productID}", [
-        ProductsCentralController::class,
-        "destroy",
-    ])->name("product.destroy");
-    Route::post("/products/create", [
-        ProductsCentralController::class,
-        "create",
-    ])->name("product.create");
-    Route::post("/products/addPriceToProduct", [
-        ProductsCentralController::class,
-        "addPriceToProduct",
-    ])->name("product.addPriceToProduct");
-    Route::put("/product/{priceId}/default", [
-        ProductsCentralController::class,
-        "updateDefaultPrice",
-    ])->name("product.update.default");
+        Route::post("/create", [
+            ProductsCentralController::class,
+            "create",
+        ])->name("product.create");
 
-    ######## PRODUCT BUILDER ########
-    Route::get("/products/builder", [
-        ProductsBuilderCentralController::class,
-        "index",
-    ])->name("products.builder.index");
+        Route::post("/addPriceToProduct", [
+            ProductsCentralController::class,
+            "addPriceToProduct",
+        ])->name("product.addPriceToProduct");
 
-    Route::post("/products/update-order", [
-        ProductsBuilderCentralController::class,
-        "updateOrder",
-    ])->name("products.updateOrder");
+        // Product Price
+        Route::put("/{priceId}/default", [
+            ProductsCentralController::class,
+            "updatePriceDefault",
+        ])->name("price.update.default");
+        Route::put("/{priceId}/archived", [
+            ProductsCentralController::class,
+            "updatePriceArchived",
+        ])->name("price.update.archived");
 
-    ######## PROFILE ########
-    Route::get("/profile", [ProfileCentralController::class, "edit"])->name(
-        "profile.edit"
-    );
-    Route::get("/profile/account", function () {
-        return Inertia::render("Central/Profile/Account");
-    })->name("profile.account");
-    Route::patch("/profile", [ProfileCentralController::class, "update"])->name(
-        "profile.update"
-    );
-    Route::delete("/profile", [
-        ProfileCentralController::class,
-        "destroy",
-    ])->name("profile.destroy");
+        // Product Builder
+        Route::get("/builder", [
+            ProductsBuilderCentralController::class,
+            "index",
+        ])->name("products.builder.index");
+        Route::post("/update-order", [
+            ProductsBuilderCentralController::class,
+            "updateOrder",
+        ])->name("products.updateOrder");
+    });
 
-    ######## CONVERSATIONd ########
-    Route::get("/conversation", [
-        ConversationCentralController::class,
-        "index",
-    ])->name("conversation.index");
+    // Profile
+    Route::prefix("profile")->group(function () {
+        Route::get("/", [ProfileCentralController::class, "edit"])->name(
+            "profile.edit"
+        );
+        Route::get("/account", function () {
+            return Inertia::render("Central/Profile/Account");
+        })->name("profile.account");
+        Route::patch("/", [ProfileCentralController::class, "update"])->name(
+            "profile.update"
+        );
+        Route::delete("/", [ProfileCentralController::class, "destroy"])->name(
+            "profile.destroy"
+        );
+    });
 
-    Route::post("/conversation/message/send", [
-        ConversationCentralController::class,
-        "sendMessage",
-    ])->name("admin.message.send");
-
-    Route::post("/conversation/create", [
-        ConversationCentralController::class,
-        "createCoversation",
-    ])->name("admin.conversation.create");
+    // Conversation
+    Route::prefix("conversation")->group(function () {
+        Route::get("/", [ConversationCentralController::class, "index"])->name(
+            "conversation.index"
+        );
+        Route::post("/message/send", [
+            ConversationCentralController::class,
+            "sendMessage",
+        ])->name("admin.message.send");
+        Route::post("/create", [
+            ConversationCentralController::class,
+            "createCoversation",
+        ])->name("admin.conversation.create");
+    });
 
     Broadcast::routes();
 });

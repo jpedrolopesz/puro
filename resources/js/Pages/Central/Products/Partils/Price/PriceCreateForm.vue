@@ -48,16 +48,14 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post(
-            route("product.addPriceToProduct", { preserveScroll: true }),
-            {
-                product_id: props.data.id,
-                price: values.price,
-                currency: values.currency,
-                recurring: values.recurring,
-                nickname: values.nickname,
-            },
-        );
+        preserveScroll: true;
+        await router.post(route("product.addPriceToProduct"), {
+            product_id: props.data.id,
+            price: values.price,
+            currency: values.currency,
+            recurring: values.recurring,
+            nickname: values.nickname,
+        });
         showToast("Price Created", "Price created successfully.");
         resetForm();
     } catch (error) {

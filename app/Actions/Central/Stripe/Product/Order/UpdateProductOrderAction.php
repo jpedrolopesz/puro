@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Actions\Central\Stripe\Product;
+namespace App\Actions\Central\Stripe\Product\Order;
 
 use Illuminate\Support\Facades\Log;
 use Stripe\Product as StripeProduct;
