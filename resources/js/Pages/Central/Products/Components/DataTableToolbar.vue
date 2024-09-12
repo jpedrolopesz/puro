@@ -1,17 +1,15 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Order } from "../data/schema";
+import type { Product } from "../data/schema";
 
-import { priorities, subscriptionStatuses } from "../data/data";
-import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import { Cross2Icon } from "@radix-icons/vue";
 import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Order>;
+    table: Table<Product>;
 }
 
 const props = defineProps<DataTableToolbarProps>();
@@ -25,7 +23,7 @@ const isFiltered = computed(
     <div class="flex items-center justify-between">
         <div class="flex flex-1 items-center space-x-2">
             <Input
-                placeholder="Filter tasks..."
+                placeholder="Filter product id..."
                 :model-value="
                     (table.getColumn('id')?.getFilterValue() as string) ?? ''
                 "
@@ -33,18 +31,6 @@ const isFiltered = computed(
                 @input="
                     table.getColumn('id')?.setFilterValue($event.target.value)
                 "
-            />
-            <DataTableFacetedFilter
-                v-if="table.getColumn('paymentStatus')"
-                :column="table.getColumn('paymentStatus')"
-                title="Status"
-                :options="subscriptionStatuses"
-            />
-            <DataTableFacetedFilter
-                v-if="table.getColumn('priority')"
-                :column="table.getColumn('priority')"
-                title="Priority"
-                :options="priorities"
             />
 
             <Button

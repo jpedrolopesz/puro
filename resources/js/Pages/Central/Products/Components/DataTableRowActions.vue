@@ -23,6 +23,11 @@ const props = defineProps<DataTableRowActionsProps>();
 const productsSchema = computed(() => productSchema.parse(props.row.original));
 
 function archiveProduct() {
+    if (props.row.original.has_subscription) {
+        alert("Cannot archive a product with an active subscription.");
+        return;
+    }
+
     if (
         confirm(
             "Are you sure you want to archive this product? This will deactivate all associated prices.",
@@ -36,7 +41,6 @@ function archiveProduct() {
                 preserveScroll: true,
                 onSuccess: () => {
                     alert("Product archived successfully");
-                    // Você pode querer atualizar a UI aqui para refletir o novo estado do produto
                 },
                 onError: (errors) => {
                     alert(
