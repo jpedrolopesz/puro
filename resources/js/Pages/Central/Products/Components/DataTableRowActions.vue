@@ -1,10 +1,12 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
-import { computed } from "vue";
+import { h, computed } from "vue";
 import { Link, router } from "@inertiajs/vue3";
 import { productSchema } from "../data/schema";
 import type { Product } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
+import { toast } from "@/Components/ui/toast";
+
 import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
@@ -27,30 +29,57 @@ function archiveProduct() {
         alert("Cannot archive a product with an active subscription.");
         return;
     }
+    toggleProductArchived(true);
+}
+
+function unarchiveProduct() {
+    toggleProductArchived(false);
+}
+
+function toggleProductArchived(archive: boolean) {
+    const action = archive ? "archive" : "unarchive";
 
     if (
         confirm(
-            "Are you sure you want to archive this product? This will deactivate all associated prices.",
+            `Are you sure you want to ${action} this product? This will ${action} all associated prices in Stripe.`,
         )
     ) {
         router.patch(
-            route("product.archive", { productId: props.row.original.id }),
+            route(archive ? "product.archive" : "product.unarchive", {
+                productId: props.row.original.id,
+            }),
             {},
             {
                 preserveState: true,
                 preserveScroll: true,
                 onSuccess: () => {
-                    alert("Product archived successfully");
+                    showToast(
+                        `Product ${action}d`,
+                        "Product updated successfully.",
+                    );
                 },
                 onError: (errors) => {
-                    alert(
-                        "Failed to archive product: " +
-                            (errors.message || "Unknown error"),
+                    showToast(
+                        `Failed to ${action}d`,
+                        errors.message || "An error occurred.",
                     );
                 },
             },
         );
     }
+}
+
+function showToast(title: string, description: string) {
+    toast({
+        title,
+        description: h(
+            "pre",
+            {
+                class: `mt-2 w-[340px] rounded-md ${title === "Error" ? "bg-red-500" : "bg-slate-950"} p-4`,
+            },
+            h("code", { class: "text-white" }, description),
+        ),
+    });
 }
 </script>
 
@@ -79,8 +108,14 @@ function archiveProduct() {
                     Edit Product
                 </Link>
             </DropdownMenuItem>
-            <DropdownMenuItem @click="archiveProduct">
-                Archive
+            <DropdownMenuItem
+                v-if="props.row.original.active"
+                @click="archiveProduct"
+            >
+                Archive in Stripe
+            </DropdownMenuItem>
+            <DropdownMenuItem v-else @click="unarchiveProduct">
+                Unarchive in Stripe
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>

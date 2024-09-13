@@ -50,8 +50,6 @@ const { handleSubmit, resetForm, setValues, values } = useForm({
     initialValues: initialValues.value,
 });
 
-console.log(formSchema);
-
 watch(
     () => props.data,
     (newData) => {

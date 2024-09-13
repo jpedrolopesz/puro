@@ -97,7 +97,7 @@ const onDragChange = () => {
 };
 
 const formatPrice = (price: Price): string => {
-    return new Intl.NumberFormat("pt-BR", {
+    return new Intl.NumberFormat("en-US", {
         style: "currency",
         currency: price.currency,
     }).format(price.unit_amount / 100);
@@ -145,15 +145,12 @@ const saveOrder = () => {
         preserveScroll: true,
         onSuccess: (response) => {
             console.log(
-                "Ordem dos produtos e metadata salva com sucesso",
+                "Product order and metadata saved successfully",
                 response,
             );
         },
         onError: (errors) => {
-            console.error(
-                "Erro ao salvar a ordem dos produtos e metadata",
-                errors,
-            );
+            console.error("Error saving product order and metadata", errors);
         },
     });
 };
@@ -171,12 +168,12 @@ const getSelectedPrice = (
 </script>
 
 <template>
-    <div class="border rounded-md">
-        <div class="flex items-center justify-between m-3">
+    <div class="">
+        <div class="flex items-center justify-between">
             <Tabs v-model="selectedTab" @update:modelValue="handleTabChange">
                 <TabsList>
-                    <TabsTrigger value="monthly">Mensal</TabsTrigger>
-                    <TabsTrigger value="annually">Anual</TabsTrigger>
+                    <TabsTrigger value="monthly">Monthly</TabsTrigger>
+                    <TabsTrigger value="annually">Annual</TabsTrigger>
                 </TabsList>
             </Tabs>
 
@@ -200,12 +197,12 @@ const getSelectedPrice = (
                     @click="saveOrder"
                     :disabled="form.processing"
                 >
-                    {{ form.processing ? "Salvando..." : "Salvar Ordem" }}
+                    {{ form.processing ? "Saving..." : "Save Order" }}
                 </Button>
             </div>
         </div>
-        <Separator />
-        <div class="container mx-auto p-4">
+
+        <div class="my-4">
             <div class="mb-6">
                 <div class="mb-4">
                     <draggable
@@ -236,19 +233,19 @@ const getSelectedPrice = (
                             >
                                 <CardHeader>
                                     <div
-                                        class="flex items-center justify-between"
+                                        class="flex items-center "
                                     >
                                         <CardTitle class="text-2xl">{{
                                             element.name
                                         }}</CardTitle>
                                     </div>
-                                    <CardDescription class="flex-col">
+                                    <CardDescription ">
                                         <span>Id: {{ element.id }} </span>
                                     </CardDescription>
                                 </CardHeader>
-                                <Separator class="my-4" />
+                                <Separator class="my-1" />
                                 <CardContent class="grid gap-2">
-                                    <h4 class="font-semibold mb-2">Preços:</h4>
+                                    <h4 class="font-semibold ">Prices:</h4>
                                     <div v-if="showProducts.monthly">
                                         <div
                                             v-for="price in element.prices.filter(
@@ -288,7 +285,7 @@ const getSelectedPrice = (
                                                     'year',
                                             )"
                                             :key="price.id"
-                                            class="flex justify-between items-center p-2 bg-white border rounded shadow-sm"
+                                            class="flex justify-between items-center p-2 m-1 bg-white border rounded"
                                         >
                                             <span class="text-sm font-medium">
                                                 {{ formatPrice(price)
@@ -318,84 +315,99 @@ const getSelectedPrice = (
                 </div>
                 <div>
                     <Label class="text-lg font-semibold mb-2"
-                        >Produtos Disponíveis</Label
+                        >Available Products</Label
                     >
                     <draggable
                         v-model="availableProducts"
                         group="products"
                         item-key="id"
-                        class="flex flex-col space-y-4"
+                        class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
                         @change="onDragChange"
                     >
                         <template #item="{ element: product }">
                             <Card
-                                class="hover:bg-gray-100 transition-all duration-200"
+                                class="hover:bg-gray-100 transition-all duration-200 flex flex-col h-full"
                             >
                                 <CardHeader>
                                     <CardTitle>{{ product.name }}</CardTitle>
                                 </CardHeader>
-                                <CardContent>
-                                    <h4 class="font-semibold mb-2">Preços:</h4>
-                                    <div v-if="showProducts.monthly">
+                                <CardContent class="flex-grow flex flex-col">
+                                    <h4 class="font-semibold mb-2">Prices:</h4>
+                                    <div class="flex-grow">
                                         <div
-                                            v-for="price in product.prices.filter(
-                                                (p) =>
-                                                    p.recurring?.interval ===
-                                                    'month',
-                                            )"
-                                            :key="price.id"
-                                            class="flex justify-between items-center p-2 bg-white border rounded shadow-sm"
+                                            v-if="showProducts.monthly"
+                                            class="space-y-2"
                                         >
-                                            <span class="text-sm font-medium">
-                                                {{ formatPrice(price)
-                                                }}{{ getIntervalLabel(price) }}
-                                            </span>
-                                            <Switch
-                                                :checked="
-                                                    product.metadata
-                                                        .monthly_price_id ===
-                                                    price.id
-                                                "
-                                                @update:checked="
-                                                    () =>
-                                                        selectPrice(
-                                                            product,
-                                                            price,
-                                                            'monthly',
-                                                        )
-                                                "
-                                            />
+                                            <div
+                                                v-for="price in product.prices.filter(
+                                                    (p) =>
+                                                        p.recurring
+                                                            ?.interval ===
+                                                        'month',
+                                                )"
+                                                :key="price.id"
+                                                class="flex justify-between items-center p-2 border rounded shadow-sm"
+                                            >
+                                                <span
+                                                    class="text-sm font-medium"
+                                                >
+                                                    {{ formatPrice(price)
+                                                    }}{{
+                                                        getIntervalLabel(price)
+                                                    }}
+                                                </span>
+                                                <Switch
+                                                    :checked="
+                                                        product.metadata
+                                                            .monthly_price_id ===
+                                                        price.id
+                                                    "
+                                                    @update:checked="
+                                                        () =>
+                                                            selectPrice(
+                                                                product,
+                                                                price,
+                                                                'monthly',
+                                                            )
+                                                    "
+                                                />
+                                            </div>
                                         </div>
-                                    </div>
-                                    <div v-else>
-                                        <div
-                                            v-for="price in product.prices.filter(
-                                                (p) =>
-                                                    p.recurring?.interval ===
-                                                    'year',
-                                            )"
-                                            :key="price.id"
-                                            class="flex justify-between items-center p-2 bg-white border rounded shadow-sm"
-                                        >
-                                            <span class="text-sm font-medium">
-                                                {{ formatPrice(price)
-                                                }}{{ getIntervalLabel(price) }}
-                                            </span>
-                                            <Switch
-                                                :checked="
-                                                    product.metadata
-                                                        .yearly_price_id ===
-                                                    price.id
-                                                "
-                                                @update:checked="
-                                                    () =>
-                                                        selectPrice(
-                                                            product,
-                                                            price,
-                                                            'yearly',
-                                                        )
-                                                "
-                                            />
+                                        <div v-else class="space-y-2">
+                                            <div
+                                                v-for="price in product.prices.filter(
+                                                    (p) =>
+                                                        p.recurring
+                                                            ?.interval ===
+                                                        'year',
+                                                )"
+                                                :key="price.id"
+                                                class="flex justify-between items-center p-2 border rounded shadow-sm"
+                                            >
+                                                <span
+                                                    class="text-sm font-medium"
+                                                >
+                                                    {{ formatPrice(price)
+                                                    }}{{
+                                                        getIntervalLabel(price)
+                                                    }}
+                                                </span>
+                                                <Switch
+                                                    :checked="
+                                                        product.metadata
+                                                            .yearly_price_id ===
+                                                        price.id
+                                                    "
+                                                    @update:checked="
+                                                        () =>
+                                                            selectPrice(
+                                                                product,
+                                                                price,
+                                                                'yearly',
+                                                            )
+                                                    "
+                                                />
+                                            </div>
                                         </div>
                                     </div>
                                 </CardContent>

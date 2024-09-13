@@ -94,10 +94,17 @@ Route::middleware("auth:admin")->group(function () {
             "update",
         ])->name("product.update");
 
-        Route::patch("/{productId}/archive", [
+        Route::patch("/products/{productId}/archive", [
             ProductsCentralController::class,
             "updateProductArchived",
         ])->name("product.archive");
+
+        Route::patch("/products/{productId}/unarchive", [
+            ProductsCentralController::class,
+            "updateProductArchived",
+        ])
+            ->name("product.unarchive")
+            ->defaults("archive", false);
 
         Route::post("/create", [
             ProductsCentralController::class,

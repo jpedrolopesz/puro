@@ -20,10 +20,11 @@ const props = defineProps<{
             <div class="flex items-center justify-between space-y-2">
                 <div>
                     <h2 class="text-2xl font-bold tracking-tight">
-                        Product Builder
+                        Builder Rearrange
                     </h2>
                     <p class="text-muted-foreground">
-                        Here&apos;s a list of your tasks for this month!
+                        On this page, you can rearrange the products, and the
+                        end user will see them in the same order you have set.
                     </p>
                 </div>
             </div>

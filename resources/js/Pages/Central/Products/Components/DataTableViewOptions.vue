@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Order } from "../data/schema";
-import { MixerHorizontalIcon, PlusIcon } from "@radix-icons/vue";
+import type { Product } from "../data/schema";
+import { SlidersHorizontal, SendToBack, Plus } from "lucide-vue-next";
+
 import ProductCreateForm from "../Partils/ProductCreateForm.vue";
 import { Button } from "@/Components/ui/button";
 import {
@@ -25,7 +26,7 @@ import {
 import { Link } from "@inertiajs/vue3";
 
 interface DataTableViewOptionsProps {
-    table: Table<Task>;
+    table: Table<Product>;
 }
 
 const props = defineProps<DataTableViewOptionsProps>();
@@ -44,7 +45,7 @@ const columns = computed(() =>
     <Sheet>
         <SheetTrigger
             ><Button size="sm" class="ml-auto h-8 mr-2">
-                <PlusIcon class="mr-2 h-4 w-4" />
+                <Plus class="mr-2 h-4 w-4" />
                 Product
             </Button></SheetTrigger
         >
@@ -65,7 +66,7 @@ const columns = computed(() =>
                 size="sm"
                 class="ml-auto hidden h-8 lg:flex"
             >
-                <MixerHorizontalIcon class="mr-2 h-4 w-4" />
+                <SlidersHorizontal class="mr-2 h-4 w-4" />
                 View
             </Button>
         </DropdownMenuTrigger>
@@ -88,8 +89,8 @@ const columns = computed(() =>
 
     <Link :href="route('products.builder.index')">
         <Button variant="outline" size="sm" class="ml-2 hidden h-8 lg:flex">
-            <MixerHorizontalIcon class="mr-2 h-4 w-4" />
-            Builder
+            <SendToBack class="mr-2 h-4 w-4" />
+            Rearrange
         </Button>
     </Link>
 </template>

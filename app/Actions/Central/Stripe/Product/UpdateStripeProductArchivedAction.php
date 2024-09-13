@@ -7,13 +7,12 @@ use Stripe\Price;
 
 class UpdateStripeProductArchivedAction
 {
-    public function execute(string $productId): void
+    public function execute(string $productId, bool $archive): void
     {
         $prices = Price::all(["product" => $productId]);
-
         foreach ($prices as $price) {
-            Price::update($price->id, ["active" => false]);
+            Price::update($price->id, ["active" => !$archive]);
         }
-        Product::update($productId, ["active" => false]);
+        Product::update($productId, ["active" => !$archive]);
     }
 }

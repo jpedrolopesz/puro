@@ -133,11 +133,11 @@ class ProductsCentralController extends Controller
         return back();
     }
 
-    public function updateProductArchived(string $productId): RedirectResponse
-    {
-        $deleted = $this->updateStripeProductArchivedAction->execute(
-            $productId
-        );
+    public function updateProductArchived(
+        string $productId,
+        bool $archive = true
+    ): RedirectResponse {
+        $this->updateStripeProductArchivedAction->execute($productId, $archive);
 
         return back();
     }
