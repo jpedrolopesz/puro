@@ -30,22 +30,22 @@ interface Product {
     id: string;
     name: string;
     prices: Price[];
-}
-
-interface ProductWithMetadata extends Product {
-    selectedMonthlyPrice: Price | null;
-    selectedYearlyPrice: Price | null;
+    metadata: {
+        monthly_price_id: string;
+        yearly_price_id: string;
+        order: string;
+        column_count: number;
+    };
 }
 
 const props = defineProps<{
     products: Product[];
 }>();
 
-console.log(props.products);
-
 const isGrabbing = ref(false);
 const selectedTab = ref("monthly");
-const productCount = ref<number>(3);
+const columnCount = Number(props.products[0].metadata.column_count);
+const productCount = ref<number>(columnCount);
 
 const columnIcons = {
     2: Columns2,
@@ -57,8 +57,8 @@ const form = useForm<{ products: any[] }>({
     products: [],
 });
 
-const selectedProducts = ref<ProductWithMetadata[]>([]);
-const availableProducts = ref<ProductWithMetadata[]>([]);
+const selectedProducts = ref<Product[]>([]);
+const availableProducts = ref<Product[]>([]);
 
 const showProducts = computed(() => ({
     monthly: selectedTab.value === "monthly",
@@ -70,15 +70,9 @@ const handleTabChange = (value: string) => {
 };
 
 const initializeProducts = () => {
-    const allProducts = props.products.map((product) => ({
-        ...product,
-        selectedMonthlyPrice:
-            product.prices.find((p) => p.recurring?.interval === "month") ||
-            null,
-        selectedYearlyPrice:
-            product.prices.find((p) => p.recurring?.interval === "year") ||
-            null,
-    }));
+    const allProducts = props.products.sort(
+        (a, b) => parseInt(a.metadata.order) - parseInt(b.metadata.order),
+    );
 
     selectedProducts.value = allProducts.slice(0, productCount.value);
     availableProducts.value = allProducts.slice(productCount.value);
@@ -92,7 +86,10 @@ const updateProducts = () => {
     availableProducts.value = allProducts.slice(productCount.value);
 };
 
-watch(productCount, updateProducts);
+watch(productCount, (newValue) => {
+    updateProducts();
+    saveOrder();
+});
 
 const onDragChange = () => {
     updateProducts();
@@ -118,14 +115,14 @@ const getIntervalLabel = (price: Price): string => {
 };
 
 const selectPrice = (
-    product: ProductWithMetadata,
+    product: Product,
     price: Price,
     type: "monthly" | "yearly",
 ) => {
     if (type === "monthly") {
-        product.selectedMonthlyPrice = price;
+        product.metadata.monthly_price_id = price.id;
     } else {
-        product.selectedYearlyPrice = price;
+        product.metadata.yearly_price_id = price.id;
     }
     saveOrder();
 };
@@ -134,9 +131,10 @@ const saveOrder = () => {
     const orderedProducts = selectedProducts.value.map((product, index) => ({
         id: product.id,
         order: index + 1,
+        columnCount: productCount.value,
         metadata: {
-            monthly_price_id: product.selectedMonthlyPrice?.id || "",
-            yearly_price_id: product.selectedYearlyPrice?.id || "",
+            monthly_price_id: product.metadata.monthly_price_id,
+            yearly_price_id: product.metadata.yearly_price_id,
         },
     }));
 
@@ -158,6 +156,17 @@ const saveOrder = () => {
             );
         },
     });
+};
+
+const getSelectedPrice = (
+    product: Product,
+    type: "monthly" | "yearly",
+): Price | undefined => {
+    const priceId =
+        type === "monthly"
+            ? product.metadata.monthly_price_id
+            : product.metadata.yearly_price_id;
+    return product.prices.find((price) => price.id === priceId);
 };
 </script>
 
@@ -248,7 +257,7 @@ const saveOrder = () => {
                                                     'month',
                                             )"
                                             :key="price.id"
-                                            class="flex justify-between items-center p-2 bg-white border rounded shadow-sm"
+                                            class="flex justify-between items-center p-2 m-1 bg-white border rounded"
                                         >
                                             <span class="text-sm font-medium">
                                                 {{ formatPrice(price)
@@ -256,8 +265,9 @@ const saveOrder = () => {
                                             </span>
                                             <Switch
                                                 :checked="
-                                                    element.selectedMonthlyPrice
-                                                        ?.id === price.id
+                                                    element.metadata
+                                                        .monthly_price_id ===
+                                                    price.id
                                                 "
                                                 @update:checked="
                                                     () =>
@@ -286,8 +296,9 @@ const saveOrder = () => {
                                             </span>
                                             <Switch
                                                 :checked="
-                                                    element.selectedYearlyPrice
-                                                        ?.id === price.id
+                                                    element.metadata
+                                                        .yearly_price_id ===
+                                                    price.id
                                                 "
                                                 @update:checked="
                                                     () =>
@@ -341,8 +352,9 @@ const saveOrder = () => {
                                             </span>
                                             <Switch
                                                 :checked="
-                                                    product.selectedMonthlyPrice
-                                                        ?.id === price.id
+                                                    product.metadata
+                                                        .monthly_price_id ===
+                                                    price.id
                                                 "
                                                 @update:checked="
                                                     () =>
@@ -371,8 +383,9 @@ const saveOrder = () => {
                                             </span>
                                             <Switch
                                                 :checked="
-                                                    product.selectedYearlyPrice
-                                                        ?.id === price.id
+                                                    product.metadata
+                                                        .yearly_price_id ===
+                                                    price.id
                                                 "
                                                 @update:checked="
                                                     () =>

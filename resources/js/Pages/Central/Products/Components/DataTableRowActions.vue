@@ -72,7 +72,7 @@ function archiveProduct() {
                 <Link
                     :href="
                         route('product.details', {
-                            productID: props.row.original.id,
+                            productId: props.row.original.id,
                         })
                     "
                 >

@@ -83,10 +83,12 @@ Route::middleware("auth:admin")->group(function () {
         Route::get("/", [ProductsCentralController::class, "index"])->name(
             "products.index"
         );
-        Route::get("/{productID}", [
+
+        Route::get("/{productId}", [
             ProductsCentralController::class,
             "details",
         ])->name("product.details");
+
         Route::put("/{productId}", [
             ProductsCentralController::class,
             "update",
@@ -112,16 +114,18 @@ Route::middleware("auth:admin")->group(function () {
             ProductsCentralController::class,
             "updatePriceDefault",
         ])->name("price.update.default");
+
         Route::put("/{priceId}/archived", [
             ProductsCentralController::class,
             "updatePriceArchived",
         ])->name("price.update.archived");
 
         // Product Builder
-        Route::get("/builder", [
+        Route::get("/builder/rearrange", [
             ProductsBuilderCentralController::class,
             "index",
         ])->name("products.builder.index");
+
         Route::post("/update-order", [
             ProductsBuilderCentralController::class,
             "updateOrder",

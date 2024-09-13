@@ -1,46 +1,68 @@
 <?php
-namespace App\Actions\Central\Stripe\Product;
+
+namespace App\Actions\Central\Stripe\Product\Order;
+
 use Stripe\Product;
 use Stripe\Price;
 use Stripe\Stripe;
 
 class RetrieveOrderedProductsAction
 {
-    public function execute(): array
+    public function execute(string $filter = "all"): array
     {
         Stripe::setApiKey(config("services.stripe.secret"));
-        $productsResponse = Product::all([
-            "active" => true,
+
+        $params = [
             "expand" => ["data.default_price"],
-        ]);
+        ];
+
+        if ($filter !== "all") {
+            $params["active"] = $filter === "active";
+        }
+
+        $productsResponse = Product::all($params);
         $products = $productsResponse->data;
-        $formattedData = $this->formatData($products);
+
+        $formattedData = $this->formatData($products, $filter);
         return $this->sortProducts($formattedData);
     }
 
-    private function formatData(array $products): array
+    private function formatData(array $products, string $filter): array
     {
         $formatted = [];
         foreach ($products as $product) {
+            if (
+                $filter !== "all" &&
+                $product->active !== ($filter === "active")
+            ) {
+                continue;
+            }
+
             $hasSubscription = false;
             $prices = [];
+            $processedPriceIds = [];
 
-            // Verificar se o produto tem um preço padrão e se é uma subscrição
+            // Processar o preço padrão, se existir
             if (
                 $product->default_price &&
                 $product->default_price->type === "recurring"
             ) {
                 $hasSubscription = true;
                 $prices[] = $this->formatPrice($product->default_price);
+                $processedPriceIds[] = $product->default_price->id;
             }
 
             // Buscar todos os preços associados ao produto
             $pricesResponse = Price::all(["product" => $product->id]);
             foreach ($pricesResponse->data as $price) {
-                if ($price->type === "recurring") {
-                    $hasSubscription = true;
+                // Verificar se já processamos este preço
+                if (!in_array($price->id, $processedPriceIds)) {
+                    if ($price->type === "recurring") {
+                        $hasSubscription = true;
+                    }
+                    $prices[] = $this->formatPrice($price);
+                    $processedPriceIds[] = $price->id;
                 }
-                $prices[] = $this->formatPrice($price);
             }
 
             $formatted[] = [
@@ -89,6 +111,7 @@ class RetrieveOrderedProductsAction
                 is_numeric($b["metadata"]["order"])
                     ? intval($b["metadata"]["order"])
                     : PHP_INT_MAX;
+
             if ($orderA === $orderB) {
                 return strcmp($a["name"], $b["name"]);
             }

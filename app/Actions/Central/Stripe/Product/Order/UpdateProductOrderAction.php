@@ -20,9 +20,9 @@ class UpdateProductOrderAction
                 try {
                     $metadata = [
                         "order" => (string) $productData["order"],
+                        "column_count" => (string) $productData["columnCount"],
                     ];
 
-                    // Adiciona informações de preço para intervalos mensais e anuais
                     if (isset($productData["metadata"]["monthly_price_id"])) {
                         $metadata["monthly_price_id"] =
                             $productData["metadata"]["monthly_price_id"];

@@ -4,30 +4,33 @@ namespace App\Http\Controllers\Central;
 
 use App\Actions\Central\Stripe\Product\{
     GetProductPriceDetailsAction,
-    CreateProductAction,
+    CreateStripeProductAction,
     UpdateStripeProductAction,
-    UpdateStripeProductArchivedAction,
-    RetrieveOrderedProductsAction
+    UpdateStripeProductArchivedAction
 };
+
+use App\Actions\Central\Stripe\Product\Order\{RetrieveOrderedProductsAction};
 
 use App\Actions\Central\Stripe\Product\Price\{
     CreateStripePriceAction,
     UpdateStripePriceArchivedAction,
     UpdateStripePriceDefaultAction
 };
+
 use App\Http\Requests\Central\Stripe\Product\Price\{
     PriceUpdateRequest,
     PriceCreateRequest
 };
+
 use App\Http\Requests\Central\Stripe\Product\{
     ProductCreateRequest,
     ProductUpdateRequest
 };
+
 use App\Http\Requests\Central\Stripe\Product\Price\UpdatePriceArchivedRequest;
 use Illuminate\Http\RedirectResponse;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-
 use Inertia\{Inertia, Response};
 use Stripe\Stripe;
 
@@ -35,7 +38,7 @@ class ProductsCentralController extends Controller
 {
     public function __construct(
         private readonly GetProductPriceDetailsAction $getProductPriceDetailsAction,
-        private readonly CreateProductAction $createProductAction,
+        private readonly CreateStripeProductAction $createStripeProductAction,
         private readonly CreateStripePriceAction $createStripePriceAction,
         private readonly UpdateStripeProductAction $updateStripeProductAction,
         private readonly UpdateStripePriceArchivedAction $updateStripePriceAction,
@@ -46,17 +49,20 @@ class ProductsCentralController extends Controller
         Stripe::setApiKey(config("services.stripe.secret"));
     }
 
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $data = $this->retrieveOrderedProductsAction->execute();
+        $filter = $request->input("filter", "active");
+        $data = $this->retrieveOrderedProductsAction->execute($filter);
+
         return Inertia::render("Central/Products/ProductsCentral", [
             "products" => $data,
+            "currentFilter" => $filter,
         ]);
     }
 
-    public function details(string $productID): Response
+    public function details(string $productId): Response
     {
-        $data = $this->getProductPriceDetailsAction->execute($productID);
+        $data = $this->getProductPriceDetailsAction->execute($productId);
         return Inertia::render("Central/Products/ProductViewDetails", [
             "product" => $data,
         ]);
@@ -64,7 +70,18 @@ class ProductsCentralController extends Controller
 
     public function create(ProductCreateRequest $request): RedirectResponse
     {
-        $product = $this->createProductAction->execute($request->validated());
+        $product = $this->createStripeProductAction->execute(
+            $request->validated()
+        );
+
+        if ($request->has("price")) {
+            $this->createStripePriceAction->execute([
+                "product_id" => $product->id,
+                "price" => $request->input("price"),
+                "currency" => $request->input("currency"),
+                "recurring" => $request->input("recurring"),
+            ]);
+        }
 
         return back();
     }

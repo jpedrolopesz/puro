@@ -59,7 +59,7 @@ export interface Price {
 
 const props = defineProps<{
     data: Price[];
-    priceDefault: string;
+    priceDefault: string | null;
 }>();
 
 const data = props.data;

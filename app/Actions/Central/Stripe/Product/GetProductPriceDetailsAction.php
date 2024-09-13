@@ -7,15 +7,11 @@ use Stripe\Price;
 
 class GetProductPriceDetailsAction
 {
-    public function execute(string $productID): array
+    public function execute(string $productId): array
     {
-        $productResponse = Product::retrieve($productID);
+        $productResponse = Product::retrieve($productId);
 
-        if (!$productResponse) {
-            throw new \Exception("Produto não encontrado.");
-        }
-
-        $pricesResponse = Price::all(["product" => $productID]);
+        $pricesResponse = Price::all(["product" => $productId]);
         $prices = $pricesResponse->data;
 
         return $this->formatData($productResponse, $prices);

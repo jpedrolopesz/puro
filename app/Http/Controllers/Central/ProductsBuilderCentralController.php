@@ -2,27 +2,23 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Actions\Central\Stripe\Product\RetrieveOrderedProductsAction;
-use App\Actions\Central\Stripe\Product\Order\UpdateProductOrderAction;
+use App\Actions\Central\Stripe\Product\Order\{
+    RetrieveOrderedProductsAction,
+    UpdateProductOrderAction
+};
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use Inertia\Inertia;
+use Illuminate\Http\{Request, RedirectResponse};
+use Inertia\{Inertia, Response};
 
 class ProductsBuilderCentralController extends Controller
 {
-    protected $updateProductOrderAction;
-    protected $retrieveOrderedProductsAction;
-
     public function __construct(
-        UpdateProductOrderAction $updateProductOrderAction,
-        RetrieveOrderedProductsAction $retrieveOrderedProductsAction
+        private readonly UpdateProductOrderAction $updateProductOrderAction,
+        private readonly RetrieveOrderedProductsAction $retrieveOrderedProductsAction
     ) {
-        //  Stripe::setApiKey(config("services.stripe.secret"));
-        $this->updateProductOrderAction = $updateProductOrderAction;
-        $this->retrieveOrderedProductsAction = $retrieveOrderedProductsAction;
     }
 
-    public function index()
+    public function index(): Response
     {
         $products = $this->retrieveOrderedProductsAction->execute();
 
@@ -31,9 +27,10 @@ class ProductsBuilderCentralController extends Controller
         ]);
     }
 
-    public function updateOrder(Request $request)
+    public function updateOrder(Request $request): RedirectResponse
     {
+        //dd($request->all());
         $result = $this->updateProductOrderAction->execute($request->products);
-        return;
+        return back();
     }
 }

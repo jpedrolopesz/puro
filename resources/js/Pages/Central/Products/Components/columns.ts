@@ -21,7 +21,7 @@ export const columns: ColumnDef<Product>[] = [
       h(
         Link,
         {
-          href: `/product/${row.getValue("id")}`,
+          href: `/products/${row.getValue("id")}`,
           class: "w-24 truncate",
         },
         () => row.getValue("id"),
