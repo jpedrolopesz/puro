@@ -94,7 +94,7 @@ const defaultPriceId = ref(
                     </div>
                 </header>
 
-                <div class="grid gap-5 md:grid-cols-[1fr_250px] lg:grid-cols-5">
+                <div class="grid gap-5 md:grid-cols-[1fr_250px] lg:grid-cols-4">
                     <Card class="md:col-span-4">
                         <CardHeader class="px-7">
                             <CardTitle>Prices</CardTitle>
@@ -141,13 +141,6 @@ const defaultPriceId = ref(
                                 </SheetContent>
                             </Sheet>
                         </CardFooter>
-                    </Card>
-
-                    <Card class="md:col-span-1 hidden lg:block">
-                        <CardHeader>
-                            <CardTitle>Details</CardTitle>
-                        </CardHeader>
-                        <CardContent> </CardContent>
                     </Card>
                 </div>
             </div>

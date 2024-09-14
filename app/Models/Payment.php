@@ -22,6 +22,12 @@ class Payment extends Model
         "receipt_email",
         "application_fee_amount",
         "capture_method",
+        "refunded",
+        "amount_refunded",
+        "disputed",
+        "failure_code",
+        "failure_message",
+        "captured",
     ];
 
     protected $guarded = [
@@ -29,6 +35,11 @@ class Payment extends Model
         "payment_method_last4",
         "payment_method_brand",
     ];
+
+    public function refunds()
+    {
+        return $this->hasMany(Refund::class);
+    }
     public function user()
     {
         return $this->belongsTo(User::class);

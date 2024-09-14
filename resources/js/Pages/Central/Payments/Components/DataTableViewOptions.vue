@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, h } from "vue";
+import { router } from "@inertiajs/vue3";
+
 import { Button } from "@/Components/ui/button";
 import { MixerHorizontalIcon, GearIcon } from "@radix-icons/vue";
 import { useToast } from "@/Components/ui/toast/use-toast";
@@ -24,7 +26,7 @@ const startProcessing = async () => {
     progress.value = 0;
 
     try {
-        // await router.post(route("processPayments"));
+        await router.post(route("processPayments"));
 
         showToast("Price Updated", "Price updated successfully.");
 

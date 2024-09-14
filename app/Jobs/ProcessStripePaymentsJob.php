@@ -4,7 +4,10 @@ namespace App\Jobs;
 
 use Stripe\Stripe;
 use Stripe\PaymentIntent;
+use Stripe\Charge;
+use Stripe\Refund;
 use App\Models\Payment;
+use App\Models\Refund as RefundModel;
 use Illuminate\Bus\Batchable;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -21,99 +24,161 @@ class ProcessStripePaymentsJob implements ShouldQueue
         SerializesModels,
         Batchable;
 
-    /**
-     * @var string|null
-     */
     protected $startingAfter;
 
-    /**
-     * Create a new job instance.
-     *
-     * @param string|null $startingAfter
-     * @return void
-     */
     public function __construct(string $startingAfter = null)
     {
         $this->startingAfter = $startingAfter;
     }
 
-    /**
-     * Execute the job.
-     *
-     * @return void
-     */
     public function handle(): void
     {
         Log::info(
-            "Iniciando o processamento de PaymentIntents com starting_after: " .
+            "Iniciando o processamento de Charges com starting_after: " .
                 $this->startingAfter
         );
 
         try {
             Stripe::setApiKey(config("services.stripe.secret"));
-
-            $response = PaymentIntent::all([
+            $response = Charge::all([
                 "limit" => 50,
                 "starting_after" => $this->startingAfter,
             ]);
 
-            foreach ($response->data as $paymentIntent) {
-                $existingPayment = Payment::where(
-                    "stripe_payment_id",
-                    $paymentIntent->id
-                )->first();
+            Log::info(
+                "Número de Charges recuperados: " . count($response->data)
+            );
 
-                if ($existingPayment) {
-                    Log::info("Pagamento já existe: " . $existingPayment->id);
-                    continue; // Pule para o próximo PaymentIntent
-                }
-
-                $customerDetails = $paymentIntent->customer
-                    ? \Stripe\Customer::retrieve($paymentIntent->customer)
-                    : null;
-
-                $paymentMethodDetails = $paymentIntent->payment_method
-                    ? \Stripe\PaymentMethod::retrieve(
-                        $paymentIntent->payment_method
-                    )
-                    : null;
-
-                $payment = new Payment([
-                    "stripe_payment_id" => $paymentIntent->id,
-                    "user_id" => null,
-                    "amount" => $paymentIntent->amount / 100,
-                    "currency" => $paymentIntent->currency,
-                    "status" => $paymentIntent->status,
-                    "description" =>
-                        $paymentIntent->description ??
-                        "No description provided",
-                    "payment_date" => (new \DateTime())
-                        ->setTimestamp($paymentIntent->created)
-                        ->format("Y-m-d H:i:s"),
-                    "customer_name" => $customerDetails->name ?? null,
-                    "customer_email" => $customerDetails->email ?? null,
-                    "payment_method_type" =>
-                        $paymentMethodDetails->type ?? null,
-                    "payment_method_last4" =>
-                        $paymentMethodDetails->card->last4 ?? null,
-                    "payment_method_brand" =>
-                        $paymentMethodDetails->card->brand ?? null,
-                    "receipt_email" => $paymentIntent->receipt_email,
-                    "application_fee_amount" =>
-                        $paymentIntent->application_fee_amount ?? null,
-                    "capture_method" => $paymentIntent->capture_method,
-                ]);
-
-                $payment->save();
+            foreach ($response->data as $charge) {
+                $this->processCharge($charge);
             }
 
             if ($response->has_more) {
-                $lastPaymentIntent = end($response->data);
-                ProcessStripePaymentsJob::dispatch($lastPaymentIntent->id);
+                $lastCharge = end($response->data);
+                self::dispatch($lastCharge->id);
+                Log::info(
+                    "Agendando próximo job com starting_after: " .
+                        $lastCharge->id
+                );
+            } else {
+                Log::info(
+                    "Processamento de Charges concluído. Não há mais dados para processar."
+                );
+            }
+        } catch (\Exception $e) {
+            Log::error("Falha ao processar Charges: " . $e->getMessage());
+        }
+    }
+
+    protected function processCharge($charge)
+    {
+        Log::info(
+            "Processando charge: " .
+                $charge->id .
+                " com status: " .
+                $charge->status
+        );
+
+        $existingPayment = Payment::firstWhere(
+            "stripe_payment_id",
+            $charge->id
+        );
+
+        if ($existingPayment) {
+            Log::info("Pagamento já existe: " . $existingPayment->id);
+            $this->updateExistingPayment($existingPayment, $charge);
+        } else {
+            $this->createNewPayment($charge);
+        }
+
+        if ($charge->status === "failed") {
+            Log::info("Cobrança falhou: " . $charge->id);
+        }
+
+        if ($charge->refunded || $charge->amount_refunded > 0) {
+            $this->processRefunds($charge);
+        }
+    }
+
+    protected function updateExistingPayment($payment, $charge)
+    {
+        $payment->update([
+            "status" => $charge->status,
+            "amount_refunded" => $charge->amount_refunded / 100,
+            "refunded" => $charge->refunded,
+        ]);
+        Log::info("Pagamento atualizado: " . $payment->id);
+    }
+
+    protected function createNewPayment($charge)
+    {
+        $payment = Payment::create([
+            "stripe_payment_id" => $charge->id,
+            "user_id" => null, // Você pode querer associar ao usuário se possível
+            "amount" => $charge->amount / 100,
+            "currency" => $charge->currency,
+            "status" => $charge->status,
+            "description" => $charge->description ?? "No description provided",
+            "payment_date" => now()->setTimestamp($charge->created),
+            "customer_name" => $charge->billing_details->name,
+            "customer_email" => $charge->billing_details->email,
+            "payment_method_type" => $charge->payment_method_details->type,
+            "payment_method_last4" =>
+                $charge->payment_method_details->card->last4,
+            "payment_method_brand" =>
+                $charge->payment_method_details->card->brand,
+            "receipt_email" => $charge->receipt_email,
+            "amount_refunded" => $charge->amount_refunded / 100,
+            "refunded" => $charge->refunded,
+            "disputed" => $charge->disputed,
+            "failure_code" => $charge->failure_code,
+            "failure_message" => $charge->failure_message,
+            "captured" => $charge->captured,
+        ]);
+    }
+
+    protected function processRefunds($charge)
+    {
+        Log::info("Processando reembolsos para o charge: " . $charge->id);
+
+        try {
+            $refunds = Refund::all([
+                "charge" => $charge->id,
+                "limit" => 100,
+            ]);
+
+            Log::info(
+                "Número de reembolsos encontrados: " . count($refunds->data)
+            );
+
+            foreach ($refunds->data as $refund) {
+                $existingRefund = RefundModel::firstWhere(
+                    "stripe_refund_id",
+                    $refund->id
+                );
+                if ($existingRefund) {
+                    Log::info("Reembolso já existe: " . $refund->id);
+                    continue;
+                }
+
+                RefundModel::create([
+                    "payment_id" => Payment::where(
+                        "stripe_payment_id",
+                        $charge->id
+                    )->first()->id,
+                    "stripe_refund_id" => $refund->id,
+                    "amount" => $refund->amount / 100,
+                    "status" => $refund->status,
+                    "reason" => $refund->reason,
+                    "refund_date" => now()->setTimestamp($refund->created),
+                ]);
+
+                Log::info("Novo reembolso processado: " . $refund->id);
             }
         } catch (\Exception $e) {
             Log::error(
-                "Falha ao processar PaymentIntents: " . $e->getMessage()
+                "Erro ao processar reembolsos para o charge {$charge->id}: " .
+                    $e->getMessage()
             );
         }
     }

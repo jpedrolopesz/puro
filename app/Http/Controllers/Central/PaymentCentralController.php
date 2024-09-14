@@ -2,7 +2,10 @@
 
 namespace App\Http\Controllers\Central;
 
-use App\Actions\Central\Stripe\Payment\{RetrievePaymentIntentAction};
+use App\Actions\Central\Stripe\Payment\{
+    RetrievePaymentIntentAction,
+    RetrieveFilteredPaymentsAction
+};
 use App\Http\Controllers\Controller;
 use App\Jobs\ProcessStripePaymentsJob;
 use App\Jobs\TestJob;
@@ -13,53 +16,34 @@ use Exception;
 
 class PaymentCentralController extends Controller
 {
-    protected $retrievePaymentIntentAction;
-    protected $stripeService;
-
     public function __construct(
-        RetrievePaymentIntentAction $retrievePaymentIntentAction
+        private readonly RetrievePaymentIntentAction $retrievePaymentIntentAction,
+        private readonly RetrieveFilteredPaymentsAction $retrieveFilteredPaymentsAction
     ) {
-        $this->retrievePaymentIntentAction = $retrievePaymentIntentAction;
     }
 
-    public function index()
+    public function index(Request $request)
     {
-        try {
-            $payments = Payment::all();
-            return Inertia::render("Central/Payments/PaymentsCentral", [
-                "paymentLists" => $payments,
-            ]);
-        } catch (Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "message" => "Failed to retrieve payments.",
-                    "error" => $e->getMessage(),
-                ],
-                500
-            );
-        }
+        $filter = $request->input("filter", "all");
+
+        $payments = $this->retrieveFilteredPaymentsAction->execute($filter);
+        $statistics = $this->retrieveFilteredPaymentsAction->getStatistics();
+
+        return Inertia::render("Central/Payments/PaymentsCentral", [
+            "payments" => $payments,
+            "statistics" => $statistics,
+            "currentFilter" => $filter,
+        ]);
     }
 
     public function details($paymentId)
     {
-        try {
-            $paymentDetails = $this->retrievePaymentIntentAction->execute(
-                $paymentId
-            );
-            return Inertia::render("Central/Payments/PaymentsViewDetails", [
-                "paymentDetails" => $paymentDetails,
-            ]);
-        } catch (Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "message" => "Failed to retrieve payment details.",
-                    "error" => $e->getMessage(),
-                ],
-                500
-            );
-        }
+        $paymentDetails = $this->retrievePaymentIntentAction->execute(
+            $paymentId
+        );
+        return Inertia::render("Central/Payments/PaymentsViewDetails", [
+            "paymentDetails" => $paymentDetails,
+        ]);
     }
 
     public function processPayments(Request $request)

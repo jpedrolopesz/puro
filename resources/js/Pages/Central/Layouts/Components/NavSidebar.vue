@@ -71,7 +71,8 @@ const links: LinkProp[] = [
         route: route("products.index"),
         current:
             route().current("products.index") ||
-            route().current("product.details"),
+            route().current("product.details") ||
+            route().current("products.builder.index"),
     },
     {
         title: "Conversation",

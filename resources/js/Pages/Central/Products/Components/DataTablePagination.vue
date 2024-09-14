@@ -26,8 +26,7 @@ defineProps<DataTablePaginationProps>();
 <template>
     <div class="flex items-center justify-between px-2">
         <div class="flex-1 text-sm text-muted-foreground">
-            {{ table.getFilteredSelectedRowModel().rows.length }} of
-            {{ table.getFilteredRowModel().rows.length }} row(s) selected.
+            Products {{ table.getFilteredRowModel().rows.length }}
         </div>
         <div class="flex items-center space-x-6 lg:space-x-8">
             <div class="flex items-center space-x-2">
@@ -43,7 +42,7 @@ defineProps<DataTablePaginationProps>();
                     </SelectTrigger>
                     <SelectContent side="top">
                         <SelectItem
-                            v-for="pageSize in [10, 20, 30, 40, 50]"
+                            v-for="pageSize in [5, 10, 20, 30, 40, 50]"
                             :key="pageSize"
                             :value="`${pageSize}`"
                         >

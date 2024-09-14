@@ -22,7 +22,7 @@ interface DataTableRowActionsProps {
 }
 const props = defineProps<DataTableRowActionsProps>();
 
-const paymentsSchema = computed(() => paymentsSchema.parse(props.row.original));
+const paymentSchema = computed(() => paymentsSchema.parse(props.row.original));
 </script>
 
 <template>
