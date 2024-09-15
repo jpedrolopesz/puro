@@ -17,7 +17,6 @@ return new class extends Migration {
             $table->string("amount");
             $table->string("currency");
             $table->string("status");
-            $table->string("transaction_type")->nullable();
             $table->decimal("amount_refunded", 10, 2)->default(0);
             $table->boolean("refunded")->default(false);
             $table->boolean("disputed")->default(false);
@@ -28,12 +27,8 @@ return new class extends Migration {
             $table->dateTime("payment_date");
             $table->string("customer_name")->nullable();
             $table->string("customer_email")->nullable();
-            $table->string("payment_method_type")->nullable();
             $table->string("payment_method_last4")->nullable();
             $table->string("payment_method_brand")->nullable();
-            $table->string("receipt_email")->nullable();
-            $table->string("application_fee_amount")->nullable();
-            $table->string("capture_method")->nullable();
             $table->timestamps();
 
             $table

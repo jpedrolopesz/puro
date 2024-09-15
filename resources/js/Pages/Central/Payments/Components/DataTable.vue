@@ -37,7 +37,7 @@ interface DataTableProps {
 }
 const props = defineProps<DataTableProps>();
 
-const sorting = ref<SortingState>([]);
+const sorting = ref<SortingState>([{ id: "payment_date", desc: true }]);
 const columnFilters = ref<ColumnFiltersState>([]);
 const columnVisibility = ref<VisibilityState>({});
 const rowSelection = ref({});
@@ -118,7 +118,6 @@ onMounted(() => {
 
                 <TableBody>
                     <template v-if="isLoading">
-                        <!-- Skeleton de carregamento -->
                         <TableRow v-for="n in 5" :key="n">
                             <TableCell
                                 v-for="m in props.columns.length"

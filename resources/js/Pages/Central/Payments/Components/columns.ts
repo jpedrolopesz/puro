@@ -1,68 +1,39 @@
 import { h } from "vue";
 import type { ColumnDef } from "@tanstack/vue-table";
-import { subscriptionStatuses } from "../data/data";
+import { paymentStatus } from "../data/data";
 import type { Payments } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
-import { Checkbox } from "@/Components/ui/checkbox";
 import { Badge } from "@/Components/ui/badge";
 import { CreditCard } from "lucide-vue-next";
 
 export const columns: ColumnDef<Payments>[] = [
   {
-    id: "select",
-    header: ({ table }) =>
-      h(Checkbox, {
-        checked:
-          table.getIsAllPageRowsSelected() ||
-          (table.getIsSomePageRowsSelected() && "indeterminate"),
-        "onUpdate:checked": (value) => table.toggleAllPageRowsSelected(!!value),
-        ariaLabel: "Select all",
-        class: "translate-y-0.5",
-      }),
-    cell: ({ row }) =>
-      h(Checkbox, {
-        checked: row.getIsSelected(),
-        "onUpdate:checked": (value) => row.toggleSelected(!!value),
-        ariaLabel: "Select row",
-        class: "translate-y-0.5",
-      }),
-    enableSorting: false,
-    enableHiding: false,
-  },
-
-  {
     accessorKey: "amount",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Amount" }),
-
     cell: ({ row }) => {
-      const amount = row.original.amount;
-
+      const payment = row.original;
+      const amount = payment.amount;
       if (!amount) return null;
 
-      const status = subscriptionStatuses.find(
-        (status) => status.value === row.original.status,
-      );
-
+      const status = paymentStatus(payment);
       if (!status) return null;
 
       return h("div", { class: "flex w-[150px] space-x-2 items-center" }, [
         h("span", { class: "max-w-[50px] font-medium" }, amount),
-        h("span", { class: "font-medium uppercase" }, row.original.currency),
-
+        h("span", { class: "font-medium uppercase" }, payment.currency),
         h(
           Badge,
           {
-            variant: "outline",
-            class: "flex items-center justify-between",
+            variant: status.style,
+            class: `flex items-center space-x-1 ${status.style}`,
           },
           () => [
-            // Usando uma função para o slot do Badge
-            h("span", { class: "font-medium" }, status.status),
+            h("span", { class: "font-medium" }, status.label),
             status.icon &&
               h(status.icon, {
-                class: "h-4 w-4 ml-1 text-muted-foreground",
+                class: `h-4 w-4 ml-1 ${status.iconStyle || "text-current"}`,
               }),
           ],
         ),
@@ -120,8 +91,15 @@ export const columns: ColumnDef<Payments>[] = [
   {
     accessorKey: "payment_date",
     header: ({ column }) => h(DataTableColumnHeader, { column, title: "Data" }),
-    cell: ({ row }) =>
-      h("div", { class: "w-110" }, row.getValue("payment_date")),
+    cell: ({ row }) => {
+      const date = new Date(row.getValue("payment_date"));
+      return h("div", { class: "w-110" }, date.toLocaleDateString());
+    },
+    sortingFn: (rowA, rowB, columnId) => {
+      const dateA = new Date(rowA.getValue(columnId));
+      const dateB = new Date(rowB.getValue(columnId));
+      return dateA.getTime() - dateB.getTime(); // Ordem decrescente (mais recente primeiro)
+    },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue("payment_date"));
     },

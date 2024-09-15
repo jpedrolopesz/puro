@@ -3,7 +3,6 @@
 namespace App\Jobs;
 
 use Stripe\Stripe;
-use Stripe\PaymentIntent;
 use Stripe\Charge;
 use Stripe\Refund;
 use App\Models\Payment;
@@ -122,12 +121,10 @@ class ProcessStripePaymentsJob implements ShouldQueue
             "payment_date" => now()->setTimestamp($charge->created),
             "customer_name" => $charge->billing_details->name,
             "customer_email" => $charge->billing_details->email,
-            "payment_method_type" => $charge->payment_method_details->type,
             "payment_method_last4" =>
-                $charge->payment_method_details->card->last4,
+                $charge->payment_method_details->card->last4 ?? null,
             "payment_method_brand" =>
-                $charge->payment_method_details->card->brand,
-            "receipt_email" => $charge->receipt_email,
+                $charge->payment_method_details->card->brand ?? null,
             "amount_refunded" => $charge->amount_refunded / 100,
             "refunded" => $charge->refunded,
             "disputed" => $charge->disputed,
