@@ -11,7 +11,7 @@ use App\Jobs\ProcessStripePaymentsJob;
 use App\Jobs\TestJob;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Exception;
+use Stripe\Stripe;
 
 class PaymentCentralController extends Controller
 {
@@ -19,6 +19,7 @@ class PaymentCentralController extends Controller
         private readonly RetrievePaymentIntentAction $retrievePaymentIntentAction,
         private readonly RetrieveFilteredPaymentsAction $retrieveFilteredPaymentsAction
     ) {
+        Stripe::setApiKey(config("services.stripe.secret"));
     }
 
     public function index(Request $request)
@@ -47,18 +48,7 @@ class PaymentCentralController extends Controller
 
     public function processPayments(Request $request)
     {
-        try {
-            ProcessStripePaymentsJob::dispatch();
-        } catch (Exception $e) {
-            return response()->json(
-                [
-                    "success" => false,
-                    "message" => "Failed to process payments.",
-                    "error" => $e->getMessage(),
-                ],
-                500
-            );
-        }
+        ProcessStripePaymentsJob::dispatch();
     }
 
     public function startSync(Request $request)

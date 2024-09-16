@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { ref, computed, h } from "vue";
 import { router } from "@inertiajs/vue3";
+import type { Payments } from "../data/schema";
 
 import { Button } from "@/Components/ui/button";
 import { MixerHorizontalIcon, GearIcon } from "@radix-icons/vue";
@@ -16,6 +17,19 @@ import {
 } from "@/Components/ui/dropdown-menu";
 import { Switch } from "@/Components/ui/switch";
 
+interface DataTableViewOptionsProps {
+    table: Table<Payments>;
+}
+const props = defineProps<DataTableViewOptionsProps>();
+
+const columns = computed(() =>
+    props.table
+        .getAllColumns()
+        .filter(
+            (column) =>
+                typeof column.accessorFn !== "undefined" && column.getCanHide(),
+        ),
+);
 const processing = ref(false);
 const progress = ref(0); // Estado para o progresso
 

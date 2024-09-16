@@ -55,6 +55,11 @@ Route::middleware("auth:admin")->group(function () {
         "details",
     ])->name("tenant.details");
 
+    Route::post("tenant/user/import", [
+        TenantsCentralController::class,
+        "processImportUserTenant",
+    ])->name("userTenant.import");
+
     // Payments
     Route::prefix("payments")->group(function () {
         Route::get("/", [PaymentCentralController::class, "index"])->name(

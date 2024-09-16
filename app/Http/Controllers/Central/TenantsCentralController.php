@@ -3,7 +3,9 @@
 namespace App\Http\Controllers\Central;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\ImportStripeUsersJob;
 use App\Models\Tenant;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 
 class TenantsCentralController extends Controller
@@ -24,5 +26,10 @@ class TenantsCentralController extends Controller
         return Inertia::render("Central/Tenants/TenantViewDetails", [
             "tenantDetails" => $tenantId,
         ]);
+    }
+
+    public function processImportUserTenant(Request $request)
+    {
+        ImportStripeUsersJob::dispatch();
     }
 }

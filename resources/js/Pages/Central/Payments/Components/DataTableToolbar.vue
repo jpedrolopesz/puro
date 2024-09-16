@@ -3,8 +3,6 @@ import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Payments } from "../data/schema";
 
-import { paymentStatus } from "../data/data";
-import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import { Cross2Icon } from "@radix-icons/vue";
 import { Button } from "@/Components/ui/button";
@@ -37,12 +35,6 @@ const isFiltered = computed(
                         .getColumn('description')
                         ?.setFilterValue($event.target.value)
                 "
-            />
-            <DataTableFacetedFilter
-                v-if="table.getColumn('paymentStatus')"
-                :column="table.getColumn('paymentStatus')"
-                title="Status"
-                :options="paymentStatus"
             />
 
             <Button
