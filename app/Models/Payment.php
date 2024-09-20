@@ -11,30 +11,60 @@ class Payment extends Model
 
     protected $fillable = [
         "stripe_payment_id",
-        "user_id",
         "amount",
-        "currency",
-        "status",
-        "description",
-        "payment_date",
-        "customer_name",
-        "customer_email",
-        "refunded",
         "amount_refunded",
+        "currency",
+        "refunded",
         "disputed",
-        "failure_code",
-        "failure_message",
         "captured",
-        "payment_method_last4",
-        "payment_method_brand",
+        "converted_amount",
+        "converted_amount_refunded",
+        "converted_currency",
+        "decline_reason",
+        "description",
+        "fee",
+        "refunded_date",
+        "statement_descriptor",
+        "status",
+        "seller_message",
+        "taxes_on_fee",
+        "card_id",
+        "customer_id",
+        "customer_description",
+        "customer_email",
+        "invoice_id",
+        "transfer",
+        "additional_info",
+        "payment_date",
     ];
 
     public function refunds()
     {
         return $this->hasMany(Refund::class);
     }
-    public function user()
+
+    public function getNetAmountAttribute()
     {
-        return $this->belongsTo(User::class);
+        return $this->amount - $this->fee - $this->taxes_on_fee;
+    }
+
+    public function getIsFullyRefundedAttribute()
+    {
+        return $this->amount === $this->amount_refunded;
+    }
+
+    public function scopeSuccessful($query)
+    {
+        return $query->where("status", "succeeded");
+    }
+
+    public function scopeFailed($query)
+    {
+        return $query->where("status", "failed");
+    }
+
+    public function scopeDisputed($query)
+    {
+        return $query->where("disputed", true);
     }
 }

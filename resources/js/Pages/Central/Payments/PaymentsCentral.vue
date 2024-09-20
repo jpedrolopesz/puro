@@ -21,8 +21,6 @@ const props = defineProps<{
     currentFilter: string;
 }>();
 
-console.log(props.payments);
-
 const form = useForm({
     filter: props.currentFilter,
 });

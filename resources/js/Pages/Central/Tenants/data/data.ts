@@ -1,13 +1,6 @@
 import { h } from "vue";
 
-import {
-  CrossCircledIcon,
-  CircleIcon,
-  CheckCircledIcon,
-  ArrowUpIcon,
-  ArrowRightIcon,
-  ArrowDownIcon,
-} from "@radix-icons/vue";
+import { CrossCircledIcon, CheckCircledIcon } from "@radix-icons/vue";
 
 export const subscriptionLevels = [
   {
@@ -34,23 +27,5 @@ export const statuses = [
     value: "inactive",
     status: "Inactive",
     icon: h(CrossCircledIcon),
-  },
-];
-
-export const priorities = [
-  {
-    label: "Low",
-    value: "low",
-    icon: h(ArrowDownIcon),
-  },
-  {
-    label: "Medium",
-    value: "medium",
-    icon: h(ArrowRightIcon),
-  },
-  {
-    label: "High",
-    value: "high",
-    icon: h(ArrowUpIcon),
   },
 ];

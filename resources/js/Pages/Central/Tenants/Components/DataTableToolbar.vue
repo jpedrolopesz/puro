@@ -3,7 +3,7 @@ import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
 import type { Tenant } from "../data/schema";
 
-import { priorities, statuses } from "../data/data";
+import { statuses } from "../data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
 import { Cross2Icon } from "@radix-icons/vue";
@@ -39,12 +39,6 @@ const isFiltered = computed(
                 :column="table.getColumn('status')"
                 title="Status"
                 :options="statuses"
-            />
-            <DataTableFacetedFilter
-                v-if="table.getColumn('priority')"
-                :column="table.getColumn('priority')"
-                title="Priority"
-                :options="priorities"
             />
 
             <Button

@@ -29,6 +29,7 @@ class User extends Authenticatable
         "pm_last_four",
         "trial_ends_at",
         "tenant_id",
+        "cus_id",
     ];
 
     /**
@@ -88,5 +89,10 @@ class User extends Authenticatable
     public function messages()
     {
         return $this->morphMany(Message::class, "sender");
+    }
+
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 }

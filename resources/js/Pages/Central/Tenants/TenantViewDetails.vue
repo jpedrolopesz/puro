@@ -188,17 +188,18 @@ console.log(props.tenantDetails);
 
                             <CardContent>
                                 <CardTitle class="text-gray-800/90 text-sm">
-                                    ID creator</CardTitle
+                                    ID Local</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.id }}
                                 </CardDescription>
                                 <CardTitle class="text-gray-800/90 text-sm">
-                                    Domain</CardTitle
+                                    ID Customer</CardTitle
                                 >
                                 <CardDescription class="mb-3">
-                                    {{ tenantDetails.domain.domain }}
+                                    {{ tenantDetails.creator.stripe_id }}
                                 </CardDescription>
+
                                 <CardTitle class="text-gray-800/90 text-sm">
                                     Creator name</CardTitle
                                 >
@@ -213,10 +214,10 @@ console.log(props.tenantDetails);
                                 </CardDescription>
 
                                 <CardTitle class="text-gray-800/90 text-sm">
-                                    Customer since</CardTitle
-                                >
+                                    Billing e-mail
+                                </CardTitle>
                                 <CardDescription class="mb-3">
-                                    {{ tenantDetails.creator.created_at }}
+                                    {{ tenantDetails.email }}
                                 </CardDescription>
 
                                 <Separator class="my-4" />
@@ -252,16 +253,10 @@ console.log(props.tenantDetails);
 
                             <CardContent>
                                 <CardTitle class="text-gray-800/90 text-sm">
-                                    Last update</CardTitle
+                                    Domain</CardTitle
                                 >
                                 <CardDescription class="mb-3">
-                                    {{ tenantDetails.updated_at }}
-                                </CardDescription>
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    E-mail billing</CardTitle
-                                >
-                                <CardDescription class="mb-3">
-                                    {{ tenantDetails.email }}
+                                    {{ tenantDetails.domain.domain }}
                                 </CardDescription>
 
                                 <CardTitle class="text-gray-800/90 text-sm">
@@ -269,6 +264,13 @@ console.log(props.tenantDetails);
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.tenancy_db_name }}
+                                </CardDescription>
+
+                                <CardTitle class="text-gray-800/90 text-sm">
+                                    Last update</CardTitle
+                                >
+                                <CardDescription class="mb-3">
+                                    {{ tenantDetails.updated_at }}
                                 </CardDescription>
                             </CardContent>
                         </Card>

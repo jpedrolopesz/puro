@@ -37,39 +37,77 @@ class RetrievePaymentIntentAction
             $refunds = $this->getRefunds($charge->id);
 
             $paymentData = [
-                "id" => $charge->id,
-                "amount" => $charge->amount / 100, // Convert to decimal
+                "stripe_payment_id" => $charge->id,
+                "amount" => $charge->amount / 100,
+                "amount_refunded" => $charge->amount_refunded / 100,
                 "currency" => $charge->currency,
+                "refunded" => $charge->refunded,
+                "disputed" => $charge->disputed,
+                "captured" => $charge->captured,
+                "description" => $charge->description,
+                "fee" => ($charge->application_fee_amount ?? 0) / 100,
                 "status" => $charge->status,
-                "created" => $charge->created,
+                "seller_message" => $charge->outcome->seller_message ?? null,
+                "decline_reason" => $charge->outcome->reason ?? null,
+                "card_id" => $charge->payment_method,
+                "customer_id" => $charge->customer,
                 "customer_name" => $customer ? $customer->name : null,
                 "customer_email" => $customer ? $customer->email : null,
-                "description" => $charge->description,
-                "payment_method" => $charge->payment_method,
-                "card_brand" =>
-                    $charge->payment_method_details->card->brand ?? null,
-                "card_last4" =>
-                    $charge->payment_method_details->card->last4 ?? null,
-                "card_exp_month" =>
-                    $charge->payment_method_details->card->exp_month ?? null,
-                "card_exp_year" =>
-                    $charge->payment_method_details->card->exp_year ?? null,
+                "customer_description" => $customer
+                    ? $customer->description
+                    : null,
+                "invoice_id" => $charge->invoice ?? null,
+                "statement_descriptor" => $charge->statement_descriptor,
+                "payment_date" => date("Y-m-d H:i:s", $charge->created),
+            ];
+
+            // Retrieve balance transaction details
+            if ($charge->balance_transaction) {
+                $balanceTransaction = \Stripe\BalanceTransaction::retrieve(
+                    $charge->balance_transaction
+                );
+
+                $paymentData["fee"] = $balanceTransaction->fee / 100;
+                $paymentData["net_amount"] = $balanceTransaction->net / 100;
+
+                // Detailed fee breakdown
+                $paymentData["fee_details"] = array_map(function ($feeDetail) {
+                    return [
+                        "type" => $feeDetail->type,
+                        "amount" => $feeDetail->amount / 100,
+                        "currency" => $feeDetail->currency,
+                        "description" => $feeDetail->description ?? null,
+                    ];
+                }, $balanceTransaction->fee_details);
+
+                // Exchange rate information
+                if ($balanceTransaction->exchange_rate) {
+                    $paymentData["converted_amount"] =
+                        $balanceTransaction->amount / 100;
+                    $paymentData["converted_currency"] =
+                        $balanceTransaction->currency;
+                    $paymentData["exchange_rate"] =
+                        $balanceTransaction->exchange_rate;
+                }
+            }
+
+            $paymentData["additional_info"] = json_encode([
+                "payment_method_details" => $charge->payment_method_details,
+                "risk_score" => $charge->outcome->risk_score ?? null,
+                "risk_level" => $charge->outcome->risk_level ?? null,
                 "receipt_email" => $charge->receipt_email,
                 "metadata" => $charge->metadata,
-                "application_fee_amount" =>
-                    ($charge->application_fee_amount ?? 0) / 100,
                 "capture_method" => $paymentIntent
                     ? $paymentIntent->capture_method
                     : null,
-                "amount_refunded" => $charge->amount_refunded / 100,
-                "refunded" => $charge->refunded,
-                "disputed" => $charge->disputed,
                 "failure_code" => $charge->failure_code,
                 "failure_message" => $charge->failure_message,
-                "captured" => $charge->captured,
-                "payment_date" => date("Y-m-d H:i:s", $charge->created),
-                "refunds" => $refunds,
-            ];
+            ]);
+
+            // Add refunds if you're handling them separately
+            if (!empty($refunds)) {
+                $paymentData["refunds"] = $refunds;
+            }
 
             Log::info("Charge recuperado com sucesso: " . $chargeId);
 

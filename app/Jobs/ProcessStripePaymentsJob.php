@@ -5,6 +5,7 @@ namespace App\Jobs;
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Refund;
+use Stripe\BalanceTransaction;
 use App\Models\Payment;
 use App\Models\Refund as RefundModel;
 use Illuminate\Bus\Batchable;
@@ -90,10 +91,6 @@ class ProcessStripePaymentsJob implements ShouldQueue
             $this->createNewPayment($charge);
         }
 
-        if ($charge->status === "failed") {
-            Log::info("Cobrança falhou: " . $charge->id);
-        }
-
         if ($charge->refunded || $charge->amount_refunded > 0) {
             $this->processRefunds($charge);
         }
@@ -101,39 +98,75 @@ class ProcessStripePaymentsJob implements ShouldQueue
 
     protected function updateExistingPayment($payment, $charge)
     {
-        $payment->update([
-            "status" => $charge->status,
+        $balanceTransaction = $this->getBalanceTransaction($charge);
+
+        $updateData = [
             "amount_refunded" => $charge->amount_refunded / 100,
             "refunded" => $charge->refunded,
-        ]);
+            "disputed" => $charge->disputed,
+            "captured" => $charge->captured,
+            "status" => $charge->status,
+            "seller_message" => $charge->outcome->seller_message ?? null,
+            "decline_reason" => $charge->outcome->reason ?? null,
+        ];
+
+        if ($balanceTransaction) {
+            $updateData = array_merge($updateData, [
+                "fee" => $balanceTransaction->fee / 100,
+                "converted_amount" => $balanceTransaction->amount / 100,
+                "converted_currency" => $balanceTransaction->currency,
+            ]);
+        }
+
+        $payment->update($updateData);
         Log::info("Pagamento atualizado: " . $payment->id);
     }
 
     protected function createNewPayment($charge)
     {
-        $payment = Payment::create([
+        $balanceTransaction = $this->getBalanceTransaction($charge);
+
+        $paymentData = [
             "stripe_payment_id" => $charge->id,
-            "user_id" => null, // Você pode querer associar ao usuário se possível
+            "created_date" => now()->setTimestamp($charge->created),
             "amount" => $charge->amount / 100,
-            "currency" => $charge->currency,
-            "status" => $charge->status,
-            "description" => $charge->description ?? "No description provided",
-            "payment_date" => now()->setTimestamp($charge->created),
-            "customer_name" => $charge->billing_details->name,
-            "customer_email" => $charge->billing_details->email,
-            "payment_method_last4" =>
-                $charge->payment_method_details->card->last4 ?? null,
-            "payment_method_brand" =>
-                $charge->payment_method_details->card->brand ?? null,
             "amount_refunded" => $charge->amount_refunded / 100,
+            "currency" => $charge->currency,
             "refunded" => $charge->refunded,
             "disputed" => $charge->disputed,
-            "failure_code" => $charge->failure_code,
-            "failure_message" => $charge->failure_message,
             "captured" => $charge->captured,
-        ]);
-    }
+            "description" => $charge->description ?? "No description provided",
+            "status" => $charge->status,
+            "seller_message" => $charge->outcome->seller_message ?? null,
+            "decline_reason" => $charge->outcome->reason ?? null,
+            "card_id" => $charge->payment_method ?? null,
+            "customer_id" => $charge->customer ?? null,
+            "customer_email" => $charge->billing_details->email ?? null,
+            "invoice_id" => $charge->invoice ?? null,
+            "statement_descriptor" => $charge->statement_descriptor ?? null,
+            "payment_date" => now()->setTimestamp($charge->created),
+            "additional_info" => json_encode([
+                "payment_method_details" => $charge->payment_method_details,
+                "risk_score" => $charge->outcome->risk_score ?? null,
+                "risk_level" => $charge->outcome->risk_level ?? null,
+            ]),
+        ];
 
+        if ($balanceTransaction) {
+            $paymentData = array_merge($paymentData, [
+                "fee" => $balanceTransaction->fee / 100,
+                "converted_amount" => $balanceTransaction->amount / 100,
+                "converted_currency" => $balanceTransaction->currency,
+                "taxes_on_fee" => $this->calculateTaxesOnFee(
+                    $balanceTransaction
+                ),
+            ]);
+        }
+
+        $payment = Payment::create($paymentData);
+
+        Log::info("Novo pagamento criado: " . $payment->id);
+    }
     protected function processRefunds($charge)
     {
         Log::info("Processando reembolsos para o charge: " . $charge->id);
@@ -178,5 +211,32 @@ class ProcessStripePaymentsJob implements ShouldQueue
                     $e->getMessage()
             );
         }
+    }
+
+    protected function getBalanceTransaction($charge)
+    {
+        if ($charge->balance_transaction) {
+            try {
+                return BalanceTransaction::retrieve(
+                    $charge->balance_transaction
+                );
+            } catch (\Exception $e) {
+                Log::error(
+                    "Erro ao recuperar balance transaction: " . $e->getMessage()
+                );
+            }
+        }
+        return null;
+    }
+
+    protected function calculateTaxesOnFee($balanceTransaction)
+    {
+        $taxesOnFee = 0;
+        foreach ($balanceTransaction->fee_details as $feeDetail) {
+            if ($feeDetail->type === "tax") {
+                $taxesOnFee += $feeDetail->amount;
+            }
+        }
+        return $taxesOnFee / 100;
     }
 }

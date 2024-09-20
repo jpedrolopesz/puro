@@ -49,21 +49,45 @@ export const columns: ColumnDef<Payments>[] = [
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Payment Method" }),
     cell: ({ row }) => {
-      const paymentMethodBrand = row.original.payment_method_brand;
-      const paymentMethodLast4 = row.original.payment_method_last4;
+      let paymentMethodBrand = "";
+      let paymentMethodLast4 = "";
+
+      try {
+        const additionalInfo = JSON.parse(row.original.additional_info);
+        const paymentMethodDetails = additionalInfo.payment_method_details;
+
+        if (paymentMethodDetails && paymentMethodDetails.card) {
+          paymentMethodBrand = paymentMethodDetails.card.brand;
+          paymentMethodLast4 = paymentMethodDetails.card.last4;
+        }
+      } catch (error) {
+        console.error("Error parsing additional_info:", error);
+      }
 
       return h("div", { class: "w-110" }, [
         h("div", { class: "flex items-center" }, [
           h(CreditCard, { class: "h-3.5 w-3.5 mr-2" }),
           h("dl", { class: "flex items-center gap-2 text-muted-foreground" }, [
-            h("dt", { class: "font-medium capitalize" }, paymentMethodBrand),
-            h("dd", `**** ${paymentMethodLast4}`),
+            h(
+              "dt",
+              { class: "font-medium capitalize" },
+              paymentMethodBrand || "Unknown",
+            ),
+            h("dd", paymentMethodLast4 ? `**** ${paymentMethodLast4}` : "N/A"),
           ]),
         ]),
       ]);
     },
     filterFn: (row, id, value) => {
-      return value.includes(row.getValue("payment_method_type"));
+      try {
+        const additionalInfo = JSON.parse(row.original.additional_info);
+        const paymentMethodBrand =
+          additionalInfo.payment_method_details?.card?.brand || "";
+        return value.includes(paymentMethodBrand.toLowerCase());
+      } catch (error) {
+        console.error("Error parsing additional_info for filtering:", error);
+        return false;
+      }
     },
   },
 

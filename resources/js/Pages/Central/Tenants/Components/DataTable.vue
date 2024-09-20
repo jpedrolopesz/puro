@@ -99,6 +99,7 @@ const table = useVueTable({
                                 v-if="!header.isPlaceholder"
                                 :render="header.column.columnDef.header"
                                 :props="header.getContext()"
+                                class="mx-4"
                             />
                         </TableHead>
                     </TableRow>

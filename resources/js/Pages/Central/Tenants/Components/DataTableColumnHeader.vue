@@ -36,7 +36,7 @@ export default {
 <template>
     <div
         v-if="column.getCanSort()"
-        :class="cn('flex items-center space-x-2', $attrs.class ?? '')"
+        :class="cn('flex items-center space-x-2 ', $attrs.class ?? '')"
     >
         <DropdownMenu>
             <DropdownMenuTrigger as-child>

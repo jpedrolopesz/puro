@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Central;
 
+use App\Actions\Central\Tenants\GetTenantsQueryAction;
 use App\Http\Controllers\Controller;
 use App\Jobs\ImportStripeUsersJob;
 use App\Models\Tenant;
@@ -10,12 +11,17 @@ use Inertia\Inertia;
 
 class TenantsCentralController extends Controller
 {
+    public function __construct(
+        private readonly GetTenantsQueryAction $getTenantsQueryAction
+    ) {
+    }
+
     public function index()
     {
-        $tenantsData = Tenant::with(["creator"])->get();
+        $tenantsQuery = $this->getTenantsQueryAction->execute()->get();
 
         return Inertia::render("Central/Tenants/TenantsCentral", [
-            "tenantsLists" => $tenantsData,
+            "tenantsLists" => $tenantsQuery,
         ]);
     }
 
