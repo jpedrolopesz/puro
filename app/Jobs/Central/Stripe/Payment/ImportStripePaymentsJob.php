@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Central\Stripe\Payment;
 
 use Stripe\Stripe;
 use Stripe\Charge;
@@ -16,7 +16,7 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 
-class ProcessStripePaymentsJob implements ShouldQueue
+class ImportStripePaymentsJob implements ShouldQueue
 {
     use Dispatchable,
         InteractsWithQueue,

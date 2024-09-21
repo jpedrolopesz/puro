@@ -1,6 +1,10 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import DataTable from "./Components/DataTable.vue";
+import { columns } from "./Components/columnsDetails";
 import { Head, Link } from "@inertiajs/vue3";
+import { ref } from "vue";
+
 import { ChevronLeft, CreditCard } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import { Button } from "@/Components/ui/button";
@@ -12,29 +16,45 @@ import {
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/Components/ui/table";
-import { defineProps } from "vue";
 
-function formatDate(timestamp) {
-    const date = new Date(timestamp * 1000);
-    return date.toLocaleDateString();
+interface TenantDetails {
+    tenancy_name: string;
+    email: string;
+    status: string;
+    creator: {
+        id: number;
+        stripe_id: string;
+        name: string;
+        email: string;
+    };
+    domain: {
+        domain: string;
+    };
+    tenancy_db_name: string;
+    updated_at: string;
 }
 
-const props = defineProps({
-    tenantDetails: {
-        type: Object,
-        required: true,
-    },
-});
+interface Payment {
+    id: number;
+    amount: number;
+    description: string;
+    payment_date: string;
+}
 
-console.log(props.tenantDetails);
+interface CustomerPayments {
+    payments: Payment[];
+    totals: {
+        total_amount: number;
+        payment_count: number;
+    };
+}
+
+const props = defineProps<{
+    tenantDetails: TenantDetails;
+    customerPayments: CustomerPayments;
+}>();
+
+const paymentsData = ref(props.customerPayments.payments);
 </script>
 
 <template>
@@ -56,7 +76,11 @@ console.log(props.tenantDetails);
                         >
                             {{ tenantDetails.tenancy_name }}
                             <Badge
-                                :variant="tenantDetails.status ? '' : 'outline'"
+                                :variant="
+                                    tenantDetails.status === 'active'
+                                        ? ''
+                                        : 'outline'
+                                "
                                 class="ml-2"
                             >
                                 {{
@@ -69,15 +93,6 @@ console.log(props.tenantDetails);
                         <span class="lowercase">
                             {{ tenantDetails.email }}
                         </span>
-                    </div>
-
-                    <div class="hidden items-center md:ml-auto md:flex">
-                        <div class="flex items-center justify-center gap-2">
-                            <Button variant="outline" size="sm">
-                                Discard
-                            </Button>
-                            <Button size="sm"> Save </Button>
-                        </div>
                     </div>
                 </div>
                 <div
@@ -110,72 +125,38 @@ console.log(props.tenantDetails);
                                 </CardDescription>
                             </CardHeader>
                             <CardContent>
-                                <Table>
-                                    <TableHeader>
-                                        <TableRow>
-                                            <TableHead>Customer</TableHead>
-                                            <TableHead
-                                                class="hidden sm:table-cell"
-                                            >
-                                                Type
-                                            </TableHead>
-                                            <TableHead
-                                                class="hidden sm:table-cell"
-                                            >
-                                                Status
-                                            </TableHead>
-                                            <TableHead
-                                                class="hidden md:table-cell"
-                                            >
-                                                Date
-                                            </TableHead>
-                                            <TableHead class="text-right">
-                                                Amount
-                                            </TableHead>
-                                        </TableRow>
-                                    </TableHeader>
-                                    <TableBody>
-                                        <TableRow>
-                                            <TableCell>
-                                                <div class="font-medium">
-                                                    Emma Brown
-                                                </div>
-                                                <div
-                                                    class="hidden text-sm text-muted-foreground md:inline"
-                                                >
-                                                    emma@example.com
-                                                </div>
-                                            </TableCell>
-                                            <TableCell
-                                                class="hidden sm:table-cell"
-                                            >
-                                                Sale
-                                            </TableCell>
-                                            <TableCell
-                                                class="hidden sm:table-cell"
-                                            >
-                                                <Badge
-                                                    class="text-xs"
-                                                    variant="secondary"
-                                                >
-                                                    Fulfilled
-                                                </Badge>
-                                            </TableCell>
-                                            <TableCell
-                                                class="hidden md:table-cell"
-                                            >
-                                                2023-06-26
-                                            </TableCell>
-                                            <TableCell class="text-right">
-                                                $450.00
-                                            </TableCell>
-                                        </TableRow>
-                                    </TableBody>
-                                </Table>
+                                <DataTable
+                                    :data="paymentsData"
+                                    :columns="columns"
+                                />
                             </CardContent>
                         </Card>
                     </div>
                     <div class="grid auto-rows-max items-start gap-4 lg:gap-8">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Insights</CardTitle>
+                            </CardHeader>
+                            <CardContent>
+                                <div>
+                                    <h3 class="text-lg font-semibold">
+                                        Total gasto
+                                    </h3>
+                                    <p class="text-2xl font-bold">
+                                        {{
+                                            customerPayments.totals.total_amount
+                                        }}
+                                    </p>
+                                    <p class="text-sm text-muted-foreground">
+                                        {{
+                                            customerPayments.totals
+                                                .payment_count
+                                        }}
+                                        transações
+                                    </p>
+                                </div>
+                            </CardContent>
+                        </Card>
                         <Card class="overflow-hidden">
                             <CardHeader>
                                 <CardTitle>Creator of the tenant</CardTitle>
@@ -187,35 +168,33 @@ console.log(props.tenantDetails);
                             </CardHeader>
 
                             <CardContent>
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    ID Local</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >ID Local</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.id }}
                                 </CardDescription>
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    ID Customer</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >ID Customer</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.stripe_id }}
                                 </CardDescription>
-
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Creator name</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Creator name</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.name }}
                                 </CardDescription>
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Creator e-mail</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Creator e-mail</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.creator.email }}
                                 </CardDescription>
-
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Billing e-mail
-                                </CardTitle>
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Billing e-mail</CardTitle
+                                >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.email }}
                                 </CardDescription>
@@ -252,22 +231,20 @@ console.log(props.tenantDetails);
                             </CardHeader>
 
                             <CardContent>
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Domain</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Domain</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.domain.domain }}
                                 </CardDescription>
-
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Tenant name database</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Tenant name database</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.tenancy_db_name }}
                                 </CardDescription>
-
-                                <CardTitle class="text-gray-800/90 text-sm">
-                                    Last update</CardTitle
+                                <CardTitle class="text-gray-800/90 text-sm"
+                                    >Last update</CardTitle
                                 >
                                 <CardDescription class="mb-3">
                                     {{ tenantDetails.updated_at }}
@@ -275,10 +252,6 @@ console.log(props.tenantDetails);
                             </CardContent>
                         </Card>
                     </div>
-                </div>
-                <div class="flex items-center justify-center gap-2 md:hidden">
-                    <Button variant="outline" size="sm"> Discard </Button>
-                    <Button size="sm"> Save </Button>
                 </div>
             </div>
         </main>

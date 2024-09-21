@@ -50,7 +50,7 @@ Route::middleware("auth:admin")->group(function () {
     Route::get("/tenants", [TenantsCentralController::class, "index"])->name(
         "tenants.index"
     );
-    Route::get("/tenants/{tenantID}", [
+    Route::get("/tenants/{tenant}", [
         TenantsCentralController::class,
         "details",
     ])->name("tenant.details");

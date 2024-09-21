@@ -2,7 +2,7 @@ import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
 
-import { subscriptionLevels, priorities, statuses } from "../data/data";
+import { subscriptionLevels, statuses } from "../data/data";
 import type { Tenant } from "../data/schema";
 import DataTableColumnHeader from "./DataTableColumnHeader.vue";
 import DataTableRowActions from "./DataTableRowActions.vue";
@@ -100,9 +100,23 @@ export const columns: ColumnDef<Tenant>[] = [
       return value.includes(row.getValue("status"));
     },
   },
-
   {
     id: "actions",
-    cell: ({ row }) => h(DataTableRowActions, { row }),
+    cell: ({ row }) =>
+      h(
+        DataTableRowActions,
+        { row },
+        {
+          default: () =>
+            h(
+              Link,
+              {
+                href: route("tenant.details", { tenant: row.original }),
+                class: "block w-full",
+              },
+              () => "View tenant details",
+            ),
+        },
+      ),
   },
 ];

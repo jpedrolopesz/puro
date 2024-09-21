@@ -1,24 +1,13 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
-import { computed } from "vue";
-import { Link } from "@inertiajs/vue3";
-
-import { tenantSchema } from "../data/schema";
 import type { Tenant } from "../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
-
 import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuRadioGroup,
-    DropdownMenuRadioItem,
     DropdownMenuSeparator,
-    DropdownMenuShortcut,
-    DropdownMenuSub,
-    DropdownMenuSubContent,
-    DropdownMenuSubTrigger,
     DropdownMenuTrigger,
     DropdownMenuLabel,
 } from "@/Components/ui/dropdown-menu";
@@ -26,9 +15,8 @@ import {
 interface DataTableRowActionsProps {
     row: Row<Tenant>;
 }
-const props = defineProps<DataTableRowActionsProps>();
 
-const tenantSchema = computed(() => tenantSchema.parse(props.row.original));
+const props = defineProps<DataTableRowActionsProps>();
 </script>
 
 <template>
@@ -45,16 +33,9 @@ const tenantSchema = computed(() => tenantSchema.parse(props.row.original));
         <DropdownMenuContent align="end" class="w-[180px]">
             <DropdownMenuLabel>Connections</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem
-                ><Link
-                    :href="
-                        route('tenant.details', {
-                            tenantID: props.row.original.id,
-                        })
-                    "
-                    >View payment details</Link
-                ></DropdownMenuItem
-            >
+            <DropdownMenuItem>
+                <slot></slot>
+            </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>
 </template>

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Jobs;
+namespace App\Jobs\Central;
 
 use App\Events\Central\SyncPaymentStripeEvent;
 use Illuminate\Bus\Queueable;

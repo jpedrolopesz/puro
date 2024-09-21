@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Central;
 
 use App\Actions\Central\Stripe\Payment\{
     RetrievePaymentIntentAction,
-    RetrieveFilteredPaymentsAction
+    RetrieveFilteredPaymentsAction,
+    CountStripeCustomerPaymentsAction
 };
 use App\Http\Controllers\Controller;
-use App\Jobs\ProcessStripePaymentsJob;
-use App\Jobs\TestJob;
+use App\Jobs\Central\Stripe\Payment\ImportStripePaymentsJob;
+use App\Jobs\Central\TestJob;
+
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Stripe\Stripe;
@@ -48,7 +50,7 @@ class PaymentCentralController extends Controller
 
     public function processPayments(Request $request)
     {
-        ProcessStripePaymentsJob::dispatch();
+        ImportStripePaymentsJob::dispatch();
     }
 
     public function startSync(Request $request)

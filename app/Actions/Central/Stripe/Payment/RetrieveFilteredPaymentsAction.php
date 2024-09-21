@@ -4,7 +4,6 @@ namespace App\Actions\Central\Stripe\Payment;
 
 use App\Models\Payment;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\DB;
 
 class RetrieveFilteredPaymentsAction
 {
