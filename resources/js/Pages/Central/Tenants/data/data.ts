@@ -1,7 +1,15 @@
 import { h } from "vue";
 
 import { CrossCircledIcon, CheckCircledIcon } from "@radix-icons/vue";
-import { XIcon, CheckIcon, Info, CornerDownLeft } from "lucide-vue-next";
+import {
+  XIcon,
+  CheckIcon,
+  Info,
+  CornerDownLeft,
+  Shield,
+  User,
+  Star,
+} from "lucide-vue-next";
 
 export interface Payment {
   disputed: boolean | number;
@@ -74,3 +82,50 @@ export const statuses = [
     icon: h(CrossCircledIcon),
   },
 ];
+
+export const userRoles = [
+  {
+    value: "super_admin",
+    label: "Super Admin",
+    icon: Shield,
+    description: "Full access to all features and settings",
+  },
+  {
+    value: "admin",
+    label: "Admin",
+    icon: Star,
+    description: "Access to most features and settings",
+  },
+  {
+    value: "user",
+    label: "User",
+    icon: User,
+    description: "Standard user access",
+  },
+] as const;
+
+export const userStatuses = [
+  {
+    value: "Yes",
+    label: "Verified",
+    icon: CheckIcon,
+    description: "Email has been verified",
+    color: "green",
+  },
+  {
+    value: "No",
+    label: "Unverified",
+    icon: XIcon,
+    description: "Email has not been verified",
+    color: "red",
+  },
+] as const;
+
+export type UserRole = (typeof userRoles)[number]["value"];
+export type UserStatus = (typeof userStatuses)[number]["value"];
+
+export const getUserRole = (value: UserRole) =>
+  userRoles.find((role) => role.value === value) || userRoles[2]; // Default to 'user' if not found
+
+export const getUserStatus = (value: UserStatus) =>
+  userStatuses.find((status) => status.value === value) || userStatuses[1];

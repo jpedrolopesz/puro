@@ -20,6 +20,13 @@ export const columns: ColumnDef<Payment>[] = [
     enableSorting: false,
   },
   {
+    accessorKey: "customer_id",
+    header: () => null,
+    cell: () => null,
+    enableHiding: false,
+    enableSorting: false,
+  },
+  {
     accessorKey: "amount",
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Amount" }),
@@ -95,7 +102,7 @@ export const columns: ColumnDef<Payment>[] = [
               Link,
               {
                 href: route("payments.details", {
-                  paymentsId: row.original.id,
+                  paymentsId: row.original.stripe_payment_id,
                 }),
                 class: "block w-full",
               },

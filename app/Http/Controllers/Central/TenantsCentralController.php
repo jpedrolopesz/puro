@@ -4,20 +4,21 @@ namespace App\Http\Controllers\Central;
 
 use App\Actions\Central\Tenants\{
     GetTenantsQueryAction,
-    CountStripeCustomerPaymentsAction
+    CountStripeCustomerPaymentsAction,
+    GetTenantUsersAction
 };
 use App\Http\Controllers\Controller;
 use App\Jobs\Central\Stripe\User\ImportStripeUsersJob;
 use App\Models\Tenant;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class TenantsCentralController extends Controller
 {
     public function __construct(
         private readonly GetTenantsQueryAction $getTenantsQueryAction,
-        private readonly CountStripeCustomerPaymentsAction $countStripeCustomerPaymentsAction
+        private readonly CountStripeCustomerPaymentsAction $countStripeCustomerPaymentsAction,
+        private readonly GetTenantUsersAction $getTenantsUsersAction
     ) {
     }
 
@@ -42,9 +43,12 @@ class TenantsCentralController extends Controller
             );
         }
 
+        $tenantUsers = $this->getTenantsUsersAction->execute($tenant);
+
         return Inertia::render("Central/Tenants/TenantViewDetails", [
             "tenantDetails" => $tenant,
             "customerPayments" => $customerPayments,
+            "tenantUsers" => $tenantUsers,
         ]);
     }
 

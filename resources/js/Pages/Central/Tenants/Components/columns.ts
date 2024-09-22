@@ -11,18 +11,24 @@ import { Badge } from "@/Components/ui/badge";
 export const columns: ColumnDef<Tenant>[] = [
   {
     accessorKey: "id",
-    header: ({ column }) => h(DataTableColumnHeader, { column, title: "Id" }),
-    cell: ({ row }) =>
-      h(
-        Link,
-        {
-          href: `/tenants/${row.getValue("id")}`,
-          class: "w-24 ml-4",
-        },
-        () => row.getValue("id"),
-      ),
+    header: () => null,
+    cell: () => null,
     enableSorting: false,
     enableHiding: false,
+  },
+  {
+    accessorKey: "customer_id",
+    header: ({ column }) =>
+      h(DataTableColumnHeader, { column, title: "Customer Id" }),
+    cell: ({ row }) => {
+      const creatorId = row.original.creator.stripe_id;
+      return h("div", { class: "w-20" }, creatorId);
+    },
+    filterFn: (row, id, value) => {
+      const creatorId = row.original.creator.stripe_id;
+      if (!creatorId) return false;
+      return creatorId.toLowerCase().includes(value.toLowerCase());
+    },
   },
   {
     accessorKey: "tenancy_name",
@@ -56,12 +62,12 @@ export const columns: ColumnDef<Tenant>[] = [
     header: ({ column }) =>
       h(DataTableColumnHeader, { column, title: "Domain" }),
     cell: ({ row }) => {
-      const creatorName = row.original.domain.domain;
-      return h("div", { class: "w-20" }, creatorName);
+      const creatorDomain = row.original.domain.domain;
+      return h("div", { class: "w-20" }, creatorDomain);
     },
     filterFn: (row, id, value) => {
-      const creatorName = row.original.domain.domain;
-      return creatorName.includes(value);
+      const creatorDomain = row.original.domain.domain;
+      return creatorDomain.includes(value);
     },
   },
   {

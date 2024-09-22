@@ -25,13 +25,17 @@ const isFiltered = computed(
     <div class="flex items-center justify-between">
         <div class="flex flex-1 items-center space-x-2">
             <Input
-                placeholder="Filter tasks..."
+                placeholder="Filter customer id..."
                 :model-value="
-                    (table.getColumn('id')?.getFilterValue() as string) ?? ''
+                    (table
+                        .getColumn('customer_id')
+                        ?.getFilterValue() as string) ?? ''
                 "
                 class="h-8 w-[150px] lg:w-[250px]"
                 @input="
-                    table.getColumn('id')?.setFilterValue($event.target.value)
+                    table
+                        .getColumn('customer_id')
+                        ?.setFilterValue($event.target.value)
                 "
             />
             <DataTableFacetedFilter

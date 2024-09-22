@@ -35,6 +35,7 @@ interface DataTableProps {
     columns: ColumnDef<Tenant, any>[];
     data: Items[];
 }
+
 const props = defineProps<DataTableProps>();
 
 const sorting = ref<SortingState>([]);
