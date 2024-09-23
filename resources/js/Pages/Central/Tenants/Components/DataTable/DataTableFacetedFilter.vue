@@ -2,7 +2,7 @@
 import type { Column } from "@tanstack/vue-table";
 import type { Component } from "vue";
 import { computed } from "vue";
-import type { Tenant } from "../data/schema";
+import type { Tenant } from "../../Data/schema";
 import { CheckIcon, PlusCircledIcon } from "@radix-icons/vue";
 
 import { Badge } from "@/Components/ui/badge";

@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-import TenantCustomerDetails from "./TenantCustomerDetails.vue";
-import TenantUserDetails from "./TenantUserDetails.vue";
-import { TenantDetails, CustomerPayments } from "./data/tenantTypes";
-import { UserSchema } from "./data/userTypes";
+import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
+import TenantCustomerDetails from "../Components/TenantCustomerDetails.vue";
+import TenantUserDetails from "../Components/TenantUserDetails.vue";
+import { TenantDetails } from "../Types/tenantTypes";
+import { CustomerPayments } from "../Types/paymentsTypes";
+import { UserSchema } from "../Types/userTypes";
 
 import { Link } from "@inertiajs/vue3";
 
@@ -17,8 +18,6 @@ const props = defineProps<{
     customerPayments: CustomerPayments;
     tenantUsers: UserSchema;
 }>();
-
-console.log(props.tenantUsers);
 </script>
 
 <template>

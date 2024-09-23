@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import DataTable from "./Components/DataTable.vue";
-import { columns } from "./Components/columnsDetails";
-import { TenantDetails, CustomerPayments } from "./data/tenantTypes";
-
+import DataTable from "./DataTable/DataTable.vue";
+import { columns } from "./DataTable/Columns/paymentColumns";
+import { TenantDetails } from "../Types/tenantTypes";
+import { CustomerPayments } from "../Types/paymentsTypes";
 import { Head } from "@inertiajs/vue3";
 import { ref } from "vue";
 import { CreditCard } from "lucide-vue-next";

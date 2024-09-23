@@ -2,14 +2,14 @@ import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
 
-import DataTableColumnHeader from "./DataTableColumnHeader.vue";
-import DataTableRowActions from "./DataTableRowActions.vue";
+import DataTableColumnHeader from "../DataTableColumnHeader.vue";
+import DataTableRowActions from "../DataTableRowActions.vue";
 
 import { Badge } from "@/Components/ui/badge";
 
-import { statuses, paymentStatus } from "../data/data";
+import { statuses, paymentStatus } from "../../../Data/data";
 
-import type { Payment } from "../data/schema";
+import type { Payment } from "../../../Data/schema";
 
 export const columns: ColumnDef<Payment>[] = [
   {

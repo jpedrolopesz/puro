@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
-import type { Tenant } from "../data/schema";
+import type { Tenant } from "../../Data/schema";
 import {
     DoubleArrowLeftIcon,
     DoubleArrowRightIcon,

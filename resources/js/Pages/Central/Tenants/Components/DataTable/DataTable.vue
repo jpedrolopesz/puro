@@ -17,7 +17,7 @@ import {
 } from "@tanstack/vue-table";
 
 import { ref } from "vue";
-import type { Tenant } from "../data/schema";
+import type { Tenant } from "../../Data/schema";
 import DataTablePagination from "./DataTablePagination.vue";
 import DataTableToolbar from "./DataTableToolbar.vue";
 import { valueUpdater } from "@/lib/utils";

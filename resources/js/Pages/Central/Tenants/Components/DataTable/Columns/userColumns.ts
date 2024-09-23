@@ -1,10 +1,9 @@
 import { h } from "vue";
-import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
-import { userRoles, userStatuses } from "../data/data";
-import type { User } from "../data/schema";
-import DataTableColumnHeader from "./DataTableColumnHeader.vue";
-import DataTableRowActions from "./DataTableRowActions.vue";
+import { userRoles, userStatuses } from "../../../Data/data";
+import type { User } from "../../../Data/schema";
+import DataTableColumnHeader from "../DataTableColumnHeader.vue";
+import DataTableRowActions from "../DataTableRowActions.vue";
 import { Badge } from "@/Components/ui/badge";
 
 export const columns: ColumnDef<User>[] = [

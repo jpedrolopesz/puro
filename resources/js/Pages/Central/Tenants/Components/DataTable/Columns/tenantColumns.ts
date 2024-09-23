@@ -2,10 +2,10 @@ import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 import type { ColumnDef } from "@tanstack/vue-table";
 
-import { subscriptionLevels, statuses } from "../data/data";
-import type { Tenant } from "../data/schema";
-import DataTableColumnHeader from "./DataTableColumnHeader.vue";
-import DataTableRowActions from "./DataTableRowActions.vue";
+import { subscriptionLevels, statuses } from "../../../Data/data";
+import type { Tenant } from "../../../Data/schema";
+import DataTableColumnHeader from "../DataTableColumnHeader.vue";
+import DataTableRowActions from "../DataTableRowActions.vue";
 import { Badge } from "@/Components/ui/badge";
 
 export const columns: ColumnDef<Tenant>[] = [

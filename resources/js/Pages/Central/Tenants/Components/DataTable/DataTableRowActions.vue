@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Row } from "@tanstack/vue-table";
-import type { Tenant } from "../data/schema";
+import type { Tenant } from "../../Data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 import { Button } from "@/Components/ui/button";
 import {

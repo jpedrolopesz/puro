@@ -53,7 +53,7 @@ export const UserSchema = z.object({
     .string()
     .nullable()
     .transform((val) => (val ? new Date(val) : null)),
-  password: z.string().min(6), // Assumindo uma senha de pelo menos 6 caracteres
+  password: z.string().min(6),
   tenant_id: z.number().int().positive().nullable(),
   role: UserRole,
   remember_token: z.string().optional(),
@@ -61,5 +61,4 @@ export const UserSchema = z.object({
   updated_at: z.string().transform((val) => new Date(val)),
 });
 
-// Tipo derivado do schema
 export type User = z.infer<typeof UserSchema>;

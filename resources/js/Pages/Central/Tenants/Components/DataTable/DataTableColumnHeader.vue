@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import type { Column } from "@tanstack/vue-table";
-import type { Tenant } from "../data/schema";
+import type { Tenant } from "../../Data/schema";
 
 import {
     EyeNoneIcon,

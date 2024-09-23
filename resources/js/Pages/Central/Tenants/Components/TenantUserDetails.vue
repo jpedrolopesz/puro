@@ -1,11 +1,8 @@
 <script setup lang="ts">
-import DataTable from "./Components/DataTable.vue";
-import { columns } from "./Components/columnsUsers";
-import { UserSchema } from "./data/userTypes";
-
+import DataTable from "./DataTable/DataTable.vue";
+import { columns } from "./DataTable/Columns/userColumns";
+import { UserSchema } from "../Types/userTypes";
 import { Head } from "@inertiajs/vue3";
-import { ref } from "vue";
-
 import {
     Card,
     CardContent,

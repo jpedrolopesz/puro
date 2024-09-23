@@ -26,7 +26,7 @@ class TenantsCentralController extends Controller
     {
         $tenantsQuery = $this->getTenantsQueryAction->execute()->get();
 
-        return Inertia::render("Central/Tenants/TenantsCentral", [
+        return Inertia::render("Central/Tenants/Pages/TenantsCentral", [
             "tenantsLists" => $tenantsQuery,
         ]);
     }
@@ -45,7 +45,7 @@ class TenantsCentralController extends Controller
 
         $tenantUsers = $this->getTenantsUsersAction->execute($tenant);
 
-        return Inertia::render("Central/Tenants/TenantViewDetails", [
+        return Inertia::render("Central/Tenants/Pages/TenantViewDetails", [
             "tenantDetails" => $tenant,
             "customerPayments" => $customerPayments,
             "tenantUsers" => $tenantUsers,
