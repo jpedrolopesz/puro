@@ -28,7 +28,7 @@ const props = defineProps<{
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <DataTable :data="tenantUsers" :columns="columns" />
+                <DataTable :data="tenantUsers" :columns="columns" type="user" />
             </CardContent>
         </Card>
     </div>

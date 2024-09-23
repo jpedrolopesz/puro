@@ -1,8 +1,7 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
 import { computed } from "vue";
-import type { Tenant } from "../../Data/schema";
-
+import type { Tenant, User, Payment } from "../../Data/schema";
 import { statuses } from "../../Data/data";
 import DataTableFacetedFilter from "./DataTableFacetedFilter.vue";
 import DataTableViewOptions from "./DataTableViewOptions.vue";
@@ -11,7 +10,8 @@ import { Button } from "@/Components/ui/button";
 import { Input } from "@/Components/ui/input";
 
 interface DataTableToolbarProps {
-    table: Table<Tenant>;
+    table: Table<Tenant | User | Payment>;
+    type: "tenant" | "user" | "payment";
 }
 
 const props = defineProps<DataTableToolbarProps>();
@@ -19,22 +19,48 @@ const props = defineProps<DataTableToolbarProps>();
 const isFiltered = computed(
     () => props.table.getState().columnFilters.length > 0,
 );
+
+const filterColumn = computed(() => {
+    switch (props.type) {
+        case "tenant":
+            return "customer_id";
+        case "user":
+            return "name";
+        case "payment":
+            return "description";
+        default:
+            return "customer_id";
+    }
+});
+
+const filterPlaceholder = computed(() => {
+    switch (props.type) {
+        case "tenant":
+            return "Filter customer id...";
+        case "user":
+            return "Filter name...";
+        case "payment":
+            return "Filter description...";
+        default:
+            return "Filter...";
+    }
+});
 </script>
 
 <template>
     <div class="flex items-center justify-between">
         <div class="flex flex-1 items-center space-x-2">
             <Input
-                placeholder="Filter customer id..."
+                :placeholder="filterPlaceholder"
                 :model-value="
                     (table
-                        .getColumn('customer_id')
+                        .getColumn(filterColumn)
                         ?.getFilterValue() as string) ?? ''
                 "
                 class="h-8 w-[150px] lg:w-[250px]"
                 @input="
                     table
-                        .getColumn('customer_id')
+                        .getColumn(filterColumn)
                         ?.setFilterValue($event.target.value)
                 "
             />
@@ -44,7 +70,6 @@ const isFiltered = computed(
                 title="Status"
                 :options="statuses"
             />
-
             <Button
                 v-if="isFiltered"
                 variant="ghost"

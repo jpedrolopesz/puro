@@ -36,7 +36,7 @@ const startProcessing = async () => {
                 </div>
             </div>
 
-            <DataTable :data="tenantsLists" :columns="columns" />
+            <DataTable :data="tenantsLists" :columns="columns" type="tenant" />
         </main>
     </AuthenticatedCentralLayout>
 </template>

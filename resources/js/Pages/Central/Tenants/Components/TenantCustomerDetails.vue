@@ -115,7 +115,11 @@ const formatNextBilling = (date: string) => {
                     </CardDescription>
                 </CardHeader>
                 <CardContent>
-                    <DataTable :data="paymentsData" :columns="columns" />
+                    <DataTable
+                        :data="paymentsData"
+                        :columns="columns"
+                        type="payment"
+                    />
                 </CardContent>
             </Card>
         </div>

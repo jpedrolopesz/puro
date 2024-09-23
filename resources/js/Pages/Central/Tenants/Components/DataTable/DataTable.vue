@@ -34,6 +34,7 @@ import {
 interface DataTableProps {
     columns: ColumnDef<Tenant, any>[];
     data: Items[];
+    type: "tenant" | "user" | "payment";
 }
 
 const props = defineProps<DataTableProps>();
@@ -84,7 +85,7 @@ const table = useVueTable({
 
 <template>
     <div class="space-y-4">
-        <DataTableToolbar :table="table" />
+        <DataTableToolbar :table="table" :type="type" />
         <div class="rounded-md border">
             <Table>
                 <TableHeader>
