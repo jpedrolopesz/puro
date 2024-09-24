@@ -15,12 +15,15 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\DB;
+use App\Events\ImportProgressUpdated;
 
 class ImportStripeUsersJob implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     protected $startingAfter;
+    protected $totalCustomers;
+    protected $processedCustomers = 0;
 
     public function __construct(string $startingAfter = null)
     {
@@ -29,12 +32,9 @@ class ImportStripeUsersJob implements ShouldQueue
 
     public function handle(): void
     {
-        Log::info(
-            "Iniciando importação de usuários do Stripe com starting_after: " .
-                $this->startingAfter
-        );
-
         try {
+            $this->updateProgress(0, "Initializing import...");
+
             Stripe::setApiKey(config("services.stripe.secret"));
             $response = Customer::all([
                 "limit" => 100,
@@ -42,9 +42,11 @@ class ImportStripeUsersJob implements ShouldQueue
                 "expand" => ["data.subscriptions", "data.default_source"],
             ]);
 
-            Log::info(
-                "Número de clientes do Stripe recuperados: " .
-                    count($response->data)
+            $this->totalCustomers =
+                $response->total_count ?? count($response->data);
+            $this->updateProgress(
+                0,
+                "Retrieved {$this->totalCustomers} customers from Stripe"
             );
 
             foreach ($response->data as $customer) {
@@ -52,11 +54,26 @@ class ImportStripeUsersJob implements ShouldQueue
                     DB::beginTransaction();
                     $this->processCustomer($customer);
                     DB::commit();
+
+                    $this->processedCustomers++;
+                    $progress =
+                        ($this->processedCustomers / $this->totalCustomers) *
+                        100;
+                    $this->updateProgress(
+                        $progress,
+                        "Processed {$this->processedCustomers} of {$this->totalCustomers} customers"
+                    );
                 } catch (\Exception $e) {
                     DB::rollBack();
                     Log::error(
-                        "Erro ao processar cliente {$customer->id}: " .
+                        "Error processing customer {$customer->id}: " .
                             $e->getMessage()
+                    );
+                    $this->updateProgress(
+                        null,
+                        "Error processing customer {$customer->id}: " .
+                            $e->getMessage(),
+                        true
                     );
                 }
             }
@@ -64,41 +81,75 @@ class ImportStripeUsersJob implements ShouldQueue
             if ($response->has_more) {
                 $lastCustomer = end($response->data);
                 self::dispatch($lastCustomer->id)->delay(now()->addSeconds(5));
-                Log::info(
-                    "Agendando próximo job com starting_after: " .
-                        $lastCustomer->id
+                $this->updateProgress(
+                    null,
+                    "Scheduling next batch of customers"
                 );
             } else {
-                Log::info(
-                    "Importação de usuários do Stripe concluída. Não há mais dados para processar."
-                );
+                $this->updateProgress(100, "Import completed successfully");
             }
         } catch (\Exception $e) {
-            Log::error(
-                "Falha ao importar usuários do Stripe: " . $e->getMessage()
+            Log::error("Failed to import Stripe users: " . $e->getMessage());
+            $this->updateProgress(
+                null,
+                "Failed to import Stripe users: " . $e->getMessage(),
+                true
             );
         }
     }
 
+    protected function updateProgress(
+        $progress = null,
+        $status = "",
+        $isError = false
+    ) {
+        $eventName = $isError ? "import.error" : "import.progress";
+        $payload = ["status" => $status];
+        if (!is_null($progress)) {
+            $payload["progress"] = $progress;
+        }
+        broadcast(new ImportProgressUpdated($eventName, $payload))->toOthers();
+    }
+
     protected function processCustomer($customer)
     {
-        Log::info("Processando cliente do Stripe: " . $customer->id);
+        Log::info(
+            "Processando cliente do Stripe: {$customer->id}, Email: {$customer->email}"
+        );
 
-        $user = User::where("stripe_id", $customer->id)->first();
+        $userByStripeId = User::where("stripe_id", $customer->id)->first();
+        $userByEmail = User::where("email", $customer->email)->first();
 
-        if (!$user) {
-            $user = User::where("email", $customer->email)->first();
-        }
-
-        if ($user) {
-            $this->updateExistingUser($user, $customer);
+        if ($userByStripeId) {
+            Log::info(
+                "Usuário encontrado pelo Stripe ID: {$userByStripeId->id}"
+            );
+            $this->updateExistingUser($userByStripeId, $customer);
+        } elseif ($userByEmail) {
+            Log::info("Usuário encontrado pelo email: {$userByEmail->id}");
+            if (
+                $userByEmail->stripe_id &&
+                $userByEmail->stripe_id !== $customer->id
+            ) {
+                Log::warning(
+                    "Usuário {$userByEmail->id} já tem um Stripe ID diferente: {$userByEmail->stripe_id}"
+                );
+                // Decida como lidar com esta situação. Por exemplo:
+                // $this->handleConflictingStripeIds($userByEmail, $customer);
+            } else {
+                $this->updateExistingUser($userByEmail, $customer);
+            }
         } else {
+            Log::info(
+                "Nenhum usuário existente encontrado. Criando novo usuário para {$customer->email}"
+            );
             $this->createNewUserWithTenant($customer);
         }
     }
 
     protected function updateExistingUser($user, $customer)
     {
+        $originalStripeId = $user->stripe_id;
         $user->update([
             "stripe_id" => $customer->id,
             "name" => $customer->name ?? $user->name,
@@ -109,15 +160,20 @@ class ImportStripeUsersJob implements ShouldQueue
         ]);
 
         Log::info(
-            "Usuário atualizado: " .
-                $user->id .
-                " com Stripe ID: " .
-                $customer->id
+            "Usuário atualizado: ID {$user->id}, Email: {$user->email}, " .
+                "Stripe ID Original: {$originalStripeId}, Novo Stripe ID: {$customer->id}"
         );
     }
 
     protected function createNewUserWithTenant($customer)
     {
+        if (User::where("email", $customer->email)->exists()) {
+            Log::warning(
+                "Tentativa de criar um usuário duplicado para o email: {$customer->email}"
+            );
+            return;
+        }
+
         $user = User::create([
             "name" => $customer->name ?? "Stripe Customer",
             "email" => $customer->email,
@@ -142,12 +198,8 @@ class ImportStripeUsersJob implements ShouldQueue
         $this->createTenantDomain($tenant, $user->identifier);
 
         Log::info(
-            "Novo usuário criado: " .
-                $user->id .
-                " com Stripe ID: " .
-                $customer->id .
-                " e Tenant ID: " .
-                $tenant->id
+            "Novo usuário criado: ID {$user->id}, Email: {$user->email}, " .
+                "Stripe ID: {$customer->id}, Tenant ID: {$tenant->id}"
         );
     }
 

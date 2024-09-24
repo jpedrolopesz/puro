@@ -23,3 +23,7 @@ Broadcast::channel(
 Broadcast::channel("conversation.{id}", function ($user, $id) {
     return true; // Substitua isso pela sua lógica de autorização
 });
+
+Broadcast::channel("import-progress", function ($user) {
+    return true; // Ou adicione lógica de autorização conforme necessário
+});
