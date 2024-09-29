@@ -15,6 +15,7 @@ use Illuminate\Foundation\Bus\Dispatchable;
 use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
+use App\Events\ImportProgressUpdated;
 
 class ImportStripePaymentsJob implements ShouldQueue
 {
@@ -25,6 +26,8 @@ class ImportStripePaymentsJob implements ShouldQueue
         Batchable;
 
     protected $startingAfter;
+    protected $totalCharges;
+    protected $processedCharges = 0;
 
     public function __construct(string $startingAfter = null)
     {
@@ -33,49 +36,85 @@ class ImportStripePaymentsJob implements ShouldQueue
 
     public function handle(): void
     {
-        Log::info(
-            "Iniciando o processamento de Charges com starting_after: " .
-                $this->startingAfter
-        );
-
         try {
+            $this->updateProgress(0, "Initializing payment import...");
+
             Stripe::setApiKey(config("services.stripe.secret"));
             $response = Charge::all([
                 "limit" => 50,
                 "starting_after" => $this->startingAfter,
             ]);
 
-            Log::info(
-                "Número de Charges recuperados: " . count($response->data)
+            $this->totalCharges =
+                $response->total_count ?? count($response->data);
+            $this->updateProgress(
+                0,
+                "Retrieved {$this->totalCharges} charges from Stripe"
             );
 
             foreach ($response->data as $charge) {
-                $this->processCharge($charge);
+                try {
+                    $this->processCharge($charge);
+                    $this->processedCharges++;
+                    $progress =
+                        ($this->processedCharges / $this->totalCharges) * 100;
+                    $this->updateProgress(
+                        $progress,
+                        "Processed {$this->processedCharges} of {$this->totalCharges} charges"
+                    );
+                } catch (\Exception $e) {
+                    Log::error(
+                        "Error processing charge {$charge->id}: " .
+                            $e->getMessage()
+                    );
+                    $this->updateProgress(
+                        null,
+                        "Error processing charge {$charge->id}: " .
+                            $e->getMessage(),
+                        true
+                    );
+                }
             }
 
             if ($response->has_more) {
                 $lastCharge = end($response->data);
-                self::dispatch($lastCharge->id);
-                Log::info(
-                    "Agendando próximo job com starting_after: " .
-                        $lastCharge->id
-                );
+                self::dispatch($lastCharge->id)->delay(now()->addSeconds(5));
+                $this->updateProgress(null, "Scheduling next batch of charges");
             } else {
-                Log::info(
-                    "Processamento de Charges concluído. Não há mais dados para processar."
+                $this->updateProgress(
+                    100,
+                    "Payment import completed successfully"
                 );
             }
         } catch (\Exception $e) {
-            Log::error("Falha ao processar Charges: " . $e->getMessage());
+            Log::error("Failed to import Stripe payments: " . $e->getMessage());
+            $this->updateProgress(
+                null,
+                "Failed to import Stripe payments: " . $e->getMessage(),
+                true
+            );
         }
+    }
+
+    protected function updateProgress(
+        $progress = null,
+        $status = "",
+        $isError = false
+    ) {
+        $eventName = $isError ? "import.error" : "import.progress";
+        $payload = ["status" => $status];
+        if (!is_null($progress)) {
+            $payload["progress"] = $progress;
+        }
+        broadcast(new ImportProgressUpdated($eventName, $payload))->toOthers();
     }
 
     protected function processCharge($charge)
     {
         Log::info(
-            "Processando charge: " .
+            "Processing charge: " .
                 $charge->id .
-                " com status: " .
+                " with status: " .
                 $charge->status
         );
 
@@ -85,7 +124,7 @@ class ImportStripePaymentsJob implements ShouldQueue
         );
 
         if ($existingPayment) {
-            Log::info("Pagamento já existe: " . $existingPayment->id);
+            Log::info("Payment already exists: " . $existingPayment->id);
             $this->updateExistingPayment($existingPayment, $charge);
         } else {
             $this->createNewPayment($charge);

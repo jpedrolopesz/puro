@@ -1,21 +1,34 @@
 <script setup lang="ts">
-import { ref, computed, h } from "vue";
+import { ref, onMounted, onUnmounted, h, watch, computed } from "vue";
+
 import { router } from "@inertiajs/vue3";
 import type { Payments } from "../data/schema";
 
 import { Button } from "@/Components/ui/button";
-import { MixerHorizontalIcon, GearIcon } from "@radix-icons/vue";
+import {
+    RotateCw,
+    Settings,
+    Download,
+    ChevronDown,
+    SlidersHorizontal,
+} from "lucide-vue-next";
 import { useToast } from "@/Components/ui/toast/use-toast";
+
 import {
     DropdownMenu,
     DropdownMenuContent,
-    DropdownMenuTrigger,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
+    DropdownMenuGroup,
     DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuPortal,
+    DropdownMenuSeparator,
+    DropdownMenuShortcut,
+    DropdownMenuSub,
+    DropdownMenuSubContent,
+    DropdownMenuSubTrigger,
+    DropdownMenuTrigger,
     DropdownMenuCheckboxItem,
 } from "@/Components/ui/dropdown-menu";
-import { Switch } from "@/Components/ui/switch";
 
 interface DataTableViewOptionsProps {
     table: Table<Payments>;
@@ -30,35 +43,78 @@ const columns = computed(() =>
                 typeof column.accessorFn !== "undefined" && column.getCanHide(),
         ),
 );
-const processing = ref(false);
-const progress = ref(0); // Estado para o progresso
-
 const { toast } = useToast();
+const isImporting = ref(false);
+const importProgress = ref(0);
+const importStatus = ref("");
+const lastImportTime = ref<Date | null>(null);
 
 const startProcessing = async () => {
-    processing.value = true;
-    progress.value = 0;
+    if (isImporting.value) return;
 
     try {
+        isImporting.value = true;
+        importProgress.value = 0;
+        importStatus.value = "Starting import...";
+        showToast("Import Started", "The import process has begun.");
+
         await router.post(route("processPayments"));
-
-        showToast("Price Updated", "Price updated successfully.");
-
-        const interval = setInterval(() => {
-            progress.value += 5; // Incremento do progresso
-            if (progress.value >= 100) {
-                clearInterval(interval);
-            }
-        }, 100);
-
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        lastImportTime.value = new Date();
     } catch (error) {
-        console.error("Failed to process payments:", error);
-    } finally {
-        processing.value = false;
-        progress.value = 1000;
+        console.error("Failed to start import:", error);
+        resetImportState();
+        showToast("Error", "Failed to start import. Please try again.");
     }
 };
+
+const resetImportState = () => {
+    isImporting.value = false;
+    importProgress.value = 0;
+    importStatus.value = "";
+};
+
+onMounted(() => {
+    window.Echo.channel("import-progress")
+        .listen(
+            ".import.progress",
+            (event: { payload: { progress: number; status: string } }) => {
+                const { payload } = event;
+                isImporting.value = true;
+                importProgress.value = payload.progress;
+                importStatus.value = payload.status;
+            },
+        )
+        .listen(".import.error", (event: { payload: { status: string } }) => {
+            const { payload } = event;
+            importStatus.value = `Error: ${payload.status}`;
+            showToast("Error", `Import failed: ${payload.status}`);
+            setTimeout(resetImportState, 3000);
+        })
+        .listen(".import.completed", (event: { payload: any }) => {
+            importProgress.value = 100;
+            importStatus.value = "Import completed";
+            showToast(
+                "Import Completed",
+                "The import process has finished successfully.",
+            );
+            setTimeout(resetImportState, 3000);
+        });
+
+    const storedLastImportTime = localStorage.getItem("lastImportTime");
+    if (storedLastImportTime) {
+        lastImportTime.value = new Date(storedLastImportTime);
+    }
+});
+
+onUnmounted(() => {
+    window.Echo.leave("import-progress");
+});
+
+watch(lastImportTime, (newValue) => {
+    if (newValue) {
+        localStorage.setItem("lastImportTime", newValue.toISOString());
+    }
+});
 
 function showToast(title: string, description: string) {
     toast({
@@ -66,7 +122,7 @@ function showToast(title: string, description: string) {
         description: h(
             "pre",
             {
-                class: `mt-2 w-[340px] rounded-md ${title === "Error" ? "bg-red-500" : "bg-slate-950"} p-4`,
+                class: `mt-2 w-[340px] rounded-md ${title.toLowerCase().includes("error") ? "bg-red-500" : "bg-slate-950"} p-4`,
             },
             h("code", { class: "text-white" }, description),
         ),
@@ -77,55 +133,84 @@ function showToast(title: string, description: string) {
 <template>
     <div class="flex space-x-2">
         <DropdownMenu>
-            <DropdownMenuTrigger as-child>
-                <div class="flex space-x-2">
-                    <Button
-                        :class="[
-                            'ml-auto hidden h-8 lg:flex relative',
-                            {
-                                ' ': processing.value,
-                            },
-                        ]"
-                        size="sm"
-                        :disabled="processing"
+            <DropdownMenuTrigger asChild>
+                <Button
+                    variant="outline"
+                    size="sm"
+                    class="ml-auto h-8 lg:flex relative overflow-hidden min-w-[120px]"
+                    :disabled="isImporting"
+                >
+                    <div
+                        class="absolute top-0 left-0 h-full bg-emerald-500 transition-all duration-300 ease-in-out"
+                        :style="{ width: `${importProgress}%` }"
+                    ></div>
+                    <div
+                        class="relative z-10 flex items-center justify-center w-full"
                     >
-                        <div
-                            v-if="processing"
-                            class="absolute top-0 left-0 h-full rounded-sm transition-width duration-100 ease-linear"
-                            :style="{
-                                width: progress + '%',
-                                backgroundColor: '#020617',
-                            }"
-                        ></div>
-
-                        <GearIcon
-                            :class="{
-                                '': !processing,
-                                'text-white z-20': processing,
-                            }"
-                            class="mr-2 h-4 w-4"
-                        />
-                        <span v-if="!processing">Sync</span>
-                        <span v-else variant="ghost" class="z-20 font-bold"
-                            >Processing...</span
-                        >
-                    </Button>
-                </div>
+                        <template v-if="!isImporting && importProgress === 0">
+                            <Settings class="mr-2 h-4 w-4" />
+                            <span>Sync</span>
+                        </template>
+                        <template v-else>
+                            <RotateCw class="mr-2 h-4 w-4 animate-spin" />
+                            <span class="text-xs whitespace-nowrap">
+                                {{ importStatus }} ({{
+                                    Math.round(importProgress)
+                                }}%)
+                            </span>
+                        </template>
+                    </div>
+                    <ChevronDown class="ml-2 h-4 w-4" />
+                </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" class="w-[250px]">
-                <DropdownMenuLabel>Sync payments</DropdownMenuLabel>
+                <DropdownMenuLabel>Import Payments</DropdownMenuLabel>
                 <DropdownMenuSeparator />
 
-                <DropdownMenuItem class="flex items-center space-x-2">
-                    <DropdownMenuLabel for="stripeSync"
-                        >Stripe sync payments</DropdownMenuLabel
-                    >
-                    <Switch
-                        id="syncPayments"
-                        @click="startProcessing"
-                        :disabled="processing"
-                    />
-                </DropdownMenuItem>
+                <DropdownMenuGroup>
+                    <DropdownMenuSub>
+                        <DropdownMenuSubTrigger>
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                width="1em"
+                                height="1em"
+                                viewBox="0 0 256 256"
+                                class="mr-2 h-4 w-4"
+                            >
+                                <path
+                                    fill="currentColor"
+                                    d="M168 152c0 17.65-17.94 32-40 32s-40-14.35-40-32a8 8 0 0 1 16 0c0 8.67 11 16 24 16s24-7.33 24-16c0-9.48-8.61-13-26.88-18.26c-15.75-4.54-35.34-10.19-35.34-29.74c0-18.24 16.43-32 38.22-32c15.72 0 29.18 7.3 35.12 19a8 8 0 1 1-14.27 7.22C145.64 91.94 137.65 88 128 88c-12.67 0-22.22 6.88-22.22 16c0 7 9 10.1 23.77 14.36C145.78 123 168 129.45 168 152m56-104v160a16 16 0 0 1-16 16H48a16 16 0 0 1-16-16V48a16 16 0 0 1 16-16h160a16 16 0 0 1 16 16m-16 160V48H48v160z"
+                                />
+                            </svg>
+
+                            <span>Stripe Payments</span>
+                        </DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                            <DropdownMenuSubContent>
+                                <DropdownMenuItem
+                                    :disabled="isImporting"
+                                    @click="startProcessing"
+                                >
+                                    <Download class="mr-2 h-4 w-4" />
+                                    <span>Import</span>
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+
+                                <DropdownMenuLabel
+                                    v-if="lastImportTime"
+                                    class="mt-2 text-xs text-gray-400"
+                                >
+                                    {{
+                                        new Date(
+                                            lastImportTime,
+                                        ).toLocaleString()
+                                    }}
+                                </DropdownMenuLabel>
+                            </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                    </DropdownMenuSub>
+                </DropdownMenuGroup>
+                <DropdownMenuSeparator />
             </DropdownMenuContent>
         </DropdownMenu>
 
@@ -136,7 +221,7 @@ function showToast(title: string, description: string) {
                     size="sm"
                     class="ml-auto hidden h-8 lg:flex"
                 >
-                    <MixerHorizontalIcon class="mr-2 h-4 w-4" />
+                    <SlidersHorizontal class="mr-2 h-4 w-4" />
                     View
                 </Button>
             </DropdownMenuTrigger>

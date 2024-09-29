@@ -61,7 +61,7 @@ const links: LinkProp[] = [
         route: route("payments.index"),
         current:
             route().current("payments.index") ||
-            route().current("payment.details"),
+            route().current("payments.details"),
     },
     {
         title: "Products",

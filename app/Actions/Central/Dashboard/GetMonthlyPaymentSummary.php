@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Actions\Central\Dashboard;
 
 use App\Models\Payment;
@@ -48,15 +47,15 @@ class GetMonthlyPaymentSummary
             $groupedData[$monthName] = ["month" => $monthName];
             // Inicializar todos os anos com 0
             foreach ($years as $year) {
-                $groupedData[$monthName][(string) $year] = 0;
+                $groupedData[$monthName][$year] = 0;
             }
         }
 
         // Preencher os valores reais dos pagamentos
         foreach ($payments as $payment) {
             $monthName = $months[$payment->month]; // Nome do mês
-            $groupedData[$monthName][(string) $payment->year] =
-                $payment->total_amount;
+            $groupedData[$monthName][$payment->year] =
+                (float) $payment->total_amount;
         }
 
         return array_values($groupedData);

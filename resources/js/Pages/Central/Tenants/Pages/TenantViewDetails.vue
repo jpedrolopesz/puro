@@ -18,6 +18,8 @@ const props = defineProps<{
     customerPayments: CustomerPayments;
     tenantUsers: UserSchema;
 }>();
+
+console.log(props.customerPayments);
 </script>
 
 <template>

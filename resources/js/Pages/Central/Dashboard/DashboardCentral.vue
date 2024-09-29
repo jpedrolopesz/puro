@@ -18,6 +18,8 @@ const props = defineProps({
         required: true,
     },
 });
+
+console.log(props.calculateAnnualPaymentTotals);
 </script>
 
 <template>
@@ -188,7 +190,7 @@ const props = defineProps({
 
                             <CardContent class="pl-2">
                                 <ChartlineOverview
-                                    :data="getMonthlyPaymentSummary"
+                                    :data="props.getMonthlyPaymentSummary"
                                 />
                             </CardContent>
                         </Card>
