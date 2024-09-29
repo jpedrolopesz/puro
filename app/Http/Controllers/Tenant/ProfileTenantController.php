@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tenant;
 
 use App\Http\Controllers\Controller;
+use App\Actions\Central\Stripe\Product\Order\RetrieveOrderedProductsAction;
 use App\Http\Requests\ProfileUpdateRequest;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -14,12 +15,19 @@ use Inertia\Response;
 
 class ProfileTenantController extends Controller
 {
+    public function __construct(
+        private readonly RetrieveOrderedProductsAction $retrieveOrderedProductsAction
+    ) {
+    }
     /**
      * Display the user's profile form.
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render("Tenant/Profile/ProfileTenant", [
+        $products = $this->retrieveOrderedProductsAction->execute();
+
+        return Inertia::render("Tenant/Profile/Index", [
+            "plans" => $products,
             "mustVerifyEmail" => $request->user() instanceof MustVerifyEmail,
             "status" => session("status"),
         ]);

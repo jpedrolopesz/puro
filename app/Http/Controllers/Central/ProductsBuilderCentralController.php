@@ -29,7 +29,6 @@ class ProductsBuilderCentralController extends Controller
 
     public function updateOrder(Request $request): RedirectResponse
     {
-        //dd($request->all());
         $result = $this->updateProductOrderAction->execute($request->products);
         return back();
     }

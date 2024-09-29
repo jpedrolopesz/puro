@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import { Link, usePage } from "@inertiajs/vue3";
 import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
@@ -26,84 +26,67 @@ import {
     CardTitle,
 } from "@/Components/ui/card";
 
+const props = defineProps({
+    plans: {
+        type: Array,
+        required: true,
+    },
+});
+
 const route = usePage();
 const planSelect = ref(true);
 
-const plansMonthly = ref([
-    {
-        id: 1,
-        name: "Basic Plan",
-        price: 10,
-        slug: "month",
-        price_id: "price_1LSRHkGQW0U1PfqxJO7EGsHx",
-        detail: [
-            { id: 1, name: "Access to basic features" },
-            { id: 2, name: "5GB Cloud Storage" },
-        ],
-    },
-    {
-        id: 2,
-        name: "Standard Plan",
-        price: 20,
-        slug: "month",
-        price_id: "price_1LSmsIGQW0U1PfqxxsV7db73",
-        detail: [
-            { id: 1, name: "Access to standard features" },
-            { id: 2, name: "10GB Cloud Storage" },
-            { id: 3, name: "Priority Support" },
-        ],
-    },
-    {
-        id: 3,
-        name: "Premium Plan",
-        price: 30,
-        slug: "month",
-        price_id: "price_1LSRIVGQW0U1PfqxnFnKpQmh",
-        detail: [
-            { id: 1, name: "Access to all features" },
-            { id: 2, name: "50GB Cloud Storage" },
-            { id: 3, name: "Dedicated Support" },
-        ],
-    },
-]);
+const columnCount = ref(3);
 
-const plansYearly = ref([
-    {
-        id: 4,
-        name: "Basic Plan",
-        price: 100,
-        slug: "year",
-        price_id: "price_1LTBIAGQW0U1Pfqxdr82APbW",
+const sortPlans = (plans) => {
+    return plans.sort((a, b) => {
+        const orderA = parseInt(a.metadata.order) || 0;
+        const orderB = parseInt(b.metadata.order) || 0;
+        return orderA - orderB;
+    });
+};
+
+const plansMonthly = computed(() => {
+    const sorted = sortPlans(props.plans);
+    // Atualiza o columnCount com base no primeiro plano (assumindo que todos têm o mesmo valor)
+    if (sorted.length > 0) {
+        columnCount.value = parseInt(sorted[0].metadata.column_count) || 3;
+    }
+    return sorted.map((plan) => ({
+        id: plan.id,
+        name: plan.name,
+        price:
+            parseInt(
+                plan.prices.find((p) => p.recurring?.interval === "month")
+                    ?.unit_amount || 0,
+            ) / 100,
+        slug: "month",
+        price_id: plan.metadata.monthly_price_id,
         detail: [
-            { id: 1, name: "Access to basic features" },
-            { id: 2, name: "5GB Cloud Storage" },
+            { id: 1, name: plan.description },
+            // Adicione mais detalhes conforme necessário
         ],
-    },
-    {
-        id: 5,
-        name: "Standard Plan",
-        price: 200,
+    }));
+});
+
+const plansYearly = computed(() => {
+    const sorted = sortPlans(props.plans);
+    return sorted.map((plan) => ({
+        id: plan.id,
+        name: plan.name,
+        price:
+            parseInt(
+                plan.prices.find((p) => p.recurring?.interval === "year")
+                    ?.unit_amount || 0,
+            ) / 100,
         slug: "year",
-        price_id: "price_1Lb6p6GQW0U1PfqxjKs6uVX2",
+        price_id: plan.metadata.yearly_price_id,
         detail: [
-            { id: 1, name: "Access to standard features" },
-            { id: 2, name: "10GB Cloud Storage" },
-            { id: 3, name: "Priority Support" },
+            { id: 1, name: plan.description },
+            // Adicione mais detalhes conforme necessário
         ],
-    },
-    {
-        id: 6,
-        name: "Premium Plan",
-        price: 300,
-        slug: "year",
-        price_id: "price_1Lb6kvGQW0U1PfqxQFJJcEBN",
-        detail: [
-            { id: 1, name: "Access to all features" },
-            { id: 2, name: "50GB Cloud Storage" },
-            { id: 3, name: "Dedicated Support" },
-        ],
-    },
-]);
+    }));
+});
 
 const currentPlan = ref({
     stripe_price: "price_1Lb6kvGQW0U1PfqxQFJJcEBN",
