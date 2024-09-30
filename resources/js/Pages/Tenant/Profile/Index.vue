@@ -1,38 +1,31 @@
 <script setup lang="ts">
+import AuthenticatedLayout from "../Layouts/AuthenticatedLayout.vue";
+import Plans from "./Pages/Plans.vue";
+import Account from "./Pages/Account.vue";
+
 import { defineProps } from "vue";
-import { Button } from "@/Components/ui/button";
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/Components/ui/card";
-import { Input } from "@/Components/ui/input";
-import { Label } from "@/Components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { Separator } from "@/Components/ui/separator";
-import AuthenticatedLayout from "../Layouts/AuthenticatedLayout.vue";
 
 const props = defineProps({
-    title: {
-        type: String,
-        default: "Settings",
-    },
-    description: {
-        type: String,
-        default: "Manage your account settings.",
-    },
+    plans: { type: Array, required: true },
 });
+
+console.log(props.plans);
 </script>
 
 <template>
     <AuthenticatedLayout>
         <div class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="space-y-0.5">
-                <h2 class="text-2xl font-bold tracking-tight">{{ title }}</h2>
-                <p class="text-muted-foreground">{{ description }}</p>
+                <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
+                <p class="text-muted-foreground">Description</p>
             </div>
 
             <Tabs
@@ -62,24 +55,8 @@ const props = defineProps({
                                 </CardDescription>
                             </CardHeader>
                             <CardContent class="space-y-2">
-                                <div class="space-y-1">
-                                    <Label for="name">Name</Label>
-                                    <Input
-                                        id="name"
-                                        default-value="Pedro Duarte"
-                                    />
-                                </div>
-                                <div class="space-y-1">
-                                    <Label for="username">Username</Label>
-                                    <Input
-                                        id="username"
-                                        default-value="@peduarte"
-                                    />
-                                </div>
+                                <Account />
                             </CardContent>
-                            <CardFooter>
-                                <Button>Save changes</Button>
-                            </CardFooter>
                         </Card>
                     </TabsContent>
                     <TabsContent value="plans">
@@ -92,20 +69,8 @@ const props = defineProps({
                                 </CardDescription>
                             </CardHeader>
                             <CardContent class="space-y-2">
-                                <div class="space-y-1">
-                                    <Label for="current"
-                                        >Current password</Label
-                                    >
-                                    <Input id="current" type="password" />
-                                </div>
-                                <div class="space-y-1">
-                                    <Label for="new">New password</Label>
-                                    <Input id="new" type="password" />
-                                </div>
+                                <Plans :plans="props.plans" />
                             </CardContent>
-                            <CardFooter>
-                                <Button>Save password</Button>
-                            </CardFooter>
                         </Card>
                     </TabsContent>
                 </div>

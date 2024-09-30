@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed } from "vue";
-import { Link, usePage } from "@inertiajs/vue3";
+import { Link, usePage, Head } from "@inertiajs/vue3";
 import { Label } from "@/Components/ui/label";
 import { Switch } from "@/Components/ui/switch";
 import { Separator } from "@/Components/ui/separator";
@@ -94,6 +94,8 @@ const currentPlan = ref({
 </script>
 
 <template>
+    <Head title="Plans" />
+
     <div class="mt-5 md:col-span-2 md:mt-0">
         <div class="flex items-center space-x-2">
             <Label for="airplane-mode">Monthly</Label>

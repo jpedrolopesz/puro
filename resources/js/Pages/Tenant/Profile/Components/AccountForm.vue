@@ -4,6 +4,8 @@ import * as z from "zod";
 import { format } from "date-fns";
 import { toTypedSchema } from "@vee-validate/zod";
 import { Check, ChevronsUpDown } from "lucide-vue-next";
+import { Head } from "@inertiajs/vue3";
+
 import { cn } from "@/lib/utils";
 
 import { CalendarIcon } from "@radix-icons/vue";
@@ -86,6 +88,8 @@ async function onSubmit(values: any) {
 </script>
 
 <template>
+    <Head title="Account" />
+
     <Form
         v-slot="{ setValues }"
         :validation-schema="accountFormSchema"

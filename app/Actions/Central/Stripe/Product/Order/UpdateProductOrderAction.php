@@ -2,8 +2,10 @@
 
 namespace App\Actions\Central\Stripe\Product\Order;
 
+use App\Models\StripeProduct as LocalStripeProduct;
 use Illuminate\Support\Facades\Log;
-use Stripe\Product as StripeProduct;
+use Stripe\Product as StripeProductAPI;
+use Stripe\Price as StripePriceAPI;
 use Stripe\Stripe;
 use Stripe\Exception\ApiErrorException;
 
@@ -19,8 +21,9 @@ class UpdateProductOrderAction
             foreach ($products as $productData) {
                 try {
                     $metadata = [
-                        "order" => (string) $productData["order"],
-                        "column_count" => (string) $productData["columnCount"],
+                        "order" => (string) ($productData["order"] ?? null),
+                        "column_count" =>
+                            (string) ($productData["columnCount"] ?? null),
                     ];
 
                     if (isset($productData["metadata"]["monthly_price_id"])) {
@@ -33,9 +36,12 @@ class UpdateProductOrderAction
                     }
 
                     // Atualiza o produto no Stripe
-                    $stripeProduct = StripeProduct::update($productData["id"], [
-                        "metadata" => $metadata,
-                    ]);
+                    $stripeProduct = StripeProductAPI::update(
+                        $productData["id"],
+                        [
+                            "metadata" => $metadata,
+                        ]
+                    );
 
                     $updateSuccessful = $this->verifyUpdate(
                         $stripeProduct,
@@ -43,6 +49,40 @@ class UpdateProductOrderAction
                     );
 
                     if ($updateSuccessful) {
+                        $monthlyPrice = StripePriceAPI::retrieve(
+                            $metadata["monthly_price_id"]
+                        );
+                        $yearlyPrice = StripePriceAPI::retrieve(
+                            $metadata["yearly_price_id"]
+                        );
+
+                        LocalStripeProduct::updateOrCreate(
+                            ["stripe_product_id" => $productData["id"]],
+                            [
+                                "name" => $stripeProduct->name,
+                                "description" => $stripeProduct->description,
+                                "order" => intval($metadata["order"] ?? 0),
+                                "column_count" => intval(
+                                    $metadata["column_count"] ?? 3
+                                ),
+                                "monthly_price_id" =>
+                                    $metadata["monthly_price_id"],
+                                "yearly_price_id" =>
+                                    $metadata["yearly_price_id"],
+                                "monthly_unit_amount" =>
+                                    $monthlyPrice->unit_amount,
+                                "yearly_unit_amount" =>
+                                    $yearlyPrice->unit_amount,
+                                "monthly_recurring_interval" =>
+                                    $monthlyPrice->recurring->interval,
+                                "yearly_recurring_interval" =>
+                                    $yearlyPrice->recurring->interval,
+                                "features" => json_decode(
+                                    $metadata["features"] ?? "[]"
+                                ),
+                            ]
+                        );
+
                         $updatedProducts[] = $productData["id"];
                         $this->logSuccessfulUpdate($productData, $metadata);
                     } else {
@@ -84,9 +124,8 @@ class UpdateProductOrderAction
             throw $e;
         }
     }
-
     private function verifyUpdate(
-        StripeProduct $stripeProduct,
+        StripeProductAPI $stripeProduct,
         array $metadata
     ): bool {
         foreach ($metadata as $key => $value) {

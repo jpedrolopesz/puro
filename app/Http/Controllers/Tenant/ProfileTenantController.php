@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Tenant;
 use App\Http\Controllers\Controller;
 use App\Actions\Central\Stripe\Product\Order\RetrieveOrderedProductsAction;
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\StripeProduct;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -24,10 +25,10 @@ class ProfileTenantController extends Controller
      */
     public function edit(Request $request): Response
     {
-        $products = $this->retrieveOrderedProductsAction->execute();
+        $plans = StripeProduct::all();
 
         return Inertia::render("Tenant/Profile/Index", [
-            "plans" => $products,
+            "plans" => $plans,
             "mustVerifyEmail" => $request->user() instanceof MustVerifyEmail,
             "status" => session("status"),
         ]);
