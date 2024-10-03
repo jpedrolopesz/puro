@@ -11,7 +11,7 @@ import {
     CardTitle,
 } from "@/Components/ui/card";
 
-//sada
+//sa
 interface Plan {
     id: number;
     stripe_product_id: string;
