@@ -187,7 +187,7 @@ const getSelectedPrice = (
     <Head title="Builder Rearrange" />
 
     <div>
-        <div class="flex items-center justify-between m-3">
+        <div class="flex items-center justify-between">
             <Tabs v-model="selectedTab" @update:modelValue="handleTabChange">
                 <TabsList>
                     <TabsTrigger value="monthly">Monthly</TabsTrigger>
@@ -219,8 +219,8 @@ const getSelectedPrice = (
                 </Button>
             </div>
         </div>
-        <Separator />
-        <div class="container mx-auto p-4">
+
+        <div class="my-4">
             <div class="mb-6">
                 <div class="mb-4">
                     <draggable

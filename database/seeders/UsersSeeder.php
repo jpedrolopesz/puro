@@ -6,7 +6,6 @@ use App\Models\Domain;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Str;
 
 class UsersSeeder extends Seeder
 {
@@ -15,38 +14,21 @@ class UsersSeeder extends Seeder
      */
     public function run(): void
     {
-        $numTenants = 3;
-        $usersPerTenant = 3;
+        $user = User::factory()->create([
+            "name" => "User Tenant Demo",
+            "email" => "usertenant@demo.com",
+            "password" => bcrypt("password"),
+        ]);
 
-        $specificName = "User Tenant Demo";
-        $specificEmail = "usertenant@demo.com";
-        $specificPassword = bcrypt("password");
+        $tenant = Tenant::factory()->create([
+            "creator_id" => $user->id,
+        ]);
 
-        $specificDomain = "demo";
+        $user->update(["tenant_id" => $tenant->id]);
 
-        $tenants = Tenant::factory()->count($numTenants)->create();
-
-        foreach ($tenants as $tenantIndex => $tenant) {
-            if ($tenantIndex === 0) {
-                User::factory()->create([
-                    "name" => $specificName,
-                    "tenant_id" => $tenant->id,
-                    "email" => $specificEmail,
-                    "password" => $specificPassword,
-                ]);
-            }
-            User::factory()
-                ->count($usersPerTenant - 1)
-                ->create(["tenant_id" => $tenant->id]);
-
-            if ($tenantIndex === 0) {
-                Domain::factory()->create([
-                    "tenant_id" => $tenant->id,
-                    "domain" => $specificDomain,
-                ]);
-            } else {
-                Domain::factory()->create(["tenant_id" => $tenant->id]);
-            }
-        }
+        Domain::factory()->create([
+            "tenant_id" => $tenant->id,
+            "domain" => "demo",
+        ]);
     }
 }

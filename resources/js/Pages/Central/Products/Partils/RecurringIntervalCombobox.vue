@@ -20,10 +20,7 @@ import {
     PopoverTrigger,
 } from "@/Components/ui/popover";
 
-// Defina suas opções aqui
 const recurrings = [
-    { value: "day", label: "Daily" },
-    { value: "week", label: "Weekly" },
     { value: "month", label: "Monthly" },
     { value: "year", label: "Annual" },
 ];

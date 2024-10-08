@@ -31,7 +31,7 @@ class TenantFactory extends Factory
             "status" => "active",
             "tenancy_db_name" => $tenantDbName,
             "tenancy_about" => $this->faker->sentence,
-            "creator_id" => User::factory(),
+            "creator_id" => null,
         ];
     }
 }

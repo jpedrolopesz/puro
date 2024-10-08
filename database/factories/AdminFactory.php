@@ -28,8 +28,8 @@ class AdminFactory extends Factory
         return [
             "identifier" => $this->generateIdentifier(),
             "name" => "Joao Zamonelo",
-            // "email" => "zamonelo@hotmail.com",
-            "email" => $this->faker->unique()->safeEmail,
+            "email" => "zamonelo@hotmail.com",
+            // "email" => $this->faker->unique()->safeEmail,
             "email_verified_at" => now(),
             "password" => (static::$password ??= Hash::make("password")),
             "role" => AdminRole::SuperAdmin,

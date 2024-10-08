@@ -4,15 +4,15 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { router } from "@inertiajs/vue3";
-
+import { Plus, Trash2 } from "lucide-vue-next";
 import { Button } from "@/Components/ui/button";
 import {
     FormControl,
-    FormDescription,
     FormField,
     FormItem,
     FormLabel,
     FormMessage,
+    FormDescription,
 } from "@/Components/ui/form";
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
@@ -27,10 +27,14 @@ const formSchema = toTypedSchema(
         price: z.number().min(0).max(255),
         currency: z.string().nonempty("Please select a currency."),
         recurring: z.string().nonempty("Please select a recurring."),
+        features: z
+            .array(z.string().min(1, "Feature name is required"))
+            .min(1, "At least one feature is required"),
     }),
 );
 
 const selectedCurrency = ref();
+const features = ref([""]);
 
 const { handleSubmit, resetForm } = useForm({
     validationSchema: formSchema,
@@ -38,13 +42,32 @@ const { handleSubmit, resetForm } = useForm({
 
 const onSubmit = handleSubmit(async (values) => {
     try {
-        await router.post(route("product.create"), values);
+        const metadata = {};
+        values.features.forEach((feature, index) => {
+            metadata[`feature_${index + 1}`] = feature;
+        });
+
+        const submitData = {
+            ...values,
+            metadata,
+        };
+
+        await router.post(route("product.create"), submitData);
         showToast("Product Created", "Product created successfully.");
         resetForm();
+        features.value = [""];
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
     }
 });
+
+function addFeature() {
+    features.value.push("");
+}
+
+function removeFeature(index: number) {
+    features.value.splice(index, 1);
+}
 
 function showToast(title: string, description: string) {
     toast({
@@ -129,6 +152,43 @@ function showToast(title: string, description: string) {
                     </FormControl>
                 </FormItem>
             </FormField>
+        </div>
+
+        <div>
+            <div class="flex justify-between items-center">
+                <Label>Features</Label>
+                <Button size="sm" variant="outline" @click="addFeature">
+                    <Plus class="h-4 w-4" />
+                </Button>
+            </div>
+
+            <div v-for="(feature, index) in features" :key="index" class="mt-2">
+                <div class="flex items-center space-x-2">
+                    <FormField
+                        :name="`features[${index}]`"
+                        v-slot="{ componentField }"
+                    >
+                        <FormItem class="flex-grow">
+                            <FormControl>
+                                <Input
+                                    v-model="features[index]"
+                                    placeholder="Feature name"
+                                    v-bind="componentField"
+                                />
+                            </FormControl>
+                        </FormItem>
+                    </FormField>
+                    <Button
+                        type="button"
+                        variant="secondary"
+                        @click="removeFeature(index)"
+                        v-if="features.length > 1"
+                        class="shrink-0"
+                    >
+                        <Trash2 class="h-4 w-4" />
+                    </Button>
+                </div>
+            </div>
         </div>
 
         <div>
