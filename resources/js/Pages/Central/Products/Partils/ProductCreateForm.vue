@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { h, ref } from "vue";
+import { h, ref, watch } from "vue";
 import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
@@ -36,10 +36,26 @@ const formSchema = toTypedSchema(
 const selectedCurrency = ref();
 const features = ref([""]);
 
-const { handleSubmit, resetForm } = useForm({
+const { handleSubmit, resetForm, setFieldValue, values } = useForm({
     validationSchema: formSchema,
+    initialValues: {
+        name: "",
+        description: "",
+        price: 0,
+        currency: "",
+        recurring: "",
+        features: [""],
+    },
 });
-//sfs
+
+watch(
+    features,
+    (newFeatures) => {
+        setFieldValue("features", newFeatures);
+    },
+    { deep: true },
+);
+
 const onSubmit = handleSubmit(async (values) => {
     try {
         const metadata = {};
@@ -67,6 +83,9 @@ function addFeature() {
 
 function removeFeature(index: number) {
     features.value.splice(index, 1);
+    if (features.value.length === 0) {
+        features.value.push("");
+    }
 }
 
 function showToast(title: string, description: string) {
@@ -157,7 +176,12 @@ function showToast(title: string, description: string) {
         <div>
             <div class="flex justify-between items-center">
                 <Label>Features</Label>
-                <Button size="sm" variant="outline" @click="addFeature">
+                <Button
+                    type="button"
+                    size="sm"
+                    variant="outline"
+                    @click="addFeature"
+                >
                     <Plus class="h-4 w-4" />
                 </Button>
             </div>

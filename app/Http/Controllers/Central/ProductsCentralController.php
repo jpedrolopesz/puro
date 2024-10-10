@@ -80,6 +80,7 @@ class ProductsCentralController extends Controller
                 "price" => $request->input("price"),
                 "currency" => $request->input("currency"),
                 "recurring" => $request->input("recurring"),
+                "metadata" => $request->input("metadata"),
             ]);
         }
 
