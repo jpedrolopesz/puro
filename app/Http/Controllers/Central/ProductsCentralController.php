@@ -73,6 +73,7 @@ class ProductsCentralController extends Controller
         $product = $this->createStripeProductAction->execute(
             $request->validated()
         );
+        //asdas
 
         if ($request->has("price")) {
             $this->createStripePriceAction->execute([
