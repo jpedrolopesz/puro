@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import AuthenticatedLayout from "../Layouts/AuthenticatedLayout.vue";
-import Plans from "./Pages/Plans.vue";
-import Account from "./Pages/Account.vue";
+import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+
+import UpdatePasswordForm from "./Partials/UpdatePasswordForm.vue";
+import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm.vue";
 
 import { defineProps } from "vue";
 import {
@@ -13,15 +14,14 @@ import {
 } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 
-const props = defineProps({
-    plans: { type: Array, required: true },
-});
-
-console.log(props.plans);
+defineProps<{
+    mustVerifyEmail?: boolean;
+    status?: string;
+}>();
 </script>
 
 <template>
-    <AuthenticatedLayout>
+    <AuthenticatedCentralLayout>
         <div class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="space-y-0.5">
                 <h2 class="text-2xl font-bold tracking-tight">Settings</h2>
@@ -37,7 +37,7 @@ console.log(props.plans);
             >
                 <TabsList class="grid w-48 grid-cols-1 bg-white space-y-2">
                     <TabsTrigger
-                        v-for="tab in ['account', 'plans']"
+                        v-for="tab in ['account', 'password']"
                         :key="tab"
                         :value="tab"
                         class="w-full justify-start px-4 py-2 text-left capitalize transition-all hover:bg-gray-100 data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -50,33 +50,37 @@ console.log(props.plans);
                     <TabsContent value="account">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Account</CardTitle>
+                                <CardTitle>Profile Information</CardTitle>
                                 <CardDescription>
-                                    Make changes to your account here. Click
-                                    save when you're done.
+                                    Update your account's profile information
+                                    and email address.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent class="space-y-2">
-                                <Account />
+                                <UpdateProfileInformationForm
+                                    :must-verify-email="mustVerifyEmail"
+                                    :status="status"
+                                    class="max-w-xl"
+                                />
                             </CardContent>
                         </Card>
                     </TabsContent>
-                    <TabsContent value="plans">
+                    <TabsContent value="password">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Password</CardTitle>
+                                <CardTitle>Update Password</CardTitle>
                                 <CardDescription>
-                                    Change your password here. After saving,
-                                    you'll be logged out.
+                                    Ensure your account is using a long, random
+                                    password to stay secure.
                                 </CardDescription>
                             </CardHeader>
                             <CardContent class="space-y-2">
-                                <Plans :plans="props.plans" />
+                                <UpdatePasswordForm />
                             </CardContent>
                         </Card>
                     </TabsContent>
                 </div>
             </Tabs>
         </div>
-    </AuthenticatedLayout>
+    </AuthenticatedCentralLayout>
 </template>

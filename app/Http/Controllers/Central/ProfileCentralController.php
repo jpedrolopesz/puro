@@ -19,7 +19,7 @@ class ProfileCentralController extends Controller
      */
     public function edit(Request $request): Response
     {
-        return Inertia::render("Central/Profile/ProfileCentral", [
+        return Inertia::render("Central/Profile/Index", [
             "mustVerifyEmail" => $request->user() instanceof MustVerifyEmail,
             "status" => session("status"),
         ]);
