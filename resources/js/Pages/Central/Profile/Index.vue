@@ -1,10 +1,7 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-
 import UpdatePasswordForm from "./Partials/UpdatePasswordForm.vue";
 import UpdateProfileInformationForm from "./Partials/UpdateProfileInformationForm.vue";
-
-import { defineProps } from "vue";
 import {
     Card,
     CardContent,
@@ -13,6 +10,8 @@ import {
     CardTitle,
 } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+
+import { defineProps } from "vue";
 
 defineProps<{
     mustVerifyEmail?: boolean;
