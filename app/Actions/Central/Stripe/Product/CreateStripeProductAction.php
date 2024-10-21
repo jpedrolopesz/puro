@@ -11,6 +11,18 @@ class CreateStripeProductAction
         return Product::create([
             "name" => $data["name"],
             "description" => $data["description"],
+            "metadata" => $this->formatMetadata($data["features"]),
         ]);
+    }
+
+    private function formatMetadata(array $features): array
+    {
+        return array_combine(
+            array_map(
+                fn($index) => "feature_" . ($index + 1),
+                array_keys($features)
+            ),
+            $features
+        );
     }
 }

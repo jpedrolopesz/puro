@@ -4,7 +4,6 @@ import { useForm } from "vee-validate";
 import { toTypedSchema } from "@vee-validate/zod";
 import * as z from "zod";
 import { router } from "@inertiajs/vue3";
-import { Plus, Trash2 } from "lucide-vue-next";
 import { Button } from "@/Components/ui/button";
 import {
     FormControl,
@@ -17,8 +16,13 @@ import {
 import { Input } from "@/Components/ui/input";
 import { Label } from "@/Components/ui/label";
 import { toast } from "@/Components/ui/toast";
-import CurrencyCombobox from "./CurrencyCombobox.vue";
-import RecurringIntervalCombobox from "./RecurringIntervalCombobox.vue";
+
+import CurrencyField from "../Fields/CurrencyField.vue";
+import RecurringField from "../Fields/RecurringField.vue";
+import FeatureField from "../Fields/FeatureField.vue";
+import { DialogClose } from "radix-vue";
+
+const dialogCloseRef = ref<InstanceType<typeof DialogClose> | null>(null);
 
 const formSchema = toTypedSchema(
     z.object({
@@ -72,6 +76,7 @@ const onSubmit = handleSubmit(async (values) => {
         showToast("Product Created", "Product created successfully.");
         resetForm();
         features.value = [""];
+        dialogCloseRef.value?.$el.click();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
     }
@@ -162,7 +167,7 @@ function showToast(title: string, description: string) {
             <FormField v-slot="{ componentField }" name="currency">
                 <FormItem>
                     <FormControl>
-                        <CurrencyCombobox
+                        <CurrencyField
                             v-model="selectedCurrency"
                             v-bind="componentField"
                         />
@@ -174,45 +179,17 @@ function showToast(title: string, description: string) {
         </div>
 
         <div>
-            <div class="flex justify-between items-center">
-                <Label>Features</Label>
-                <Button
-                    type="button"
-                    size="sm"
-                    variant="outline"
-                    @click="addFeature"
-                >
-                    <Plus class="h-4 w-4" />
-                </Button>
-            </div>
-
-            <div v-for="(feature, index) in features" :key="index" class="mt-2">
-                <div class="flex items-center space-x-2">
-                    <FormField
-                        :name="`features[${index}]`"
-                        v-slot="{ componentField }"
-                    >
-                        <FormItem class="flex-grow">
-                            <FormControl>
-                                <Input
-                                    v-model="features[index]"
-                                    placeholder="Feature name"
-                                    v-bind="componentField"
-                                />
-                            </FormControl>
-                        </FormItem>
-                    </FormField>
-                    <Button
-                        type="button"
-                        variant="secondary"
-                        @click="removeFeature(index)"
-                        v-if="features.length > 1"
-                        class="shrink-0"
-                    >
-                        <Trash2 class="h-4 w-4" />
-                    </Button>
-                </div>
-            </div>
+            <FormField v-slot="{ componentField }" name="features">
+                <FormItem>
+                    <FormControl>
+                        <FeatureField
+                            v-model="features"
+                            :name="componentField.name"
+                        />
+                        <FormMessage />
+                    </FormControl>
+                </FormItem>
+            </FormField>
         </div>
 
         <div>
@@ -221,7 +198,7 @@ function showToast(title: string, description: string) {
                     <FormLabel>Recurring Interval</FormLabel>
 
                     <FormControl>
-                        <RecurringIntervalCombobox v-bind="componentField" />
+                        <RecurringField v-bind="componentField" />
 
                         <FormMessage />
                     </FormControl>
@@ -230,6 +207,7 @@ function showToast(title: string, description: string) {
         </div>
 
         <div>
+            <DialogClose ref="dialogCloseRef" class="hidden" />
             <Button class="mt-10" type="submit">Create Product</Button>
         </div>
     </form>

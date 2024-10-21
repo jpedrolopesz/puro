@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
+import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
 
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { defineProps, watch, ref } from "vue";
-import DataTable from "./Components/DataTable.vue";
-import { columns } from "./Components/columns";
+import DataTable from "../Components/DataTable/DataTable.vue";
+import { columns } from "../Components/DataTable/columns";
 import { Boxes, PackageCheck, PackageX } from "lucide-vue-next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 

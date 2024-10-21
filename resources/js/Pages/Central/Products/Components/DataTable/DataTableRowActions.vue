@@ -2,8 +2,8 @@
 import type { Row } from "@tanstack/vue-table";
 import { h, computed } from "vue";
 import { Link, router } from "@inertiajs/vue3";
-import { productSchema } from "../data/schema";
-import type { Product } from "../data/schema";
+import { productSchema } from "../../data/schema";
+import type { Product } from "../../data/schema";
 import { DotsHorizontalIcon } from "@radix-icons/vue";
 import { toast } from "@/Components/ui/toast";
 

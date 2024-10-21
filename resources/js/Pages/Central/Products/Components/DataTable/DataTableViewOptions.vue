@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import type { Table } from "@tanstack/vue-table";
-import { computed } from "vue";
-import type { Product } from "../data/schema";
+import { computed, ref } from "vue";
+import type { Product } from "../../data/schema";
 import { SlidersHorizontal, SendToBack, Plus } from "lucide-vue-next";
 
-import ProductCreateForm from "../Partils/ProductCreateForm.vue";
+import ProductCreateForm from "../Forms/ProductCreateForm.vue";
 import { Button } from "@/Components/ui/button";
 import {
     DropdownMenu,
@@ -39,6 +39,12 @@ const columns = computed(() =>
                 typeof column.accessorFn !== "undefined" && column.getCanHide(),
         ),
 );
+
+const isOpen = ref(false);
+
+const handleSuccess = () => {
+    isOpen.value = false;
+};
 </script>
 
 <template>
@@ -55,7 +61,7 @@ const columns = computed(() =>
                 <SheetDescription><Separator /></SheetDescription>
             </SheetHeader>
 
-            <ProductCreateForm />
+            <ProductCreateForm @success="handleSuccess" />
         </SheetContent>
     </Sheet>
 

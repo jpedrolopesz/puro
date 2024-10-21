@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
-import PriceCreateForm from "./Partils/Price/PriceCreateForm.vue";
-import ProductUpdateForm from "./Partils/ProductUpdateForm.vue";
-import DataTable from "./Components/PriceDetails/DataTable.vue";
+import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
+import PriceCreateForm from "../Partils/Price/PriceCreateForm.vue";
+import ProductUpdateForm from "../Partils/ProductUpdateForm.vue";
+import DataTable from "../Components/PriceDetails/DataTable.vue";
 
 import { Head, Link } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";

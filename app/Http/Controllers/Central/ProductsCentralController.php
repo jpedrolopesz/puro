@@ -54,7 +54,7 @@ class ProductsCentralController extends Controller
         $filter = $request->input("filter", "active");
         $data = $this->retrieveOrderedProductsAction->execute($filter);
 
-        return Inertia::render("Central/Products/ProductsCentral", [
+        return Inertia::render("Central/Products/Pages/ProductsCentral", [
             "products" => $data,
             "currentFilter" => $filter,
         ]);
@@ -63,17 +63,20 @@ class ProductsCentralController extends Controller
     public function details(string $productId): Response
     {
         $data = $this->getProductPriceDetailsAction->execute($productId);
-        return Inertia::render("Central/Products/ProductViewDetails", [
+        return Inertia::render("Central/Products/Pages/ProductViewDetails", [
             "product" => $data,
         ]);
     }
 
     public function create(ProductCreateRequest $request): RedirectResponse
     {
-        $product = $this->createStripeProductAction->execute(
-            $request->validated()
-        );
-        //asdasasda
+        $validatedData = $request->validated();
+
+        $product = $this->createStripeProductAction->execute([
+            "name" => $validatedData["name"],
+            "description" => $validatedData["description"],
+            "features" => $validatedData["features"],
+        ]);
 
         if ($request->has("price")) {
             $this->createStripePriceAction->execute([
