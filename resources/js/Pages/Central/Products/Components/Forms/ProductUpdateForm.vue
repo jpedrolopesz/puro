@@ -14,6 +14,8 @@ import {
     FormLabel,
     FormMessage,
 } from "@/Components/ui/form";
+import FeatureField from "../Fields/FeatureField.vue";
+
 import { Input } from "@/Components/ui/input";
 import { toast } from "@/Components/ui/toast";
 import {
@@ -36,43 +38,65 @@ const formSchema = toTypedSchema(
         name: z.string().min(2).max(255),
         description: z.string().max(255).optional(),
         active: z.string().nonempty("Please select a status."),
+        features: z
+            .array(z.string().min(1, "Feature name is required"))
+            .min(1, "At least one feature is required"),
     }),
 );
+
+const features = ref([""]);
 
 const initialValues = ref({
     name: props.data.name || "",
     description: props.data.description || "",
     active: props.data.active ? "true" : "false",
+    features: props.data.features || [""],
 });
 
-const { handleSubmit, resetForm, setValues, values } = useForm({
+const { handleSubmit, resetForm, setValues, setFieldValue, values } = useForm({
     validationSchema: formSchema,
     initialValues: initialValues.value,
 });
 
+// Inicializa as features com os dados existentes
 watch(
     () => props.data,
     (newData) => {
-        if (newData.length > 0) {
-            const newValues = {
-                name: newData[0].name || "",
-                description: newData[0].description || "",
-                active: newData[0].active ? "true" : "false",
-            };
-            setValues(newValues);
+        if (newData && newData.features) {
+            features.value = Array.isArray(newData.features)
+                ? newData.features
+                : Object.values(newData.features);
         }
     },
     { immediate: true, deep: true },
 );
 
+// Atualiza o valor do campo features quando o ref features mudar
+watch(
+    features,
+    (newFeatures) => {
+        setFieldValue("features", newFeatures);
+    },
+    { deep: true },
+);
+
 const onSubmit = handleSubmit(async (formValues) => {
     try {
+        const metadata = {};
+        formValues.features.forEach((feature, index) => {
+            metadata[`feature_${index + 1}`] = feature;
+        });
+
+        const submitData = {
+            ...formValues,
+            metadata,
+        };
+
         await router.put(
             route("product.update", { productId: props.data.id }),
-            formValues,
+            submitData,
         );
         showToast("Product Updated", "Product updated successfully.");
-        resetForm();
     } catch (error) {
         showToast("Error", error.message || "An error occurred.");
     }
@@ -129,6 +153,20 @@ function showToast(title: string, description: string) {
                         Aparece no checkout, no portal do cliente e entre aspas.
                     </FormDescription>
                     <FormMessage />
+                </FormItem>
+            </FormField>
+        </div>
+
+        <div>
+            <FormField v-slot="{ componentField }" name="features">
+                <FormItem>
+                    <FormControl>
+                        <FeatureField
+                            v-model="features"
+                            :name="componentField.name"
+                        />
+                        <FormMessage />
+                    </FormControl>
                 </FormItem>
             </FormField>
         </div>
