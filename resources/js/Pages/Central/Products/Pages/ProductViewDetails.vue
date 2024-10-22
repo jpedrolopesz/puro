@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout.vue";
-import PriceCreateForm from "../Partils/Price/PriceCreateForm.vue";
-import ProductUpdateForm from "../Partils/ProductUpdateForm.vue";
-import DataTable from "../Components/PriceDetails/DataTable.vue";
+import PriceCreateForm from "../Components/Forms/PriceCreateForm.vue";
+import ProductUpdateForm from "../Components/Forms/ProductUpdateForm.vue";
+import DataTable from "../Components/DataTable/DataTable.vue";
+import { columns } from "../Components/DataTable/Columns/priceColumns";
 
 import { Head, Link } from "@inertiajs/vue3";
 import { defineProps, ref } from "vue";
@@ -113,6 +114,7 @@ const defaultPriceId = ref(
                             <DataTable
                                 :data="props.product.prices"
                                 :priceDefault="defaultPriceId"
+                                :columns="columns"
                             />
                         </CardContent>
                         <CardFooter class="justify-center border-t p-4">

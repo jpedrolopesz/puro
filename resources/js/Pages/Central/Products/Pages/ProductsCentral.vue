@@ -4,9 +4,9 @@ import AuthenticatedCentralLayout from "../../Layouts/AuthenticatedCentralLayout
 import { Head, useForm, router } from "@inertiajs/vue3";
 import { defineProps, watch, ref } from "vue";
 import DataTable from "../Components/DataTable/DataTable.vue";
-import { columns } from "../Components/DataTable/columns";
+import { columns } from "../Components/DataTable/Columns/productColumns";
 import { Boxes, PackageCheck, PackageX } from "lucide-vue-next";
-import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
+import { Card, CardHeader, CardTitle } from "@/Components/ui/card";
 
 const props = defineProps<{
     products: any[];

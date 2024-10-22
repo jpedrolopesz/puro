@@ -2,10 +2,9 @@ import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
 import { Link } from "@inertiajs/vue3";
 
-import type { Product } from "../data/schema";
-import DataTableColumnHeader from "./DataTableColumnHeader.vue";
-import DataTableRowActions from "./DataTableRowActions.vue";
-import { Checkbox } from "@/Components/ui/checkbox";
+import type { Product } from "../../../data/schema";
+import DataTableColumnHeader from "../DataTableColumnHeader.vue";
+import DataTableRowActions from "../DataTableRowActions.vue";
 
 function formatDate(timestamp) {
   const date = new Date(timestamp * 1000); // Convert Unix timestamp to milliseconds

@@ -20,8 +20,8 @@ import { Toaster } from "@/Components/ui/toast";
 
 import { useToast } from "@/Components/ui/toast/use-toast";
 
-import CurrencyCombobox from "../CurrencyCombobox.vue";
-import RecurringIntervalCombobox from "../RecurringIntervalCombobox.vue";
+import CurrencyField from "../Fields/CurrencyField.vue";
+import RecurringField from "../Fields/RecurringField.vue";
 
 const props = defineProps({
     data: {
@@ -102,7 +102,7 @@ function showToast(title: string, description: string) {
             <FormField v-slot="{ componentField }" name="currency">
                 <FormItem>
                     <FormControl>
-                        <CurrencyCombobox
+                        <CurrencyField
                             v-model="selectedCurrency"
                             v-bind="componentField"
                         />
@@ -119,7 +119,7 @@ function showToast(title: string, description: string) {
                     <FormLabel>Recurring Interval</FormLabel>
 
                     <FormControl>
-                        <RecurringIntervalCombobox v-bind="componentField" />
+                        <RecurringField v-bind="componentField" />
 
                         <FormMessage />
                     </FormControl>
