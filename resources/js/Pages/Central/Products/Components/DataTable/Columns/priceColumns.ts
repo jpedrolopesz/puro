@@ -110,7 +110,22 @@ export const columns: ColumnDef<Price>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => h(DataTableRowActions, { row }),
+    cell: ({ row }) =>
+      h(
+        DataTableRowActions,
+        { row },
+        {
+          default: () =>
+            h(
+              Link,
+              {
+                href: route("tenant.details", { tenant: row.original }),
+                class: "block w-full",
+              },
+              () => "View tenant details",
+            ),
+        },
+      ),
     enableHiding: false,
   },
 ];
