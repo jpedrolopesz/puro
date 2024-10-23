@@ -16,6 +16,8 @@ interface DataTableRowActionsProps {
     row: Row<Tenant>;
 }
 
+//32432
+
 const props = defineProps<DataTableRowActionsProps>();
 </script>
 
