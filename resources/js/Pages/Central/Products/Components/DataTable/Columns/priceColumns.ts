@@ -1,11 +1,9 @@
 import type { ColumnDef } from "@tanstack/vue-table";
 import { h } from "vue";
-import { Link } from "@inertiajs/vue3";
-import { ArrowUpDown, GitCompareArrows } from "lucide-vue-next";
-import { Button } from "@/Components/ui/button";
+import { GitCompareArrows } from "lucide-vue-next";
 import { Badge } from "@/Components/ui/badge";
 import DataTableColumnHeader from "../DataTableColumnHeader.vue";
-import DataTableRowActions from "../DataTableRowActions.vue";
+import DataTableRowActionsPrice from "../DataTableRowActionsPrice.vue";
 
 export interface Price {
   id: string;
@@ -110,22 +108,7 @@ export const columns: ColumnDef<Price>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) =>
-      h(
-        DataTableRowActions,
-        { row },
-        {
-          default: () =>
-            h(
-              Link,
-              {
-                href: route("tenant.details", { tenant: row.original }),
-                class: "block w-full",
-              },
-              () => "View tenant details",
-            ),
-        },
-      ),
+    cell: ({ row }) => h(DataTableRowActionsPrice, { row }),
     enableHiding: false,
   },
 ];

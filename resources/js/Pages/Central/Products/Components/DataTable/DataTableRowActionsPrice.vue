@@ -1,5 +1,6 @@
 <script setup lang="ts">
-import { defineEmits } from "vue";
+import type { Row } from "@tanstack/vue-table";
+import { computed } from "vue"; // Adicionei o import do computed
 import { useForm } from "@inertiajs/vue3";
 import { MoreHorizontal } from "lucide-vue-next";
 import { Button } from "@/Components/ui/button";
@@ -13,12 +14,18 @@ import {
     DropdownMenuTrigger,
 } from "@/Components/ui/dropdown-menu";
 
+// Define a interface para o tipo Price
+interface Price {
+    id: string;
+    active: boolean;
+}
+
 interface Props {
-    price: {
+    row: Row<{
         id: string;
-        active: boolean;
-    };
-    priceDefaultId: string | null;
+        price: Price;
+        priceDefaultId: string | null;
+    }>;
 }
 
 const props = defineProps<Props>();
@@ -28,13 +35,23 @@ function copy(id: string) {
     navigator.clipboard.writeText(id);
 }
 
+// Certifique-se de que os dados existem antes de acessá-los
+const price = computed(
+    () => props.row.original?.price || { id: "", active: false },
+);
+const priceDefaultId = computed(
+    () => props.row.original?.priceDefaultId || null,
+);
+
 const archiveForm = useForm({
-    active: props.price.active,
+    active: price.value.active,
 });
 
 function handlePriceArchivedChange(checked: boolean) {
+    if (!price.value.id) return;
+
     archiveForm.put(
-        route("price.update.archived", { priceId: props.price.id }),
+        route("price.update.archived", { priceId: price.value.id }),
         {
             active: checked,
             onSuccess: () => {
@@ -49,13 +66,15 @@ function handlePriceArchivedChange(checked: boolean) {
 }
 
 const defaultPriceForm = useForm({
-    priceDefault: props.priceDefaultId,
+    priceDefault: priceDefaultId.value,
 });
 
 function handlePriceDefaultChange() {
-    defaultPriceForm.priceDefault = props.price.id;
+    if (!price.value.id) return;
+
+    defaultPriceForm.priceDefault = price.value.id;
     defaultPriceForm.put(
-        route("price.update.default", { priceId: props.price.id }),
+        route("price.update.default", { priceId: price.value.id }),
         {
             onSuccess: () => {
                 emit("update");
@@ -83,30 +102,25 @@ function handlePriceDefaultChange() {
                 Copy payment ID
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-
             <DropdownMenuItem class="flex items-center space-x-2">
                 <DropdownMenuLabel for="archiveprice"
                     >Archive price</DropdownMenuLabel
                 >
                 <Switch
                     id="price-active"
-                    :checked="!props.price.active"
-                    :disabled="props.priceDefaultId === props.price.id"
-                    @click="handlePriceArchivedChange"
+                    :checked="!price.active"
+                    :disabled="priceDefaultId === price.id"
+                    @click="handlePriceArchivedChange(!price.active)"
                 />
             </DropdownMenuItem>
-
             <DropdownMenuItem class="flex items-center space-x-2">
                 <DropdownMenuLabel for="archiveprice"
                     >Set default price</DropdownMenuLabel
                 >
                 <Switch
                     id="setdefault"
-                    :checked="props.priceDefaultId === props.price.id"
-                    :disabled="
-                        props.priceDefaultId === props.price.id ||
-                        !props.price.active
-                    "
+                    :checked="priceDefaultId === price.id"
+                    :disabled="priceDefaultId === price.id || !price.active"
                     @click="handlePriceDefaultChange"
                 />
             </DropdownMenuItem>

@@ -10,24 +10,13 @@ use App\Http\Controllers\Central\{
     StripeWebhookController,
     ProductsBuilderCentralController
 };
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Public routes
 Route::get("/", function () {
-    if (Auth::guard("admin")->check()) {
-        $user = Auth::guard("admin")->user();
-        return response()->json([
-            "authenticated" => Auth::guard("admin")->check(),
-            "user" => $user,
-        ]);
-    }
-
-    return response()->json(["authenticated" => false]);
-
-    return Inertia::render("Welcome", [
+    return Inertia::render("LandingPage/Page", [
         "canLogin" => Route::has("login"),
         "canRegister" => Route::has("register"),
     ]);
