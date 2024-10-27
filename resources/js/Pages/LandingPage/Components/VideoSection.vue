@@ -2,7 +2,9 @@
 import { ref, onBeforeUnmount } from "vue";
 
 const isVideoPlaying = ref(false);
-const videoUrl = ref("https://www.youtube.com/embed/MFAmnD5InIo");
+const videoUrl = ref(
+    "https://www.youtube.com/embed/qTIEENQzHZo?si=yPZCJHtpq-Lwpnm0",
+);
 
 const playVideo = () => {
     isVideoPlaying.value = true;
@@ -27,10 +29,11 @@ onBeforeUnmount(() => {
                 <h2
                     class="mx-auto max-w-xl text-4xl sm:text-5xl font-semibold tracking-tight text-gray-900 font-display"
                 >
-                    How Supersaas works.
+                    Veja Como Funciona o PuroSaaS.
                 </h2>
                 <p class="mx-auto mt-4 max-w-xl text-gray-600 text-2xl">
-                    Demo, folder structure, and why I built it.
+                    Conheça o código, as funcionalidades, e veja como ele pode
+                    acelerar seu desenvolvimento.
                 </p>
             </div>
 

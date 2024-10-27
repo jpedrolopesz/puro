@@ -26,6 +26,18 @@ const features = ref<Feature[]>([
         icon: "DatabaseIcon",
         bgColor: "bg-teal-500",
     },
+    {
+        title: "Payments/Subscription",
+        description: "Simple payment management with Stripe.",
+        icon: "DatabaseIcon",
+        bgColor: "bg-purple-500",
+    },
+    {
+        title: "Multi-tenancy",
+        description: "Simple payment management with Stripe.",
+        icon: "DatabaseIcon",
+        bgColor: "bg-sky-500",
+    },
 ]);
 </script>
 
@@ -36,14 +48,15 @@ const features = ref<Feature[]>([
                 <h1
                     class="text-5xl sm:text-6xl font-bold tracking-tight text-gray-800 font-display"
                 >
-                    The Simple, Fast & Smart Nuxt 3 Fullstack Kit.
+                    Construa Seu Próprio SaaS de Forma Rápida e Simples
                 </h1>
                 <div class="space-y-4 mt-6 text-lg text-gray-700 max-w-lg">
                     <p>I analysed the best starter kits.</p>
                     <p>
-                        Cherry-picked their good features and enhanced the areas
-                        that needed improvement & added everything you need to
-                        build a modern SaaS
+                        Economize tempo e foque no que importa: o crescimento do
+                        seu negócio. Com o PuroSaaS, você não precisa começar do
+                        zero! Tenha tudo pronto para lançar seu SaaS sem perder
+                        horas com a configuração do básico.
                     </p>
                 </div>
 

@@ -4,9 +4,29 @@ import type { Card } from "../Types";
 
 const cards = ref<Card[]>([
     {
-        title: "Always Fresh",
+        title: "Multi-Tenancy Simples",
         description:
-            "Our codebase is always current and up-to-date. I personally ensure that every piece of code is reviewed before it's published.",
+            "Não perca tempo configurando múltiplas instâncias, o PuroSaaS faz isso por você.",
+        bgColor: "bg-sky-500",
+    },
+    {
+        title: "Gestão Completa de Pagamentos",
+        description:
+            "Controle pagamentos e assinaturas sem precisar acessar o Stripe.",
+        bgColor: "bg-indigo-500",
+    },
+
+    {
+        title: "Interface Moderna",
+        description:
+            "Frontend responsivo e pronto para uso, com Vue.js, Typescript com Shadcn ui",
+        bgColor: "bg-gray-500",
+    },
+
+    {
+        title: "Comunicaçao Interna",
+        description:
+            "Suporte aos seus clientes diretamente pelo sistema, com o chat Tenant-Super Admin.",
         bgColor: "bg-rose-500",
     },
     // ... other cards

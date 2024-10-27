@@ -4,18 +4,6 @@ import type { Feature } from "../Types";
 
 const features = ref<Feature[]>([
     {
-        title: "Authentication",
-        description: "Password, Passcode, Magic Link, Social login, Passkey.",
-        icon: "LockIcon",
-        bgColor: "bg-rose-500",
-    },
-    {
-        title: "Database",
-        description: "Supports major databases with Drizzle ORM.",
-        icon: "DatabaseIcon",
-        bgColor: "bg-teal-500",
-    },
-    {
         title: "Easy Login and User Management",
         description:
             "We're all famililar with the pain of writing auth logic and the amount of use cases that come with it. I wanted to make it stupid simple and easy to use.",
@@ -50,7 +38,8 @@ const features = ref<Feature[]>([
                 <h2
                     class="mx-auto max-w-xl text-4xl sm:text-5xl font-semibold tracking-tight text-gray-900 font-display"
                 >
-                    6 major things Supersaas comes pre installed with
+                    Explore todos os recursos e veja como PuroSaaS pode acelerar
+                    seu projeto SaaS!
                 </h2>
                 <p class="mx-auto mt-4 max-w-xl text-gray-600 text-2xl">
                     I've purposely not added unnecessary things.
