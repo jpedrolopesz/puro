@@ -65,7 +65,7 @@ const handleKeydown = (e: KeyboardEvent) => {
                     Que bom ter você aqui! 😊 Imagino que você esteja curioso
                     sobre como esse produto pode fazer a diferença para você.
                     Não estou aqui para dizer que sou o melhor ou único na
-                    internet.
+                    internet.sada
                 </p>
 
                 <p>
