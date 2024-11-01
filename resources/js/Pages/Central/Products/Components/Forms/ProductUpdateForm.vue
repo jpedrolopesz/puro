@@ -46,11 +46,12 @@ const formSchema = toTypedSchema(
 
 const features = ref([""]);
 
+console.log(props.data);
 const initialValues = ref({
     name: props.data.name || "",
     description: props.data.description || "",
     active: props.data.active ? "true" : "false",
-    features: props.data.features || [""],
+    metadata: props.data.metadata || [""],
 });
 
 const { handleSubmit, resetForm, setValues, setFieldValue, values } = useForm({
@@ -71,7 +72,6 @@ watch(
     { immediate: true, deep: true },
 );
 
-// Atualiza o valor do campo features quando o ref features mudar
 watch(
     features,
     (newFeatures) => {

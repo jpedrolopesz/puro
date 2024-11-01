@@ -53,6 +53,7 @@ class GetProductPriceDetailsAction
             "name" => $product["name"],
             "description" => $product["description"] ?? null,
             "active" => $product["active"],
+            "metadata" => $product["metadata"] ?? null,
             "default_price" => $product["default_price"],
             "created" => $product["created"],
             "updated" => $product["updated"] ?? null,
