@@ -98,33 +98,6 @@ onMounted(() => {
         <div class="relative z-10">
             <Header />
             <main class="min-h-screen">
-                <svg
-                    width="200"
-                    height="200"
-                    xmlns="http://www.w3.org/2000/svg"
-                >
-                    <path
-                        d="M20 50 C40 30, 80 70, 100 50 S160 70, 180 40"
-                        fill="#f0f0f0"
-                        stroke="#cccccc"
-                        stroke-width="2"
-                    />
-                    <path
-                        d="M30 80 Q50 60, 70 75 T110 85 Q90 95, 60 110 Z"
-                        fill="#e0e0e0"
-                        stroke="#b0b0b0"
-                        opacity="0.8"
-                    />
-                    <ellipse
-                        cx="100"
-                        cy="130"
-                        rx="30"
-                        ry="10"
-                        fill="#dcdcdc"
-                        opacity="0.4"
-                    />
-                </svg>
-
                 <HeroSection />
                 <VideoSection />
                 <AboutMeCardSection />

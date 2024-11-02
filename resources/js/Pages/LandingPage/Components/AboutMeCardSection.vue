@@ -2,7 +2,6 @@
 import { ref } from "vue";
 import type { User } from "../Types";
 
-const isModalOpen = ref(false);
 const users = ref<User[]>([
     {
         name: "Fayaz Ahmed",
@@ -12,26 +11,7 @@ const users = ref<User[]>([
         name: "Gavin Zhou",
         avatar: "https://api.dicebear.com/9.x/glass/svg?seed=gavin",
     },
-    {
-        name: "Gavin Zhou",
-        avatar: "https://api.dicebear.com/9.x/glass/svg?seed=gavin",
-    },
-    {
-        name: "Gavin Zhou",
-        avatar: "https://api.dicebear.com/9.x/glass/svg?seed=gavin",
-    },
 ]);
-
-const toggleModal = () => {
-    isModalOpen.value = !isModalOpen.value;
-};
-
-// Fechar modal com tecla ESC
-const handleKeydown = (e: KeyboardEvent) => {
-    if (e.key === "Escape") {
-        isModalOpen.value = false;
-    }
-};
 </script>
 
 <template>
@@ -40,38 +20,31 @@ const handleKeydown = (e: KeyboardEvent) => {
             <h2
                 class="mx-auto max-w-xl text-4xl sm:text-5xl font-semibold tracking-tight text-gray-900 font-display"
             >
-                É um prazer ter você aqui!
+                It's a pleasure to have you here!
             </h2>
             <p class="mx-auto mt-4 max-w-xl text-gray-600 text-2xl">
-                Tenho certeza de que você está curioso sobre como este produto
-                pode transformar a sua experiência.
+                Every step with you brings us closer to our dreams.
             </p>
         </div>
-        <!-- Card Principal -->
         <div class="p-8 space-y-6">
             <div class="flex items-start justify-between">
                 <div class="space-y-1 mr-10">
                     <h1 class="prose prose-lg text-gray-700 space-y-4">
-                        <p>
-                            Eiiiii, e aí? Antes de mais nada, me desculpa por
-                            não me apresentar!
-                        </p>
-                        <p>Esse cara da foto sou eu, e meu nome é Joao 😄</p>
+                        <p>E aí, beleza? 🇧🇷 (Hey, what's up?)</p>
+                        <p>That's me in the photo, and my name is Joao 😄</p>
 
-                        <p>Agora sim, vamos lá!</p>
                         <p>
-                            Não estou aqui para descrever todas minhas
-                            competencias ou dizer o melhor ou o único produto
-                            incrivel feito; minha missão é bem mais simples:
-                            ajudar você a alcançar seus objetivos enquanto busco
-                            realizar os meus sonhos.
+                            I'm not here to list all my skills or claim to have
+                            the best or only amazing product; my mission is much
+                            simpler: to help you reach your goals while I work
+                            toward my own dreams.
                         </p>
 
                         <p>
-                            Gostaria de dizer que cada compra representa um
-                            passo em direção à realização dos meus sonhos, e
-                            serei eternamente grato por você fazer parte dessa
-                            jornada ao meu lado. 💙
+                            I'd like you to know that every purchase represents
+                            a step toward making my dreams a reality, and I'll
+                            be forever grateful to have you as part of this
+                            journey with me. 💙
                         </p>
                     </h1>
                 </div>
@@ -98,19 +71,11 @@ const handleKeydown = (e: KeyboardEvent) => {
                 </div>
                 <p class="text-sm text-gray-500 max-w-xs">
                     <span class="font-semibold text-primary-900"
-                        >148+ developers</span
+                        >0+ people responsible</span
                     >
-                    shipping apps in production.
+                    for making my dreams come true.
                 </p>
             </div>
         </div>
     </div>
 </template>
-
-<style scoped>
-.grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 1.5rem;
-}
-</style>

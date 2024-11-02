@@ -48,15 +48,32 @@ const features = ref<Feature[]>([
                 <h1
                     class="text-5xl sm:text-6xl font-bold tracking-tight text-gray-800 font-display"
                 >
-                    Construa Seu Próprio SaaS de Forma Rápida e Simples
+                    Build Your Own SaaS Quickly and Easily
                 </h1>
                 <div class="space-y-4 mt-6 text-lg text-gray-700 max-w-lg">
-                    <p>I analysed the best starter kits.</p>
                     <p>
-                        Economize tempo e foque no que importa: o crescimento do
-                        seu negócio. Com o PuroSaaS, você não precisa começar do
-                        zero! Tenha tudo pronto para lançar seu SaaS sem perder
-                        horas com a configuração do básico.
+                        Built with
+                        <span class="underline decoration-rose-500"
+                            >Laravel</span
+                        >,
+                        <span class="underline decoration-green-500"
+                            >Vue.js</span
+                        >
+                        and
+                        <span class="underline decoration-purple-500"
+                            >Inertia.js</span
+                        >, and coming soon with
+                        <span class="underline decoration-sky-500"
+                            >React.js</span
+                        >
+                        .
+                    </p>
+
+                    <p>
+                        Save time and focus on what matters: growing your
+                        business. With PuroSaaS, you don’t have to start from
+                        scratch! Get everything ready to launch your SaaS
+                        without spending hours setting up the basics.
                     </p>
                 </div>
 

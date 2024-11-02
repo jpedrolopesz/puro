@@ -29,11 +29,11 @@ onBeforeUnmount(() => {
                 <h2
                     class="mx-auto max-w-xl text-4xl sm:text-5xl font-semibold tracking-tight text-gray-900 font-display"
                 >
-                    Veja Como Funciona o PuroSaaS.
+                    See How PuroSaaS Works
                 </h2>
                 <p class="mx-auto mt-4 max-w-xl text-gray-600 text-2xl">
-                    Conheça o código, as funcionalidades, e veja como ele pode
-                    acelerar seu desenvolvimento.
+                    Explore the code, features, and see how it can speed up your
+                    development.
                 </p>
             </div>
 
