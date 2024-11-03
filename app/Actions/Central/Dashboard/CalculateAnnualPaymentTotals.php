@@ -10,26 +10,21 @@ class CalculateAnnualPaymentTotals
 {
     public function execute(): array
     {
-        try {
-            $validPaymentsQuery = $this->getValidPaymentsQuery();
-            $totalAmount = $this->calculateTotalAmount($validPaymentsQuery);
-            $yearlyTotals = $this->calculateYearlyTotals($validPaymentsQuery);
+        $validPaymentsQuery = $this->getValidPaymentsQuery();
+        $totalAmount = $this->calculateTotalAmount($validPaymentsQuery);
+        $yearlyTotals = $this->calculateYearlyTotals($validPaymentsQuery);
 
-            return [
-                "total_amount" => $this->formatPrice($totalAmount),
-                "yearly_totals" => $this->formatYearlyTotals($yearlyTotals),
-                "chart_data" => $this->formatChartData($yearlyTotals),
-            ];
-        } catch (\Exception $e) {
-            \Log::error(
-                "Error in CalculateAnnualPaymentTotals: " . $e->getMessage()
-            );
-            return [
-                "total_amount" => $this->formatPrice(0),
-                "yearly_totals" => [],
-                "chart_data" => [],
-            ];
-        }
+        return [
+            "total_amount" => $this->formatPrice($totalAmount),
+            "yearly_totals" => $this->formatYearlyTotals($yearlyTotals),
+            "chart_data" => $this->formatChartData($yearlyTotals),
+        ];
+
+        return [
+            "total_amount" => $this->formatPrice(0),
+            "yearly_totals" => [],
+            "chart_data" => [],
+        ];
     }
 
     private function getValidPaymentsQuery()

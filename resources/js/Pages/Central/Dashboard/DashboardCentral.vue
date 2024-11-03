@@ -6,7 +6,7 @@ import ChartlineOverview from "./Components/ChartlineOverview.vue";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
-import { defineProps, ref } from "vue";
+import { defineProps, computed } from "vue";
 
 const props = defineProps({
     getMonthlyPaymentSummary: {
@@ -19,7 +19,33 @@ const props = defineProps({
     },
 });
 
-console.log(props.calculateAnnualPaymentTotals);
+const calculatePercentageChange = computed(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    const currentMonthPayment =
+        props.getMonthlyPaymentSummary[currentMonth][currentYear] || 0;
+    const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
+    const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
+    const previousMonthPayment =
+        props.getMonthlyPaymentSummary[previousMonth][previousYear] || 0;
+
+    if (previousMonthPayment === 0) return 0;
+
+    return (
+        ((currentMonthPayment - previousMonthPayment) / previousMonthPayment) *
+        100
+    ).toFixed(1);
+});
+
+const currentMonthSales = computed(() => {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth();
+
+    return props.getMonthlyPaymentSummary[currentMonth][currentYear] || 0;
+});
 </script>
 
 <template>
@@ -82,8 +108,14 @@ console.log(props.calculateAnnualPaymentTotals);
                                         calculateAnnualPaymentTotals.total_amount
                                     }}
                                 </div>
+
                                 <p class="text-xs text-muted-foreground">
-                                    +20.1% from last month
+                                    {{
+                                        calculatePercentageChange >= 0
+                                            ? "+"
+                                            : ""
+                                    }}{{ calculatePercentageChange }}% from last
+                                    month
                                 </p>
                             </CardContent>
                         </Card>
@@ -148,9 +180,20 @@ console.log(props.calculateAnnualPaymentTotals);
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div class="text-2xl font-bold">+12,234</div>
+                                <div class="text-2xl font-bold">
+                                    ${{
+                                        new Intl.NumberFormat("en-US", {
+                                            minimumFractionDigits: 2,
+                                        }).format(currentMonthSales)
+                                    }}
+                                </div>
                                 <p class="text-xs text-muted-foreground">
-                                    +19% from last month
+                                    {{
+                                        calculatePercentageChange >= 0
+                                            ? "+"
+                                            : ""
+                                    }}{{ calculatePercentageChange }}% from last
+                                    month
                                 </p>
                             </CardContent>
                         </Card>
