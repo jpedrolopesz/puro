@@ -54,7 +54,7 @@ class ImportStripeUsersJob implements ShouldQueue
                     DB::beginTransaction();
                     $this->processCustomer($customer);
                     DB::commit();
-
+sadas
                     $this->processedCustomers++;
                     $progress =
                         ($this->processedCustomers / $this->totalCustomers) *
