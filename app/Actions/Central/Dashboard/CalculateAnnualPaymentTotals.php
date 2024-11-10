@@ -53,7 +53,7 @@ class CalculateAnnualPaymentTotals
             ->get();
     }
 
-    private function getAmountCalculation(): string
+    private function gjhjetAmountCalculation(): string
     {
         return "
             CASE

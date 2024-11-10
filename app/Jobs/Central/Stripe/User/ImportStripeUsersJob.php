@@ -50,7 +50,7 @@ class ImportStripeUsersJob implements ShouldQueue
             );
 
             foreach ($response->data as $customer) {
-                try {VJHVHJG
+                try {
                     DB::beginTransaction();
                     $this->processCustomer($customer);
                     DB::commit();
