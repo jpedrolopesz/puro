@@ -1,5 +1,4 @@
 <?php
-
 namespace App\Actions\Central\Dashboard;
 
 use App\Models\Payment;
@@ -13,20 +12,17 @@ class CalculateAnnualPaymentTotals
         $validPaymentsQuery = $this->getValidPaymentsQuery();
         $totalAmount = $this->calculateTotalAmount($validPaymentsQuery);
         $yearlyTotals = $this->calculateYearlyTotals($validPaymentsQuery);
-
         return [
             "total_amount" => $this->formatPrice($totalAmount),
             "yearly_totals" => $this->formatYearlyTotals($yearlyTotals),
             "chart_data" => $this->formatChartData($yearlyTotals),
         ];
-
         return [
             "total_amount" => $this->formatPrice(0),
             "yearly_totals" => [],
             "chart_data" => [],
         ];
     }
-
     private function getValidPaymentsQuery()
     {
         return Payment::where("captured", true)
@@ -35,12 +31,10 @@ class CalculateAnnualPaymentTotals
                 $query->where("refunded", false)->orWhere("amount_refunded", 0);
             });
     }
-
     private function calculateTotalAmount($query)
     {
         return $query->sum(DB::raw($this->getAmountCalculation()));
     }
-
     private function calculateYearlyTotals($query): Collection
     {
         return $query
@@ -52,8 +46,7 @@ class CalculateAnnualPaymentTotals
             ->orderBy(DB::raw("YEAR(payment_date)"))
             ->get();
     }
-
-    private function gjhjetAmountCalculation(): string
+    private function getAmountCalculation(): string
     {
         return "
             CASE
@@ -63,7 +56,6 @@ class CalculateAnnualPaymentTotals
             END
         ";
     }
-
     private function formatYearlyTotals(Collection $yearlyTotals): array
     {
         return $yearlyTotals
@@ -72,7 +64,6 @@ class CalculateAnnualPaymentTotals
             })
             ->toArray();
     }
-
     private function formatChartData(Collection $yearlyTotals): array
     {
         return $yearlyTotals
@@ -85,7 +76,6 @@ class CalculateAnnualPaymentTotals
             ->values()
             ->toArray();
     }
-
     private function formatPrice($amount): string
     {
         return number_format(max(0, $amount), 2, ",", ".");

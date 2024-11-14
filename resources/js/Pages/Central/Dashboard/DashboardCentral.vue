@@ -1,35 +1,61 @@
 <script setup lang="ts">
 import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vue";
 import { Head } from "@inertiajs/vue3";
-
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, computed } from "vue";
 
-const props = defineProps({
-    getMonthlyPaymentSummary: {
-        type: Array,
-        required: true,
-    },
-    calculateAnnualPaymentTotals: {
-        type: Object,
-        required: true,
-    },
-});
+interface Admin {
+    id: number;
+    name: string;
+    email: string;
+    // adicione outros campos necessários
+}
 
-const calculatePercentageChange = computed(() => {
+interface PaymentTotals {
+    total_amount: string;
+    yearly_totals: Record<string, string>;
+    chart_data: Array<{
+        year: number;
+        amount: number;
+    }>;
+}
+
+interface SubscriberStatistics {
+    subscribers: {
+        total: number;
+        yearly_totals: Record<number, number>;
+        chart_data: Array<{
+            year: number;
+            subscribers: number;
+        }>;
+    };
+    non_subscribers: {
+        total: number;
+    };
+    total_users: number;
+}
+
+const props = defineProps<{
+    admin: Admin;
+    getMonthlyPaymentSummary: Array<Record<number, number>>;
+    calculateAnnualPaymentTotals: PaymentTotals;
+    calculateAnnualSubscriberTotals: SubscriberStatistics;
+}>();
+
+// Cálculo de variação percentual de pagamentos
+const calculatePaymentPercentageChange = computed(() => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
 
     const currentMonthPayment =
-        props.getMonthlyPaymentSummary[currentMonth][currentYear] || 0;
+        props.getMonthlyPaymentSummary[currentMonth]?.[currentYear] || 0;
     const previousMonth = currentMonth === 0 ? 11 : currentMonth - 1;
     const previousYear = currentMonth === 0 ? currentYear - 1 : currentYear;
     const previousMonthPayment =
-        props.getMonthlyPaymentSummary[previousMonth][previousYear] || 0;
+        props.getMonthlyPaymentSummary[previousMonth]?.[previousYear] || 0;
 
     if (previousMonthPayment === 0) return 0;
 
@@ -39,12 +65,35 @@ const calculatePercentageChange = computed(() => {
     ).toFixed(1);
 });
 
+// Cálculo de variação percentual de inscritos
+const calculateSubscriberPercentageChange = computed(() => {
+    const currentYear = new Date().getFullYear();
+    const lastYear = currentYear - 1;
+
+    const currentYearSubscribers =
+        props.calculateAnnualSubscriberTotals.subscribers.yearly_totals[
+            currentYear
+        ] || 0;
+    const lastYearSubscribers =
+        props.calculateAnnualSubscriberTotals.subscribers.yearly_totals[
+            lastYear
+        ] || 0;
+
+    if (lastYearSubscribers === 0) return 0;
+
+    return (
+        ((currentYearSubscribers - lastYearSubscribers) / lastYearSubscribers) *
+        100
+    ).toFixed(1);
+});
+
+// Valor atual do mês
 const currentMonthSales = computed(() => {
     const currentDate = new Date();
     const currentYear = currentDate.getFullYear();
     const currentMonth = currentDate.getMonth();
 
-    return props.getMonthlyPaymentSummary[currentMonth][currentYear] || 0;
+    return props.getMonthlyPaymentSummary[currentMonth]?.[currentYear] || 0;
 });
 </script>
 
@@ -59,26 +108,25 @@ const currentMonthSales = computed(() => {
                         Dashboard Central
                     </h2>
                     <p class="text-muted-foreground">
-                        Here&apos;s a list of your tasks for this month!
+                        Bem-vindo(a), {{ admin.name }}!
                     </p>
                 </div>
             </div>
 
             <Tabs default-value="overview" class="space-y-4">
                 <TabsList>
-                    <TabsTrigger value="overview"> Overview </TabsTrigger>
-                    <TabsTrigger value="analytics" disabled>
-                        Analytics
-                    </TabsTrigger>
-                    <TabsTrigger value="reports" disabled>
-                        Reports
-                    </TabsTrigger>
-                    <TabsTrigger value="notifications" disabled>
-                        Notifications
-                    </TabsTrigger>
+                    <TabsTrigger value="overview">Overview</TabsTrigger>
+                    <TabsTrigger value="analytics" disabled
+                        >Analytics</TabsTrigger
+                    >
+                    <TabsTrigger value="reports" disabled>Reports</TabsTrigger>
+                    <TabsTrigger value="notifications" disabled
+                        >Notifications</TabsTrigger
+                    >
                 </TabsList>
                 <TabsContent value="overview" class="space-y-4">
                     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                        <!-- Revenue Card -->
                         <Card>
                             <CardHeader
                                 class="flex flex-row items-center justify-between space-y-0 pb-2"
@@ -103,28 +151,28 @@ const currentMonthSales = computed(() => {
                             </CardHeader>
                             <CardContent>
                                 <div class="text-2xl font-bold">
-                                    $
-                                    {{
+                                    ${{
                                         calculateAnnualPaymentTotals.total_amount
                                     }}
                                 </div>
-
                                 <p class="text-xs text-muted-foreground">
                                     {{
-                                        calculatePercentageChange >= 0
+                                        calculatePaymentPercentageChange >= 0
                                             ? "+"
                                             : ""
-                                    }}{{ calculatePercentageChange }}% from last
-                                    month
+                                    }}{{ calculatePaymentPercentageChange }}%
+                                    from last month
                                 </p>
                             </CardContent>
                         </Card>
+
+                        <!-- Subscribers Card -->
                         <Card>
                             <CardHeader
                                 class="flex flex-row items-center justify-between space-y-0 pb-2"
                             >
                                 <CardTitle class="text-sm font-medium">
-                                    Subscriptions
+                                    Subscribers
                                 </CardTitle>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -140,24 +188,33 @@ const currentMonthSales = computed(() => {
                                         d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
                                     />
                                     <circle cx="9" cy="7" r="4" />
-                                    <path
-                                        d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"
-                                    />
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div class="text-2xl font-bold">+2350</div>
+                                <div class="text-2xl font-bold">
+                                    {{
+                                        calculateAnnualSubscriberTotals
+                                            .subscribers.total
+                                    }}
+                                </div>
                                 <p class="text-xs text-muted-foreground">
-                                    +180.1% from last month
+                                    {{
+                                        calculateSubscriberPercentageChange >= 0
+                                            ? "+"
+                                            : ""
+                                    }}{{ calculateSubscriberPercentageChange }}%
+                                    from last year
                                 </p>
                             </CardContent>
                         </Card>
+
+                        <!-- Monthly Sales Card -->
                         <Card>
                             <CardHeader
                                 class="flex flex-row items-center justify-between space-y-0 pb-2"
                             >
                                 <CardTitle class="text-sm font-medium">
-                                    Sales
+                                    Monthly Sales
                                 </CardTitle>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -189,20 +246,22 @@ const currentMonthSales = computed(() => {
                                 </div>
                                 <p class="text-xs text-muted-foreground">
                                     {{
-                                        calculatePercentageChange >= 0
+                                        calculatePaymentPercentageChange >= 0
                                             ? "+"
                                             : ""
-                                    }}{{ calculatePercentageChange }}% from last
-                                    month
+                                    }}{{ calculatePaymentPercentageChange }}%
+                                    from last month
                                 </p>
                             </CardContent>
                         </Card>
+
+                        <!-- Conversion Rate Card -->
                         <Card>
                             <CardHeader
                                 class="flex flex-row items-center justify-between space-y-0 pb-2"
                             >
                                 <CardTitle class="text-sm font-medium">
-                                    Active Now
+                                    Conversion Rate
                                 </CardTitle>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
@@ -218,19 +277,29 @@ const currentMonthSales = computed(() => {
                                 </svg>
                             </CardHeader>
                             <CardContent>
-                                <div class="text-2xl font-bold">+573</div>
+                                <div class="text-2xl font-bold">
+                                    {{
+                                        (
+                                            (calculateAnnualSubscriberTotals
+                                                .subscribers.total /
+                                                calculateAnnualSubscriberTotals.total_users) *
+                                            100
+                                        ).toFixed(1)
+                                    }}%
+                                </div>
                                 <p class="text-xs text-muted-foreground">
-                                    +201 since last hour
+                                    Of total users
                                 </p>
                             </CardContent>
                         </Card>
                     </div>
+
+                    <!-- Overview Chart -->
                     <div class="grid gap-2 md:grid-cols-1 lg:grid-cols-1">
                         <Card class="col-span-4">
                             <CardHeader>
                                 <CardTitle>Overview</CardTitle>
                             </CardHeader>
-
                             <CardContent class="pl-2">
                                 <ChartlineOverview
                                     :data="props.getMonthlyPaymentSummary"
