@@ -10,7 +10,7 @@ interface Admin {
     id: number;
     name: string;
     email: string;
-    // adicione outros campos necessários
+    // adicione outros campos necessárisadaos
 }
 
 interface PaymentTotals {
