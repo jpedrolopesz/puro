@@ -10,7 +10,7 @@ interface Admin {
     id: number;
     name: string;
     email: string;
-    // adicione outros camewpos necessárisadaos
+    // adicione outros camewpos necessárisadaodsfss
 }
 
 interface PaymentTotals {
