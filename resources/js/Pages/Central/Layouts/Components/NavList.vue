@@ -16,6 +16,7 @@ export interface LinkProp {
     variant: "default" | "ghost";
     route: string;
     current: boolean;
+    method?: string;
 }
 
 interface NavProps {
@@ -110,6 +111,8 @@ defineProps<NavProps>();
                     </span>
                 </Link>
             </template>
+
+            cdds
         </nav>
     </div>
 </template>

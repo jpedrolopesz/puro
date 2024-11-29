@@ -80,11 +80,11 @@ Route::middleware(["auth", "auth:admin"])->group(function () {
         "store",
     ]);
 
-    Route::put("password", [PasswordController::class, "update"])->name(
+    Route::post("password", [PasswordController::class, "update"])->name(
         "password.update"
     );
 
-    Route::post("logout", [
+    Route::delete("/logout", [
         AuthenticatedSessionController::class,
         "destroy",
     ])->name("logout");

@@ -6,6 +6,7 @@ import NavList, { type LinkProp } from "./NavList.vue";
 import { Separator } from "@/Components/ui/separator";
 import { TooltipProvider } from "@/Components/ui/tooltip";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
+import { Link } from "@inertiajs/vue3";
 
 import {
     ResizableHandle,
@@ -134,10 +135,12 @@ const links3: LinkProp[] = [
     },
     {
         title: "Log out",
-
         icon: "lucide:log-out",
         variant: "ghost",
-        route: "/social",
+        route: route("logout"), // Usando o helper do Laravel
+        method: "delete", // Inertia usa esse campo para o método HTTP
+        as: "button", // Indica que será renderizado como um botão
+        type: "button",
     },
 ];
 </script>
@@ -193,6 +196,7 @@ const links3: LinkProp[] = [
 
                     <div class="mb-1">
                         <NavList :is-collapsed="isCollapsed" :links="links3" />
+                        ss
                     </div>
                 </div>
             </ResizablePanel>
