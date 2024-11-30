@@ -137,10 +137,7 @@ const links3: LinkProp[] = [
         title: "Log out",
         icon: "lucide:log-out",
         variant: "ghost",
-        route: route("logout"), // Usando o helper do Laravel
-        method: "delete", // Inertia usa esse campo para o método HTTP
-        as: "button", // Indica que será renderizado como um botão
-        type: "button",
+        route: route("logout"), // Agora usando o método GET
     },
 ];
 </script>
@@ -196,7 +193,6 @@ const links3: LinkProp[] = [
 
                     <div class="mb-1">
                         <NavList :is-collapsed="isCollapsed" :links="links3" />
-                        ss
                     </div>
                 </div>
             </ResizablePanel>

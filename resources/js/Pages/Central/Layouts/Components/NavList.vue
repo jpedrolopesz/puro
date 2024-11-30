@@ -17,6 +17,7 @@ export interface LinkProp {
     route: string;
     current: boolean;
     method?: string;
+    as?: string;
 }
 
 interface NavProps {
@@ -111,8 +112,6 @@ defineProps<NavProps>();
                     </span>
                 </Link>
             </template>
-
-            cdds
         </nav>
     </div>
 </template>
