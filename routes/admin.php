@@ -14,7 +14,6 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 Route::middleware("auth:admin")
-    ->prefix("admin")
     ->name("admin.")
     ->group(function () {
         // Dashboard

@@ -17,6 +17,7 @@ return Application::configure(basePath: dirname(__DIR__))
                     ->domain($domain)
                     ->group(base_path("routes/web.php"));
             }
+            require base_path("routes/auth.php");
 
             Route::middleware("web")->group(base_path("routes/tenant.php"));
         }

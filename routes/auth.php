@@ -81,9 +81,8 @@ Route::middleware(["auth", "auth:admin"])->group(function () {
     Route::post("password", [PasswordController::class, "update"])->name(
         "password.update"
     );
-
-    Route::get("/logout", function () {
-        Auth::guard("web")->logout();
-        return redirect("/");
-    })->name("logout");
 });
+
+Route::post("logout", [AuthenticatedSessionController::class, "logout"])->name(
+    "logout"
+);

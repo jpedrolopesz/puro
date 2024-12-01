@@ -32,8 +32,6 @@ class DashboardCentralController extends Controller
         $calculateAnnualPaymentTotals = $this->calculateAnnualPaymentTotals->execute();
         $calculateAnnualSubscriberTotals = $this->calculateAnnualSubscriberTotals->execute();
 
-        // dd($calculateAnnualSubscriberTotals);
-
         return Inertia::render("Central/Dashboard/DashboardCentral", [
             "admin" => Auth::guard("admin")->user(),
             "getMonthlyPaymentSummary" => $getMonthlyPaymentSummary,

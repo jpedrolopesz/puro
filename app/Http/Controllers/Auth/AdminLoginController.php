@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Auth;
 
 class AdminLoginController extends Controller
 {
-guest    public function showLoginForm()
+    public function showLoginForm()
     {
         return view("auth.admin-login");
     }
@@ -28,9 +28,15 @@ guest    public function showLoginForm()
         }
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
-        Auth::guard("admin")->logout();
-        return redirect()->route("admin.login");
+        dd("öm");
+        if (Auth::guard("admin")->check()) {
+            Auth::guard("admin")->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+        }
+
+        return redirect()->route("/");
     }
 }

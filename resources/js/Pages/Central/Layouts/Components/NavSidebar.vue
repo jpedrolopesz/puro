@@ -6,7 +6,7 @@ import NavList, { type LinkProp } from "./NavList.vue";
 import { Separator } from "@/Components/ui/separator";
 import { TooltipProvider } from "@/Components/ui/tooltip";
 import ApplicationLogo from "@/Components/ApplicationLogo.vue";
-import { Link } from "@inertiajs/vue3";
+import { router, Link } from "@inertiajs/vue3";
 
 import {
     ResizableHandle,
@@ -48,10 +48,10 @@ const links: LinkProp[] = [
         label: "972",
         icon: "lucide:building-2",
         variant: "ghost",
-        route: route("tenants.index"),
+        route: route("admin.tenants.index"),
         current:
-            route().current("tenants.index") ||
-            route().current("tenant.details"),
+            route().current("admin.tenants.index") ||
+            route().current("admin.tenant.details"),
     },
 
     {
@@ -59,29 +59,29 @@ const links: LinkProp[] = [
         label: "",
         icon: "lucide:hand-coins",
         variant: "ghost",
-        route: route("payments.index"),
+        route: route("admin.payments.index"),
         current:
-            route().current("payments.index") ||
-            route().current("payments.details"),
+            route().current("admin.payments.index") ||
+            route().current("admin.payments.details"),
     },
     {
         title: "Products",
         label: "6",
         icon: "lucide:package-open",
         variant: "ghost",
-        route: route("products.index"),
+        route: route("admin.products.index"),
         current:
-            route().current("products.index") ||
-            route().current("product.details") ||
-            route().current("products.builder.index"),
+            route().current("admin.products.index") ||
+            route().current("admin.product.details") ||
+            route().current("admin.products.builder.index"),
     },
     {
         title: "Conversation",
         label: "6",
         icon: "lucide:mails",
         variant: "ghost",
-        route: route("conversation.index"),
-        current: route().current("conversation.index"),
+        route: route("admin.conversation.index"),
+        current: route().current("admin.conversation.index"),
     },
 ];
 
@@ -128,16 +128,18 @@ const links3: LinkProp[] = [
         title: "Profile",
         icon: "lucide:user-cog",
         variant: "ghost",
-        route: route("profile.edit"),
+        route: route("admin.profile.edit"),
         current:
-            route().current("profile.edit") ||
-            route().current("profile.account"),
+            route().current("admin.profile.edit") ||
+            route().current("admin.profile.account"),
     },
     {
         title: "Log out",
         icon: "lucide:log-out",
         variant: "ghost",
-        route: route("logout"), // Agora usando o método GET
+        route: route("logout"),
+        method: "post",
+        as: "button",
     },
 ];
 </script>

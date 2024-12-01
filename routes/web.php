@@ -1,10 +1,8 @@
 <?php
 
-use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
-// Public routes
 Route::get("/", function () {
     return Inertia::render("LandingPage/Page", [
         "canLogin" => Route::has("login"),
@@ -12,6 +10,5 @@ Route::get("/", function () {
     ]);
 })->name("home");
 
-// Load other route files
-require __DIR__ . "/auth.php";
-require __DIR__ . "/admin.php";
+require base_path("routes/auth.php");
+require base_path("routes/admin.php");

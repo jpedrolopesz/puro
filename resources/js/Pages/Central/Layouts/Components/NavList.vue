@@ -16,8 +16,7 @@ export interface LinkProp {
     variant: "default" | "ghost";
     route: string;
     current: boolean;
-    method?: string;
-    as?: string;
+    method?: "get" | "post";
 }
 
 interface NavProps {
@@ -45,6 +44,8 @@ defineProps<NavProps>();
                     <TooltipTrigger as-child>
                         <Link
                             :href="link.route"
+                            :method="link.method"
+                            :as="link.method === 'post' ? 'button' : undefined"
                             :class="
                                 cn(
                                     buttonVariants({
@@ -54,7 +55,6 @@ defineProps<NavProps>();
                                         size: 'sm',
                                     }),
                                     'h-9 w-9',
-
                                     link.current &&
                                         'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white',
                                 )
@@ -82,6 +82,8 @@ defineProps<NavProps>();
                     v-else
                     :key="`2-${index}`"
                     :href="link.route"
+                    :method="link.method"
+                    :as="link.method === 'post' ? 'button' : undefined"
                     :class="
                         cn(
                             buttonVariants({
