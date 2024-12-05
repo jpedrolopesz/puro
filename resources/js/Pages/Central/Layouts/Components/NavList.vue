@@ -23,6 +23,7 @@ interface NavProps {
     isCollapsed: boolean;
     links: LinkProp[];
 }
+asd;
 
 defineProps<NavProps>();
 </script>
