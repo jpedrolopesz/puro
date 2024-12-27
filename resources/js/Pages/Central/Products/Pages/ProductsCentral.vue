@@ -27,7 +27,7 @@ const filterOptions = [
 const updateFilter = (newFilter: string) => {
     currentFilter.value = newFilter;
     router.get(
-        route("products.index"),
+        route("admin.products.index"),
         { filter: newFilter },
         {
             preserveState: true,

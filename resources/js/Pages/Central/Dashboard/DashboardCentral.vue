@@ -3,14 +3,12 @@ import AuthenticatedCentralLayout from "../Layouts/AuthenticatedCentralLayout.vu
 import { Head } from "@inertiajs/vue3";
 import ChartlineOverview from "./Components/ChartlineOverview.vue";
 import { Card, CardContent, CardHeader, CardTitle } from "@/Components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
 import { defineProps, computed } from "vue";
 
 interface Admin {
     id: number;
     name: string;
     email: string;
-    // adicione outros camewpos necessárisadaodsfss
 }
 
 interface PaymentTotals {
@@ -113,202 +111,173 @@ const currentMonthSales = computed(() => {
                 </div>
             </div>
 
-            <Tabs default-value="overview" class="space-y-4">
-                <TabsList>
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="analytics" disabled
-                        >Analytics</TabsTrigger
+            <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <!-- Revenue Card -->
+                <Card>
+                    <CardHeader
+                        class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                    <TabsTrigger value="reports" disabled>Reports</TabsTrigger>
-                    <TabsTrigger value="notifications" disabled
-                        >Notifications</TabsTrigger
+                        <CardTitle class="text-sm font-medium">
+                            Total Revenue
+                        </CardTitle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            class="h-4 w-4 text-muted-foreground"
+                        >
+                            <path
+                                d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
+                            />
+                        </svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-bold">
+                            ${{ calculateAnnualPaymentTotals.total_amount }}
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            {{ calculatePaymentPercentageChange >= 0 ? "+" : ""
+                            }}{{ calculatePaymentPercentageChange }}% from last
+                            month
+                        </p>
+                    </CardContent>
+                </Card>
+
+                <!-- Subscribers Card -->
+                <Card>
+                    <CardHeader
+                        class="flex flex-row items-center justify-between space-y-0 pb-2"
                     >
-                </TabsList>
-                <TabsContent value="overview" class="space-y-4">
-                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                        <!-- Revenue Card -->
-                        <Card>
-                            <CardHeader
-                                class="flex flex-row items-center justify-between space-y-0 pb-2"
-                            >
-                                <CardTitle class="text-sm font-medium">
-                                    Total Revenue
-                                </CardTitle>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    class="h-4 w-4 text-muted-foreground"
-                                >
-                                    <path
-                                        d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"
-                                    />
-                                </svg>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="text-2xl font-bold">
-                                    ${{
-                                        calculateAnnualPaymentTotals.total_amount
-                                    }}
-                                </div>
-                                <p class="text-xs text-muted-foreground">
-                                    {{
-                                        calculatePaymentPercentageChange >= 0
-                                            ? "+"
-                                            : ""
-                                    }}{{ calculatePaymentPercentageChange }}%
-                                    from last month
-                                </p>
-                            </CardContent>
-                        </Card>
+                        <CardTitle class="text-sm font-medium">
+                            Subscribers
+                        </CardTitle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            class="h-4 w-4 text-muted-foreground"
+                        >
+                            <path
+                                d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
+                            />
+                            <circle cx="9" cy="7" r="4" />
+                        </svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-bold">
+                            {{
+                                calculateAnnualSubscriberTotals.subscribers
+                                    .total
+                            }}
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            {{
+                                calculateSubscriberPercentageChange >= 0
+                                    ? "+"
+                                    : ""
+                            }}{{ calculateSubscriberPercentageChange }}% from
+                            last year
+                        </p>
+                    </CardContent>
+                </Card>
 
-                        <!-- Subscribers Card -->
-                        <Card>
-                            <CardHeader
-                                class="flex flex-row items-center justify-between space-y-0 pb-2"
-                            >
-                                <CardTitle class="text-sm font-medium">
-                                    Subscribers
-                                </CardTitle>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    class="h-4 w-4 text-muted-foreground"
-                                >
-                                    <path
-                                        d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"
-                                    />
-                                    <circle cx="9" cy="7" r="4" />
-                                </svg>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="text-2xl font-bold">
-                                    {{
-                                        calculateAnnualSubscriberTotals
-                                            .subscribers.total
-                                    }}
-                                </div>
-                                <p class="text-xs text-muted-foreground">
-                                    {{
-                                        calculateSubscriberPercentageChange >= 0
-                                            ? "+"
-                                            : ""
-                                    }}{{ calculateSubscriberPercentageChange }}%
-                                    from last year
-                                </p>
-                            </CardContent>
-                        </Card>
+                <!-- Monthly Sales Card -->
+                <Card>
+                    <CardHeader
+                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                    >
+                        <CardTitle class="text-sm font-medium">
+                            Monthly Sales
+                        </CardTitle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            class="h-4 w-4 text-muted-foreground"
+                        >
+                            <rect width="20" height="14" x="2" y="5" rx="2" />
+                            <path d="M2 10h20" />
+                        </svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-bold">
+                            ${{
+                                new Intl.NumberFormat("en-US", {
+                                    minimumFractionDigits: 2,
+                                }).format(currentMonthSales)
+                            }}
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            {{ calculatePaymentPercentageChange >= 0 ? "+" : ""
+                            }}{{ calculatePaymentPercentageChange }}% from last
+                            month
+                        </p>
+                    </CardContent>
+                </Card>
 
-                        <!-- Monthly Sales Card -->
-                        <Card>
-                            <CardHeader
-                                class="flex flex-row items-center justify-between space-y-0 pb-2"
-                            >
-                                <CardTitle class="text-sm font-medium">
-                                    Monthly Sales
-                                </CardTitle>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    class="h-4 w-4 text-muted-foreground"
-                                >
-                                    <rect
-                                        width="20"
-                                        height="14"
-                                        x="2"
-                                        y="5"
-                                        rx="2"
-                                    />
-                                    <path d="M2 10h20" />
-                                </svg>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="text-2xl font-bold">
-                                    ${{
-                                        new Intl.NumberFormat("en-US", {
-                                            minimumFractionDigits: 2,
-                                        }).format(currentMonthSales)
-                                    }}
-                                </div>
-                                <p class="text-xs text-muted-foreground">
-                                    {{
-                                        calculatePaymentPercentageChange >= 0
-                                            ? "+"
-                                            : ""
-                                    }}{{ calculatePaymentPercentageChange }}%
-                                    from last month
-                                </p>
-                            </CardContent>
-                        </Card>
+                <!-- Conversion Rate Card -->
+                <Card>
+                    <CardHeader
+                        class="flex flex-row items-center justify-between space-y-0 pb-2"
+                    >
+                        <CardTitle class="text-sm font-medium">
+                            Conversion Rate
+                        </CardTitle>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth="2"
+                            class="h-4 w-4 text-muted-foreground"
+                        >
+                            <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                        </svg>
+                    </CardHeader>
+                    <CardContent>
+                        <div class="text-2xl font-bold">
+                            {{
+                                (
+                                    (calculateAnnualSubscriberTotals.subscribers
+                                        .total /
+                                        calculateAnnualSubscriberTotals.total_users) *
+                                    100
+                                ).toFixed(1)
+                            }}%
+                        </div>
+                        <p class="text-xs text-muted-foreground">
+                            Of total users
+                        </p>
+                    </CardContent>
+                </Card>
+            </div>
 
-                        <!-- Conversion Rate Card -->
-                        <Card>
-                            <CardHeader
-                                class="flex flex-row items-center justify-between space-y-0 pb-2"
-                            >
-                                <CardTitle class="text-sm font-medium">
-                                    Conversion Rate
-                                </CardTitle>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    viewBox="0 0 24 24"
-                                    fill="none"
-                                    stroke="currentColor"
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth="2"
-                                    class="h-4 w-4 text-muted-foreground"
-                                >
-                                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-                                </svg>
-                            </CardHeader>
-                            <CardContent>
-                                <div class="text-2xl font-bold">
-                                    {{
-                                        (
-                                            (calculateAnnualSubscriberTotals
-                                                .subscribers.total /
-                                                calculateAnnualSubscriberTotals.total_users) *
-                                            100
-                                        ).toFixed(1)
-                                    }}%
-                                </div>
-                                <p class="text-xs text-muted-foreground">
-                                    Of total users
-                                </p>
-                            </CardContent>
-                        </Card>
-                    </div>
-
-                    <!-- Overview Chart -->
-                    <div class="grid gap-2 md:grid-cols-1 lg:grid-cols-1">
-                        <Card class="col-span-4">
-                            <CardHeader>
-                                <CardTitle>Overview</CardTitle>
-                            </CardHeader>
-                            <CardContent class="pl-2">
-                                <ChartlineOverview
-                                    :data="props.getMonthlyPaymentSummary"
-                                />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-            </Tabs>
+            <div class="grid gap-2 md:grid-cols-1 lg:grid-cols-1">
+                <Card class="col-span-4">
+                    <CardHeader>
+                        <CardTitle>Overview</CardTitle>
+                    </CardHeader>
+                    <CardContent class="pl-2">
+                        <ChartlineOverview
+                            :data="props.getMonthlyPaymentSummary"
+                        />
+                    </CardContent>
+                </Card>
+            </div>
         </main>
     </AuthenticatedCentralLayout>
 </template>

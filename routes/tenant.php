@@ -31,16 +31,10 @@ Route::group(
     ],
     function () {
         Route::get("/", function () {
-            if (Auth::guard("web")->check()) {
-                $user = Auth::guard("web")->user();
-                return response()->json([
-                    "authenticated" => true,
-                    "user" => $user,
-                ]);
-            }
-
-            return response()->json(["authenticated" => false]);
-        });
+            return Inertia::render("Tenant/LandingPage/Page", [
+                "canLogin" => Route::has("login"),
+            ]);
+        })->name("home");
 
         Route::get("login", [
             AuthenticatedSessionController::class,
@@ -96,6 +90,11 @@ Route::group(
                 "destroy",
             ])->name("profile.destroy");
         });
+
+        Route::get("logout/tenant", [
+            AuthenticatedSessionController::class,
+            "logout",
+        ])->name("logout.tenant");
 
         require __DIR__ . "/auth.php";
     }

@@ -90,10 +90,11 @@ const links2: LinkProp[] = [
 const links3: LinkProp[] = [
     {
         title: "Log out",
-
         icon: "lucide:log-out",
         variant: "ghost",
-        route: "/social",
+        route: route("tenant.logout.tenant"),
+        method: "post",
+        as: "button",
     },
 ];
 </script>

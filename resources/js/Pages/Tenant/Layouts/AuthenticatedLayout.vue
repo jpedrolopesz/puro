@@ -1,6 +1,7 @@
 <script setup>
 import NavHeard from "./Components/NavHeard.vue";
 import NavSidebar from "./Components/NavSidebar.vue";
+import { ScrollArea } from "@/Components/ui/scroll-area";
 </script>
 
 <template>

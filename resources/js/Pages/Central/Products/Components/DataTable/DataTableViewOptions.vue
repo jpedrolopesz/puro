@@ -93,7 +93,7 @@ const handleSuccess = () => {
         </DropdownMenuContent>
     </DropdownMenu>
 
-    <Link :href="route('products.builder.index')">
+    <Link :href="route('admin.products.builder')">
         <Button variant="outline" size="sm" class="ml-2 hidden h-8 lg:flex">
             <SendToBack class="mr-2 h-4 w-4" />
             Rearrange

@@ -10,6 +10,8 @@ import {
     CardTitle,
 } from "@/Components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/Components/ui/tabs";
+import ImportStripePaymentsJob from "./Partials/ImportStripePaymentsJob.vue";
+import ImportStripeUsersJob from "./Partials/ImportStripeUsersJob.vue";
 
 import { defineProps } from "vue";
 
@@ -36,7 +38,7 @@ defineProps<{
             >
                 <TabsList class="grid w-48 grid-cols-1 bg-white space-y-2">
                     <TabsTrigger
-                        v-for="tab in ['account', 'password']"
+                        v-for="tab in ['account', 'password', 'sync']"
                         :key="tab"
                         :value="tab"
                         class="w-full justify-start px-4 py-2 text-left capitalize transition-all hover:bg-gray-100 data-[state=active]:bg-primary data-[state=active]:text-white"
@@ -75,6 +77,22 @@ defineProps<{
                             </CardHeader>
                             <CardContent class="space-y-2">
                                 <UpdatePasswordForm />
+                            </CardContent>
+                        </Card>
+                    </TabsContent>
+
+                    <TabsContent value="sync">
+                        <Card>
+                            <CardHeader>
+                                <CardTitle>Sync</CardTitle>
+                                <CardDescription>
+                                    Ensure your account is using a long, random
+                                    password to stay secure.
+                                </CardDescription>
+                            </CardHeader>
+                            <CardContent class="space-y-2">
+                                <ImportStripePaymentsJob />
+                                <ImportStripeUsersJob />
                             </CardContent>
                         </Card>
                     </TabsContent>

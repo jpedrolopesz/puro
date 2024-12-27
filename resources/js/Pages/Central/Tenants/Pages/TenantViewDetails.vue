@@ -27,7 +27,7 @@ console.log(props.customerPayments);
         <main class="space-y-8 m-4 md:m-10 lg:m-20">
             <div class="mx-auto grid flex-1 auto-rows-max gap-4">
                 <div class="flex items-center gap-4">
-                    <Link :href="route('tenants.index')">
+                    <Link :href="route('admin.tenants.index')">
                         <Button variant="outline" size="icon" class="h-7 w-7">
                             <ChevronLeft class="h-4 w-4" />
                             <span class="sr-only">Back</span>
