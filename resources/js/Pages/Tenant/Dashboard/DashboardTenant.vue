@@ -6,8 +6,15 @@ import { Head } from "@inertiajs/vue3";
 <template>
     <Head title="Dashboard" />
     <AuthenticatedLayout>
-        <div class="flex items-center justify-between space-y-2">
-            <h2 class="text-3xl font-bold tracking-tight">Tenant</h2>
-        </div>
+        <main class="space-y-4 m-4 md:m-10 lg:m-20">
+            <div class="flex items-center justify-between space-y-2">
+                <div>
+                    <h2 class="text-2xl font-bold tracking-tight">Dashboard</h2>
+                    <p class="text-muted-foreground">
+                        Bem-vindo(a), {{ $page.props.auth.user.name }}!
+                    </p>
+                </div>
+            </div>
+        </main>
     </AuthenticatedLayout>
 </template>

@@ -38,21 +38,13 @@ import { Link } from "@inertiajs/vue3";
             <DropdownMenuGroup>
                 <DropdownMenuItem>
                     <Link :href="route('tenant.profile.edit')"> Profile </Link>
-                    <DropdownMenuShortcut>⇧⌘P</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    Billing
-                    <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                    Settings
-                    <DropdownMenuShortcut>⌘S</DropdownMenuShortcut>
                 </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>
-                Log out
-                <DropdownMenuShortcut>⇧⌘Q</DropdownMenuShortcut>
+                <Link as="button" :href="route('tenant.logout.tenant')">
+                    Logout</Link
+                >
             </DropdownMenuItem>
         </DropdownMenuContent>
     </DropdownMenu>

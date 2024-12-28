@@ -157,7 +157,7 @@ const saveOrder = () => {
 
         form.products = orderedProducts;
 
-        form.post(route("products.updateOrder"), {
+        form.post(route("admin.products.order.update"), {
             preserveState: true,
             preserveScroll: true,
             onSuccess: (response) => {},

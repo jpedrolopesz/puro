@@ -30,7 +30,6 @@ const updateFilter = (newFilter: string) => {
         route("admin.products.index"),
         { filter: newFilter },
         {
-            preserveState: true,
             preserveScroll: true,
             replace: true,
         },

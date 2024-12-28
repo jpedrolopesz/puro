@@ -110,8 +110,11 @@ export const columns: ColumnDef<Tenant>[] = [
     },
     {
         id: "actions",
-        cell: ({ row }) =>
-            h(
+        cell: ({ row }) => {
+            if (!row.original.creator.stripe_id) {
+                return null;
+            }
+            return h(
                 DataTableRowActions,
                 { row },
                 {
@@ -127,6 +130,7 @@ export const columns: ColumnDef<Tenant>[] = [
                             () => "View tenant details",
                         ),
                 },
-            ),
+            );
+        },
     },
 ];

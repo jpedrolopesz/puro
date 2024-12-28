@@ -68,7 +68,7 @@ const filterOptions = computed(() => [
 
 const updateFilter = (newFilter: string) => {
     router.get(
-        route("payments.index"),
+        route("admin.payments.index"),
         { filter: newFilter },
         {
             preserveState: true,
