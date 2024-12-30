@@ -7,7 +7,8 @@ use App\Http\Controllers\Central\{
     ConversationCentralController,
     ProductsCentralController,
     PaymentCentralController,
-    ProductsBuilderCentralController
+    ProductsBuilderCentralController,
+    MonitoringCentralController
 };
 use Illuminate\Support\Facades\Broadcast;
 use Illuminate\Support\Facades\Route;
@@ -16,6 +17,12 @@ use Inertia\Inertia;
 Route::middleware("auth:admin")
     ->name("admin.")
     ->group(function () {
+        // Monitoring
+        Route::get("/monitoring", [
+            MonitoringCentralController::class,
+            "index",
+        ])->name("monintoring");
+
         // Dashboard
         Route::get("/dashboard", [
             DashboardCentralController::class,

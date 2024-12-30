@@ -8,7 +8,7 @@ Route::get("/", function () {
         "canLogin" => Route::has("login"),
         "canRegister" => Route::has("register"),
     ]);
-})->name("home");
+})->name("home");ddd
 
 require base_path("routes/auth.php");
 require base_path("routes/admin.php");
